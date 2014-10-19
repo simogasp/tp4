@@ -10,7 +10,8 @@ The objective of these TP sessions is to get familiar with OpenGL.
 -----------------
 Code Organization
 -----------------
-TODO
+
+The fifth TP is about creating a visualizer for models loaded from Wavefront OBJ format files. The code is in `objVisualizer` 
 
 
 --------

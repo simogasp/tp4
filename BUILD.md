@@ -1,4 +1,4 @@
-An Augmented Reality application
+OpenGL exercises
 ===========================================
 
 ----------------------

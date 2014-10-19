@@ -13,23 +13,6 @@
 
 #include "core.hpp"
 
-// for mac osx
-#ifdef __APPLE__
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
-#include <GLUT/glut.h>
-#else
-// only for windows
-#ifdef _WIN32
-#include <windows.h>
-#endif
-// for windows and linux
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <GL/freeglut.h>
-#endif
-
-
 #include <vector>
 #include <ostream>
 #include <math.h>
@@ -38,13 +21,7 @@
 #define COORD_PER_VERTEX 3
 #define TOTAL_FLOATS_IN_TRIANGLE (VERTICES_PER_TRIANGLE*COORD_PER_VERTEX)
 
-#define DEBUGGING 1
 
-#if DEBUGGING
-#define PRINTVAR( a ) std::cout << #a << " = " << a << endl << endl;
-#else
-#define PRINTVAR( a )
-#endif
 
  /**
   */
@@ -87,10 +64,19 @@ class ObjModel
          * @param[in] coord3 the third vertex
          * @param[out] norm the normal
          */
-        void computeNormal(const float coord1[3], const float coord2[3], const float coord3[3], float norm[3] );
+        void computeNormal(const float coord1[3], const float coord2[3], const float coord3[3], float norm[3] ) const;
 
         void computeNormal( const point3d& v1, const point3d& v2, const point3d& v3, vec3d &norm  ) const;
 
+        /**
+         * Computes the angle at vertex baseV formed by the edges connecting it with the
+         * vertices v1 and v2 respectively, ie the baseV-v1 and baseV-v2 edges
+         * @brief
+         * @param baseV the vertex at which to compute the angle
+         * @param v1 the other vertex of the first edge baseV-v1
+         * @param v2 the other vertex of the second edge baseV-v2
+         * @return the angle in radiants
+         */
         float angleAtVertex( const point3d& v1, const point3d& v2, const point3d& v3 ) const;
 		
 		/**
@@ -103,13 +89,17 @@ class ObjModel
 		/**
 		 * Draws the model with the opengl primitives
 		 */
-        void draw();
+        void draw() const;
 
-        void indexDraw();
+        void indexDraw() const;
 
-        void flatDraw();
+        void flatDraw() const;
 
-        void wireframetDraw();
+        void wireframetDraw() const;
+
+        void subdivision();
+
+        GLushort getNewVertex( const edge &e, std::vector<point3d> &vertList, EdgeList &newVertList ) const;
 	
 		/**
 		 * Release the model

@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
+#include <stdlib.h>
 
 #include <sstream>
 #include <string>
@@ -34,7 +35,7 @@ ObjModel::ObjModel()
  * @param[in] coord3 the third vertex
  * @param[out] norm the normal
  */
-void ObjModel::computeNormal( const float coord1[3], const float coord2[3], const float coord3[3], float norm[3]  )
+void ObjModel::computeNormal( const float coord1[3], const float coord2[3], const float coord3[3], float norm[3]  ) const
 {
 	//*********************************************
 	// Compute the normal vector of the 3 input vertices:
@@ -390,7 +391,15 @@ cout << "Found object with "<< _numVertices << " vertices and "  << _numTriangle
 }
 
 
-
+/**
+ * Computes the angle at vertex baseV formed by the edges connecting it with the
+ * vertices v1 and v2 respectively, ie the baseV-v1 and baseV-v2 edges
+ * @brief
+ * @param baseV the vertex at which to compute the angle
+ * @param v1 the other vertex of the first edge baseV-v1
+ * @param v2 the other vertex of the second edge baseV-v2
+ * @return the angle in radiants
+ */
 float ObjModel::angleAtVertex( const point3d& baseV, const point3d& v1, const point3d& v2 ) const
 {
 	vec3d e1 = baseV-v1;
@@ -405,6 +414,35 @@ float ObjModel::angleAtVertex( const point3d& baseV, const point3d& v1, const po
 }
 
 
+void ObjModel::subdivision()
+{
+    // for each triangle
+        // for each edge
+
+}
+
+GLushort ObjModel::getNewVertex( const edge &e, vector<point3d> &vertList, EdgeList &newVertList ) const
+{
+    // if the egde is not contained in the new vertex list
+    if( newVertList.contains( e ) )
+    {
+        // generate new index (vertex.size)
+        GLushort idxnew = vertList.size();
+        // add the edge and index to the map
+        newVertList.add(e , idxnew );
+        // generate new vertex
+        point3d nvert = (vertList[e.first] + vertList[e.second])*0.5;
+        // append it to the list of vertex
+        vertList.push_back( nvert );
+        // normals?
+
+    }
+    // else
+    {
+        // get the index of the vertex
+    }
+}
+
 void ObjModel::release()
 {
 	free(this->_triangles);
@@ -412,7 +450,7 @@ void ObjModel::release()
 	free(this->_vertices);
 }
  
-void ObjModel::draw()
+void ObjModel::draw() const
 {
 	glShadeModel( GL_SMOOTH );
 	
@@ -466,7 +504,7 @@ void ObjModel::draw()
 
 }
 
-void ObjModel::flatDraw()
+void ObjModel::flatDraw() const
 {
 	glShadeModel( GL_SMOOTH );
 
@@ -490,7 +528,7 @@ void ObjModel::flatDraw()
 
 }
 
-void ObjModel::wireframetDraw()
+void ObjModel::wireframetDraw() const
 {
 
 	glDisable(GL_LIGHTING);
@@ -510,7 +548,7 @@ void ObjModel::wireframetDraw()
 
 }
 
-void ObjModel::indexDraw()
+void ObjModel::indexDraw() const
 {
 	glShadeModel( GL_SMOOTH );
 

@@ -18,7 +18,101 @@
 #endif
 
 #include <vector>
+#include <map>
 #include <iostream>
+#include <functional>
+
+#define DEBUGGING 1
+
+#if DEBUGGING
+#define PRINTVAR( a ) std::cout << #a << " = " << a << std::endl << std::endl;
+#else
+#define PRINTVAR( a )
+#endif
+
+typedef std::pair<GLushort,GLushort> edge;
+
+inline GLushort sum( edge e)
+{
+    return (e.first + e.second);
+}
+
+inline GLushort min( edge e)
+{
+    return ((e.first > e.second) ? (e.second) : (e.first));
+}
+
+
+struct edgeCompare
+{
+  bool operator() (const edge &a, const edge &b) const
+  {
+//      return !( ( (a.first == b.first) && (a.second == b.second) ) ||
+//               ( (a.first == b.second) && (a.second == b.first) ) );
+
+      // two edges are equal if their sum is equal and their min is the same
+      // our ordering policy is that first is the sum to be compared and then if the sum is
+      // equal we use the ordering on the min. This guarantees that when edgeCompare is used
+      // in map to detect equal keys it really detects the same edge independently of the index
+      // order. edgeCompare is indeed used with reflexively: 2 edges are equivalent if !comp(a,b) && !comp(b,a)
+      return ( (sum(a) < sum(b)) ||
+               ((sum(a) == sum(b)) && (min(a) < min(b))));
+  }
+};
+
+// to be used with unordered
+//struct edgeHash
+//{
+//  size_t operator() (const edge &a ) const
+//  {
+//      std::hash<std::string> fun;
+//      return (fun( (a.first > a.second) ? (std::to_string(a.second)+std::to_string(a.first) ) :
+//                                          (std::to_string(a.first)+std::to_string(a.second)) ));
+//  }
+//};
+
+typedef std::map< edge, GLushort, edgeCompare > _edgeList;
+
+inline std::ostream& operator<<(std::ostream& os, const edge& p)
+{
+    return os << "["<< p.first << "," << p.second  <<"]";
+}
+
+inline std::ostream& operator<<(std::ostream& os, const _edgeList& l)
+{
+    os << std::endl;
+    for( _edgeList::const_iterator it = l.begin(); it != l.end(); ++it )
+        os << "\t" << it->first << "\t" << it->second << std::endl;
+    return os;
+}
+
+
+class EdgeList
+{
+
+public:
+    EdgeList() {}
+
+    void add( edge e, GLushort idx )
+    {
+        list[e]=idx;
+    }
+
+    bool contains(edge e)
+    {
+        return (list.find( e ) != list.end());
+    }
+
+    GLushort getIndex(edge e)
+    {
+        return (list[e]);
+    }
+
+private:
+    _edgeList list;
+
+};
+
 
 struct v3f
 {
@@ -45,18 +139,20 @@ struct v3f
     void scale( v3f t );
 
     void scale( float x, float y, float z );
+
     void scale( float a );
 
-    v3f operator +(const v3f& a) const;
+    v3f cross(const v3f& v);
 
+    v3f cross(const float v[3]);
+
+    v3f operator +(const v3f& a) const;
     v3f& operator +=(const v3f& a);
 
     v3f operator +(const float a[3]) const;
-
     v3f& operator +=(const float a[3]);
 
     v3f operator +(const float a) const;
-
     v3f& operator +=(const float a);
 
     // subtraction
@@ -65,30 +161,23 @@ struct v3f
     v3f& operator -=(const v3f& a);
 
     v3f operator -(const float a[3]) const;
-
     v3f& operator -=(const float a[3]);
 
     v3f operator -(const float a) const;
-
     v3f& operator -=(const float a);
 
     // element-wise product
 
     v3f operator *(const v3f& a) const;
-
     v3f& operator *=(const v3f& a);
 
     v3f operator *(const float a[3]) const;
-
     v3f& operator *=(const float a[3]);
 
     v3f operator *(const float a) const;
-
     v3f& operator *=(const float a);
 
-    v3f cross(const v3f& v);
 
-    v3f cross(const float v[3]);
 
 
 };

@@ -284,3 +284,8 @@ tindex& tindex::operator *=(const GLushort a)
 	v3 *= a;
 	return *this;
 }
+
+bool tindex::operator==( const tindex& r) const
+{
+	return ( (v1 == r.v1) && (v2 == r.v2) && (v3 == r.v3));
+}

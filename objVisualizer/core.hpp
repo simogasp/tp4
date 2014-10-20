@@ -237,6 +237,7 @@ struct tindex
 	tindex operator *(const GLushort a) const;
 	tindex& operator *=(const GLushort a);
 
+	bool operator==(const tindex& rhs) const;
 };
 
 inline std::ostream& operator<<(std::ostream& os, const tindex& p)

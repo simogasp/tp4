@@ -17,6 +17,8 @@
 #include <string>
 #include <vector>
 #include <cmath>
+#include <sstream>
+
 
 using namespace std;
 
@@ -40,6 +42,46 @@ void ObjModel::computeNormal( const point3d& v1, const point3d& v2, const point3
 	norm.normalize();
 }
 
+/**
+ * @brief ObjModel::parseFaceString
+ * @param toParse
+ * @param out
+ * @return
+ */
+bool ObjModel::parseFaceString( const string &toParse, triangleIndex &out) const
+{
+	if (toParse.c_str()[0] == 'f')
+	{
+		GLushort a;
+		// now check the different formats: %d, %d//%d, %d/%d, %d/%d/%d
+		if (strstr(toParse.c_str(), "//"))
+		{
+			// v//n
+			return ( sscanf(toParse.c_str(), "f %hu//%hu %hu//%hu %hu//%hu", &(out.v1), &a, &(out.v2), &a, &(out.v3), &a) == 6 );
+		}
+		else if (sscanf(toParse.c_str(), "f %hu/%hu/%hu", &a, &a, &a) == 3)
+		{
+			// v/t/n
+			return ( sscanf(toParse.c_str(), "f %hu/%hu/%hu %hu/%hu/%hu %hu/%hu/%hu", &(out.v1), &a, &a, &(out.v2), &a, &a, &(out.v3), &a, &a) == 9 );
+		}
+		else if (sscanf(toParse.c_str(), "f %hu/%hu", &a, &a) == 2)
+		{
+			// v/t .
+			return ( sscanf(toParse.c_str(), "f %hu/%hu %hu/%hu %hu/%hu", &(out.v1), &a, &(out.v2), &a, &(out.v3), &a) == 6 );
+		}
+		else
+		{
+			// v
+			sscanf(toParse.c_str(), "f %hu %hu %hu", &(out.v1), &(out.v2), &(out.v3));
+			PRINTVAR(out);
+			return ( sscanf(toParse.c_str(), "f %hu %hu %hu", &(out.v1), &(out.v2), &(out.v3)) == 3 );
+		}
+	}
+	else
+	{
+		return false;
+	}
+}
 
 /**
  * @brief 
@@ -66,10 +108,10 @@ int ObjModel::load(char* filename)
 			//**************************************************
 			// If the first character is a 'v'...
 			//**************************************************
-			if (line.c_str()[0] == 'v')										
+			PRINTVAR(line);
+			if ((line.c_str()[0] == 'v') && (line.c_str()[1] == ' '))	// to drop all the vn and vn lines
 			{
-//			    cout << line.c_str()[0] << endl;
-				
+				PRINTVAR(line);
 				// Set first character to ' '. This will allow us to use sscanf
 				line[0] = ' ';												
  
@@ -111,22 +153,32 @@ int ObjModel::load(char* filename)
 			//**************************************************
 			if (line.c_str()[0] == 'f')										
 			{
-//				cout << line.c_str()[0] << endl;
-				
-				// Set first character to ' '. This will allow us to use sscanf
-				line[0] = ' ';												
- 
-				// this contains temporary the indices of the vertices
+
 				triangleIndex t;
+				PRINTVAR(parseFaceString(line, t));
+
+//				// Set first character to ' '. This will allow us to use sscanf
+//				line[0] = ' ';
+ 
+//				// this contains temporary the indices of the vertices
+//				triangleIndex t;
 				
-				//**************************************************
-				// Read 3 integers from the line:  idx1 idx2 idx3 and store them in the corresponding place in vertexIdx
-				// In order to read the 3 integers in one shot from string you can use sscanf
-				//**************************************************
-				sscanf(line.c_str(),"%i %i %i",								// Read integers from the line:  f 1 2 3
-					&t.v1,										// First point of our triangle. This is an
-					&t.v2,										// pointer to our vertexBuffer list
-					&t.v3 );										// each point represents an X,Y,Z.
+//				//**************************************************
+//				// Read 3 integers from the line:  idx1 idx2 idx3 and store them in the corresponding place in vertexIdx
+//				// In order to read the 3 integers in one shot from string you can use sscanf
+//				//**************************************************
+//				sscanf(line.c_str(),"%hu %hu %hu",								// Read integers from the line:  f 1 2 3
+//					&t.v1,										// First point of our triangle. This is an
+//					&t.v2,										// pointer to our vertexBuffer list
+//					&t.v3 );										// each point represents an X,Y,Z.
+
+
+//				PRINTVAR(t2);
+//				PRINTVAR(t);
+
+//				assert(t2==t);
+
+//				t=t2;
 
 				//**************************************************
 				// correct the indices: OBJ starts counting from 1, in C the arrays starts at 0...
@@ -265,24 +317,24 @@ void ObjModel::linearSubdivision()
  */
 GLushort ObjModel::getNewVertex( const edge &e, vector<point3d> &vertList, vector<vec3d> &normList, EdgeList &newVertList ) const
 {
-	PRINTVAR(e);
-	PRINTVAR(newVertList);
+//	PRINTVAR(e);
+//	PRINTVAR(newVertList);
     // if the egde is not contained in the new vertex list
 	if( !newVertList.contains( e ) )
     {
         // generate new index (vertex.size)
         GLushort idxnew = vertList.size();
-		PRINTVAR(vertList);
-		PRINTVAR(idxnew);
+//		PRINTVAR(vertList);
+//		PRINTVAR(idxnew);
         // add the edge and index to the map
 		newVertList.add( e, idxnew );
-		PRINTVAR(newVertList);
+//		PRINTVAR(newVertList);
         // generate new vertex
         point3d nvert = (vertList[e.first] + vertList[e.second])*0.5;
 		// append it to the list of vertices
 	cout << "new vertex created " << endl;
-	PRINTVAR(nvert);
-	PRINTVAR(e);
+//	PRINTVAR(nvert);
+//	PRINTVAR(e);
         vertList.push_back( nvert );
 		// simple version, compute the normal as the linear combination of the
 		// normals of the 2 vertices
@@ -321,20 +373,20 @@ void ObjModel::drawSubdivision()
 	glDisableClientState(GL_VERTEX_ARRAY);  // disable vertex arrays
 	glDisableClientState(GL_NORMAL_ARRAY);
 
-//	glDisable(GL_LIGHTING);
-//	glColor3f(1,1,1);
-//	glLineWidth(2);
-//	for(int i=0; i<_subIdx.size(); i++)
-//	{
-//		glBegin(GL_LINE_LOOP);
-//			glVertex3fv((float*)&_subVert[_subIdx[i].v1]);
+	glDisable(GL_LIGHTING);
+	glColor3f(1,1,1);
+	glLineWidth(2);
+	for(int i=0; i<_subIdx.size(); i++)
+	{
+		glBegin(GL_LINE_LOOP);
+			glVertex3fv((float*)&_subVert[_subIdx[i].v1]);
 
-//			glVertex3fv((float*)&_subVert[_subIdx[i].v2]);
+			glVertex3fv((float*)&_subVert[_subIdx[i].v2]);
 
-//			glVertex3fv((float*)&_subVert[_subIdx[i].v3]);
-//		glEnd();
-//	}
-//	glEnable(GL_LIGHTING);
+			glVertex3fv((float*)&_subVert[_subIdx[i].v3]);
+		glEnd();
+	}
+	glEnable(GL_LIGHTING);
 
 }
 
@@ -442,10 +494,11 @@ float ObjModel::unitizeModel()
 		// depth using the bounding box
 		//****************************************
 		float w,h,d;
-		w = fabs(_bb.pmax.x) + fabs(_bb.pmin.x);
-		h = fabs(_bb.pmax.y) + fabs(_bb.pmin.y);
-		d = fabs(_bb.pmax.z) + fabs(_bb.pmin.z);
+		w = fabs(_bb.pmax.x) - fabs(_bb.pmin.x);
+		h = fabs(_bb.pmax.y) - fabs(_bb.pmin.y);
+		d = fabs(_bb.pmax.z) - fabs(_bb.pmin.z);
 		
+cout << "size: w: " << w << " h " << h << " d " << d <<  endl;
 		//****************************************
 		// calculate center of the bounding box of the model 
 		//****************************************

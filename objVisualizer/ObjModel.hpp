@@ -84,6 +84,14 @@ class ObjModel
 		 * @return the angle in radiants
 		 */
         float angleAtVertex( const point3d& v1, const point3d& v2, const point3d& v3 ) const;
+
+		/**
+		 * @brief ObjModel::parseFaceString
+		 * @param toParse
+		 * @param out
+		 * @return
+		 */
+		bool parseFaceString( const std::string &toParse, triangleIndex &out) const;
 		
 		/**
 		 *  Loads the model from file

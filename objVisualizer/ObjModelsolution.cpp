@@ -394,7 +394,7 @@ cout << "Found object with "<< _numVertices << " vertices and "  << _numTriangle
 /**
  * Computes the angle at vertex baseV formed by the edges connecting it with the
  * vertices v1 and v2 respectively, ie the baseV-v1 and baseV-v2 edges
- * @brief
+ * @brief Computes the angle at vertex
  * @param baseV the vertex at which to compute the angle
  * @param v1 the other vertex of the first edge baseV-v1
  * @param v2 the other vertex of the second edge baseV-v2
@@ -413,43 +413,139 @@ float ObjModel::angleAtVertex( const point3d& baseV, const point3d& v1, const po
 	return ( acos( (e1).dot(e2) / (e1.norm()*e2.norm()) ) );
 }
 
-
+/**
+ * @brief ObjModel::subdivision
+ */
 void ObjModel::subdivision()
 {
-    // for each triangle
-        // for each edge
+	// copy the data in new arrays
+	_subVert = _v;
+	_subIdx = _indices;
+	_subNorm = _nv;
 
+	PRINTVAR(_subVert);
+	PRINTVAR(_v);
+	// create a list of the new vertices creates witht the reference to the edge
+	EdgeList newVertices;
+
+    // for each triangle
+	for(int i = 0; i < _indices.size(); ++i )
+	{
+		// get the indices of the triangle vertices
+		GLushort v1 = _indices[i].v1;
+		GLushort v2 = _indices[i].v2;
+		GLushort v3 = _indices[i].v3;
+
+		// for each edge get the index of the vertex of the midpoint
+		// if it does not exist it will be generated.
+		GLushort a = getNewVertex( edge(v1,v2), _subVert, _subNorm, newVertices );
+		GLushort b = getNewVertex( edge(v2,v3), _subVert, _subNorm, newVertices );
+		GLushort c = getNewVertex( edge(v3,v1), _subVert, _subNorm ,newVertices );
+
+		// create the four new triangle
+		// BE CAREFULL WITH THE VERTEX ORDER!!
+		//		       v2
+		//		      / \
+		//		     /   \
+		//		   a ----- b
+		//		  /  \    / \
+		//		 /     \ /    \
+		//		v1 ---- c ---- v3
+		//
+		// the original triangle was v1-v2-v3, use the same clock-wise order for the other
+
+		_subIdx.push_back( triangleIndex( v1, a, c ) );
+		_subIdx.push_back( triangleIndex( a, b, c ) );
+		_subIdx.push_back( triangleIndex( a, v2, b ) );
+		_subIdx.push_back( triangleIndex( c, b, v3 ) );
+	}
+
+	PRINTVAR(newVertices);
 }
 
-GLushort ObjModel::getNewVertex( const edge &e, vector<point3d> &vertList, EdgeList &newVertList ) const
+/**
+ * @brief ObjModel::getNewVertex
+ * @param e
+ * @param vertList
+ * @param newVertList
+ * @return
+ */
+GLushort ObjModel::getNewVertex( const edge &e, vector<point3d> &vertList, vector<vec3d> &normList, EdgeList &newVertList ) const
 {
+	PRINTVAR(e);
+	PRINTVAR(newVertList);
     // if the egde is not contained in the new vertex list
-    if( newVertList.contains( e ) )
+	if( !newVertList.contains( e ) )
     {
         // generate new index (vertex.size)
         GLushort idxnew = vertList.size();
+		PRINTVAR(vertList);
+		PRINTVAR(idxnew);
         // add the edge and index to the map
-        newVertList.add(e , idxnew );
+		newVertList.add( e, idxnew );
+		PRINTVAR(newVertList);
         // generate new vertex
         point3d nvert = (vertList[e.first] + vertList[e.second])*0.5;
-        // append it to the list of vertex
+		// append it to the list of vertices
+	cout << "new vertex created " << endl;
+	PRINTVAR(nvert);
+	PRINTVAR(e);
         vertList.push_back( nvert );
-        // normals?
+		// simple version, compute the normal as the linear combination of the
+		// normals of the 2 vertices
+		vec3d nnorm = (normList[e.first] + normList[e.second]);
+		nnorm.normalize();
+		normList.push_back( nnorm );
+
+		return idxnew;
 
     }
     // else
     {
         // get the index of the vertex
+		return ( newVertList.getIndex( e ) );
     }
 }
 
-void ObjModel::release()
+void ObjModel::drawSubdivision()
 {
-	free(this->_triangles);
-	free(this->_normals);
-	free(this->_vertices);
+	if( _subIdx.empty() || _subNorm.empty() || _subVert.empty() )
+	{
+		subdivision();
+	}
+
+	glShadeModel( GL_SMOOTH );
+
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glEnableClientState(GL_VERTEX_ARRAY);
+
+	glNormalPointer(GL_FLOAT, 0, (float*)&_subNorm[0]);
+	glVertexPointer(COORD_PER_VERTEX, GL_FLOAT, 0, (float*)&_subVert[0]);
+
+	glDrawElements(GL_TRIANGLES, _subIdx.size()*VERTICES_PER_TRIANGLE, GL_UNSIGNED_SHORT, (GLushort*)&_subIdx[0]);
+
+
+	glDisableClientState(GL_VERTEX_ARRAY);  // disable vertex arrays
+	glDisableClientState(GL_NORMAL_ARRAY);
+
+	glDisable(GL_LIGHTING);
+	glColor3f(1,1,1);
+	glLineWidth(2);
+	for(int i=0; i<_subIdx.size(); i++)
+	{
+		glBegin(GL_LINE_LOOP);
+			glVertex3fv((float*)&_subVert[_subIdx[i].v1]);
+
+			glVertex3fv((float*)&_subVert[_subIdx[i].v2]);
+
+			glVertex3fv((float*)&_subVert[_subIdx[i].v3]);
+		glEnd();
+	}
+	glEnable(GL_LIGHTING);
+
 }
- 
+
+// deprecated
 void ObjModel::draw() const
 {
 	glShadeModel( GL_SMOOTH );
@@ -528,7 +624,7 @@ void ObjModel::flatDraw() const
 
 }
 
-void ObjModel::wireframetDraw() const
+void ObjModel::drawWireframe() const
 {
 
 	glDisable(GL_LIGHTING);
@@ -671,4 +767,9 @@ cout << "scale: " << scale << " cx " << cx << " cy " << cy << " cz " << cz << en
 	return 0;
 }
 
-
+void ObjModel::release()
+{
+	free(this->_triangles);
+	free(this->_normals);
+	free(this->_vertices);
+}

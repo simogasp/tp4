@@ -73,6 +73,7 @@ int angle_x=0;
 float camDistance = 5;
 bool flat = true;
 bool wireframe = true;
+bool subdivision = false;
 glutWindow win;
 
 // define a material in terms of its components
@@ -203,19 +204,26 @@ void display()
 		//***********************************************
 		// draw the model
 		//***********************************************
-        if(flat)
-        {
-//            cout << "flat";
-            obj.draw();
-//            obj.flatDraw();
-        }
-        else
-        {
-//            cout << "noflat";
-            obj.indexDraw();
-        }
-        if(wireframe)
-            obj.wireframetDraw();
+		if(subdivision)
+		{
+			obj.drawSubdivision();
+		}
+		else
+		{
+			if(flat)
+			{
+	//            cout << "flat";
+				obj.draw();
+	//            obj.flatDraw();
+			}
+			else
+			{
+	//            cout << "noflat";
+				obj.indexDraw();
+			}
+			if(wireframe)
+				obj.drawWireframe();
+		}
 		
 	glPopMatrix();
 	
@@ -263,6 +271,10 @@ void keyboard ( unsigned char key, int x, int y )
       PRINTVAR(wireframe);
       wireframe = !wireframe;
     break;
+  case 'h':
+	  PRINTVAR(subdivision);
+	  subdivision = !subdivision;
+	break;
     default:      
       break;
   }

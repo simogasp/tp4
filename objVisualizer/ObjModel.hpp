@@ -66,17 +66,18 @@ class ObjModel
          */
         void computeNormal(const float coord1[3], const float coord2[3], const float coord3[3], float norm[3] ) const;
 
+		//@deprecated
         void computeNormal( const point3d& v1, const point3d& v2, const point3d& v3, vec3d &norm  ) const;
 
-        /**
-         * Computes the angle at vertex baseV formed by the edges connecting it with the
-         * vertices v1 and v2 respectively, ie the baseV-v1 and baseV-v2 edges
-         * @brief
-         * @param baseV the vertex at which to compute the angle
-         * @param v1 the other vertex of the first edge baseV-v1
-         * @param v2 the other vertex of the second edge baseV-v2
-         * @return the angle in radiants
-         */
+		/**
+		 * Computes the angle at vertex baseV formed by the edges connecting it with the
+		 * vertices v1 and v2 respectively, ie the baseV-v1 and baseV-v2 edges
+		 * @brief Computes the angle at vertex
+		 * @param baseV the vertex at which to compute the angle
+		 * @param v1 the other vertex of the first edge baseV-v1
+		 * @param v2 the other vertex of the second edge baseV-v2
+		 * @return the angle in radiants
+		 */
         float angleAtVertex( const point3d& v1, const point3d& v2, const point3d& v3 ) const;
 		
 		/**
@@ -91,15 +92,17 @@ class ObjModel
 		 */
         void draw() const;
 
+		void drawSubdivision();
+
         void indexDraw() const;
 
         void flatDraw() const;
 
-        void wireframetDraw() const;
+		void drawWireframe() const;
 
         void subdivision();
 
-        GLushort getNewVertex( const edge &e, std::vector<point3d> &vertList, EdgeList &newVertList ) const;
+		GLushort getNewVertex( const edge &e, std::vector<point3d> &vertList, std::vector<vec3d> &normList, EdgeList &newVertList ) const;
 	
 		/**
 		 * Release the model
@@ -120,8 +123,13 @@ class ObjModel
 		float* _vertices;			// Stores the points which make the object
         std::vector<triangleIndex> _indices;	// Stores the vertex indices for the triangles
         std::vector<point3d> _v;	// Stores the vertices
-        std::vector<vec3d> _nt;      // Stores the normals for the triangles
+		std::vector<vec3d> _nt;      // Stores the normals for the triangles @todo remove ir
         std::vector<vec3d> _nv;      // Stores the normals for the triangles
+
+		// Subdivision
+		std::vector<triangleIndex> _subIdx;	// Stores the vertex indices for the triangles
+		std::vector<point3d> _subVert;		// Stores the vertices
+		std::vector<vec3d> _subNorm;		// Stores the normals for the triangles
 					
 		long _numVertices;          // the actual number of loaded vertices
 		long _numTriangles;         // the actual number of loaded faces

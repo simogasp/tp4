@@ -108,10 +108,18 @@ public:
         return (list[e]);
     }
 
+	friend std::ostream& operator<<(std::ostream& os, const EdgeList& l);
+
+
 private:
     _edgeList list;
 
 };
+
+inline std::ostream& operator<<(std::ostream& os, const EdgeList& l)
+{
+	return (os << l.list);
+}
 
 
 struct v3f

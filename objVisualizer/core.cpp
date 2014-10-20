@@ -15,7 +15,7 @@ void v3f::normalize()
     z /= n;
 }
 
-float v3f::dot(const v3f &v)
+float v3f::dot(const v3f &v) const
 {
     return (x*v.x + y*v.y + z*v.z);
 }

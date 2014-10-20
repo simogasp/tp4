@@ -1,5 +1,6 @@
 #include "core.hpp"
 #include <sstream>
+#include <stdio.h>
 
 
 int main(int argc, char **argv)

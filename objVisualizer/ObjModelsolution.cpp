@@ -43,47 +43,6 @@ void ObjModel::computeNormal( const point3d& v1, const point3d& v2, const point3
 }
 
 /**
- * @brief ObjModel::parseFaceString
- * @param toParse
- * @param out
- * @return
- */
-bool ObjModel::parseFaceString( const string &toParse, triangleIndex &out) const
-{
-	if (toParse.c_str()[0] == 'f')
-	{
-		GLushort a;
-		// now check the different formats: %d, %d//%d, %d/%d, %d/%d/%d
-		if (strstr(toParse.c_str(), "//"))
-		{
-			// v//n
-			return ( sscanf(toParse.c_str(), "f %hu//%hu %hu//%hu %hu//%hu", &(out.v1), &a, &(out.v2), &a, &(out.v3), &a) == 6 );
-		}
-		else if (sscanf(toParse.c_str(), "f %hu/%hu/%hu", &a, &a, &a) == 3)
-		{
-			// v/t/n
-			return ( sscanf(toParse.c_str(), "f %hu/%hu/%hu %hu/%hu/%hu %hu/%hu/%hu", &(out.v1), &a, &a, &(out.v2), &a, &a, &(out.v3), &a, &a) == 9 );
-		}
-		else if (sscanf(toParse.c_str(), "f %hu/%hu", &a, &a) == 2)
-		{
-			// v/t .
-			return ( sscanf(toParse.c_str(), "f %hu/%hu %hu/%hu %hu/%hu", &(out.v1), &a, &(out.v2), &a, &(out.v3), &a) == 6 );
-		}
-		else
-		{
-			// v
-			sscanf(toParse.c_str(), "f %hu %hu %hu", &(out.v1), &(out.v2), &(out.v3));
-			PRINTVAR(out);
-			return ( sscanf(toParse.c_str(), "f %hu %hu %hu", &(out.v1), &(out.v2), &(out.v3)) == 3 );
-		}
-	}
-	else
-	{
-		return false;
-	}
-}
-
-/**
  * @brief 
  * @param filename
  * @return 
@@ -209,7 +168,7 @@ int ObjModel::load(char* filename)
 			}
 		}
 
-		cout << "Foun :\n\tNumber of triangles (_indices) "<< _indices.size() << "\n\tNumber of Vertices: " << _v.size() << "\n\tNumber of Normals: " << _nv.size() << endl;
+		cout << "Found :\n\tNumber of triangles (_indices) "<< _indices.size() << "\n\tNumber of Vertices: " << _v.size() << "\n\tNumber of Normals: " << _nv.size() << endl;
 		PRINTVAR( _indices );
 		PRINTVAR( _v );
 		PRINTVAR( _nv );
@@ -546,4 +505,45 @@ cout << "scale: " << scale << " cx " << c.x << " cy " << c.y << " cz " << c.z <<
 
 void ObjModel::release()
 {
+}
+
+/**
+ * @brief ObjModel::parseFaceString
+ * @param toParse
+ * @param out
+ * @return
+ */
+bool ObjModel::parseFaceString( const string &toParse, triangleIndex &out) const
+{
+	if (toParse.c_str()[0] == 'f')
+	{
+		GLushort a;
+		// now check the different formats: %d, %d//%d, %d/%d, %d/%d/%d
+		if (strstr(toParse.c_str(), "//"))
+		{
+			// v//n
+			return ( sscanf(toParse.c_str(), "f %hu//%hu %hu//%hu %hu//%hu", &(out.v1), &a, &(out.v2), &a, &(out.v3), &a) == 6 );
+		}
+		else if (sscanf(toParse.c_str(), "f %hu/%hu/%hu", &a, &a, &a) == 3)
+		{
+			// v/t/n
+			return ( sscanf(toParse.c_str(), "f %hu/%hu/%hu %hu/%hu/%hu %hu/%hu/%hu", &(out.v1), &a, &a, &(out.v2), &a, &a, &(out.v3), &a, &a) == 9 );
+		}
+		else if (sscanf(toParse.c_str(), "f %hu/%hu", &a, &a) == 2)
+		{
+			// v/t .
+			return ( sscanf(toParse.c_str(), "f %hu/%hu %hu/%hu %hu/%hu", &(out.v1), &a, &(out.v2), &a, &(out.v3), &a) == 6 );
+		}
+		else
+		{
+			// v
+			sscanf(toParse.c_str(), "f %hu %hu %hu", &(out.v1), &(out.v2), &(out.v3));
+			PRINTVAR(out);
+			return ( sscanf(toParse.c_str(), "f %hu %hu %hu", &(out.v1), &(out.v2), &(out.v3)) == 3 );
+		}
+	}
+	else
+	{
+		return false;
+	}
 }

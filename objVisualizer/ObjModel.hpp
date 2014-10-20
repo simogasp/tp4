@@ -21,6 +21,9 @@
 #define COORD_PER_VERTEX 3
 #define TOTAL_FLOATS_IN_TRIANGLE (VERTICES_PER_TRIANGLE*COORD_PER_VERTEX)
 
+/**
+ * Some definitions
+ */
 typedef struct v3f point3d;
 typedef struct v3f vec3d;
 typedef struct tindex triangleIndex;
@@ -40,12 +43,21 @@ typedef struct BoundingBox
 		pmax( p ),
 		pmin( p ) {}
 
+	/**
+	 * Add a point to the bounding box. Its coordinates are taken into account 
+	 * and the limits of the bounding box updated accordingly
+     * @param p the point to add
+     */
 	void add( const point3d &p )
 	{
 		pmax.max(p);
 		pmin.min(p);
 	}
 
+	/**
+	 * Set the bounding box to the given point
+     * @param p the point
+     */
 	void set( const point3d &p )
 	{
 		pmax = p;
@@ -57,12 +69,27 @@ typedef struct BoundingBox
  
 
 
-
-
+/**
+ * The class containing and managing the 3D model 
+ */
 class ObjModel
 {
+private:
+
+	std::vector<triangleIndex> _indices;	//!< Stores the vertex indices for the triangles
+	std::vector<point3d> _v;				//!< Stores the vertices
+	std::vector<vec3d> _nt;					//!< Stores the normals for the triangles @todo remove ir
+	std::vector<vec3d> _nv;					//!< Stores the normals for the triangles
+
+	// Subdivision
+	std::vector<triangleIndex> _subIdx;		//!< Stores the vertex indices for the triangles
+	std::vector<point3d> _subVert;			//!< Stores the vertices
+	std::vector<vec3d> _subNorm;			//!< Stores the normals for the triangles
+
+	BoundingBox _bb;							//!< the current bounding box of the model
+
   public: 
-	ObjModel();			
+		ObjModel();			
 		
 		/**
 		 * Calculate the normal of a triangular face defined by three points
@@ -86,19 +113,13 @@ class ObjModel
         float angleAtVertex( const point3d& v1, const point3d& v2, const point3d& v3 ) const;
 
 		/**
-		 * @brief ObjModel::parseFaceString
-		 * @param toParse
-		 * @param out
-		 * @return
-		 */
-		bool parseFaceString( const std::string &toParse, triangleIndex &out) const;
-		
-		/**
 		 *  Loads the model from file
 		 * @param filename the OBJ file
 		 * @return 
 		 */
 		int load(char *filename);	
+		
+		void draw();
 		
 		void drawSubdivision();
 
@@ -108,6 +129,24 @@ class ObjModel
 
 		void drawWireframe() const;
 
+		/**
+		 * Release the model
+		 */
+		void release();				 
+	
+		/**
+		 * It scales the model to unitary size by translating it to the origin and
+		 * scaling it to fit in a unit cube around the origin.
+		 * 
+		 * @return the scale factor used to transform the model
+		 */
+		float unitizeModel();
+
+	private:
+		
+		/**
+		 * Compute a new model with one subdivision step
+         */
 		void linearSubdivision();
 
 		/**
@@ -122,43 +161,14 @@ class ObjModel
 		 * @see EdgeList
 		 */
 		GLushort getNewVertex( const edge &e, std::vector<point3d> &vertList, std::vector<vec3d> &normList, EdgeList &newVertList ) const;
-	
-		/**
-		 * Release the model
-		 */
-		void release();				 
-	
-		/**
-		 * It scales the model to unitary size by translating it to the origin and
-		 * scaling it to fit in a unit cube around the origin.
-		 * 
-		 * @return the scale factor used to transform the model
-		 */
-		float unitizeModel();
-
-  private:
-//		float* _normals;			// Stores the normals
-//		float* _triangles;			// Stores the triangles
-//		float* _vertices;			// Stores the points which make the object
-        std::vector<triangleIndex> _indices;	// Stores the vertex indices for the triangles
-        std::vector<point3d> _v;	// Stores the vertices
-		std::vector<vec3d> _nt;      // Stores the normals for the triangles @todo remove ir
-        std::vector<vec3d> _nv;      // Stores the normals for the triangles
-
-		// Subdivision
-		std::vector<triangleIndex> _subIdx;	// Stores the vertex indices for the triangles
-		std::vector<point3d> _subVert;		// Stores the vertices
-		std::vector<vec3d> _subNorm;		// Stores the normals for the triangles
-					
-//		long _numVertices;          // the actual number of loaded vertices
-//		long _numTriangles;         // the actual number of loaded faces
 		
-
-  private:
-  private:
-	  
-	// contains the bounding box of the model
-	BoundingBox _bb;
+		/**
+		 * @brief ObjModel::parseFaceString
+		 * @param toParse
+		 * @param out
+		 * @return
+		 */
+		bool parseFaceString( const std::string &toParse, triangleIndex &out) const;
  
 };
  

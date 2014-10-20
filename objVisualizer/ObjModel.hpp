@@ -64,10 +64,24 @@ typedef struct BoundingBox
 		pmin = p;
 	}
 
-
 } BoundingBox;
  
+enum obj2render {ORIGINAL, SUBDIVISION};
 
+typedef struct RenderingParameters
+{
+	bool wireframe;
+	bool solid;
+	bool useIndexRendering;
+	obj2render obj;
+	
+	RenderingParameters() :
+		wireframe(true),
+		solid(true),
+		useIndexRendering(false),
+		obj(ORIGINAL) {}
+	
+} RenderingParameters;
 
 /**
  * The class containing and managing the 3D model 
@@ -78,7 +92,6 @@ private:
 
 	std::vector<triangleIndex> _indices;	//!< Stores the vertex indices for the triangles
 	std::vector<point3d> _v;				//!< Stores the vertices
-	std::vector<vec3d> _nt;					//!< Stores the normals for the triangles @todo remove ir
 	std::vector<vec3d> _nv;					//!< Stores the normals for the triangles
 
 	// Subdivision
@@ -119,14 +132,25 @@ private:
 		 */
 		int load(char *filename);	
 		
-		void draw();
+		/////////////////////////////
+		// refactor attempt
+		void render( const RenderingParameters &params); 
+		
+		//private:
+		void draw( const std::vector<point3d> &vertices, const std::vector<triangleIndex> &indices, std::vector<point3d> &vertexNormals, const RenderingParameters &params ) const;
+		void drawSolid( const std::vector<point3d> &vertices, const std::vector<triangleIndex> &indices, std::vector<point3d> &vertexNormals, const RenderingParameters &params ) const; 
+		void drawWireframe( const std::vector<point3d> &vertices, const std::vector<triangleIndex> &indices) const; 
+		void indexDraw( const std::vector<point3d> &vertices, const std::vector<triangleIndex> &indices, std::vector<point3d> &vertexNormals ) const;
+		void flatDraw( const std::vector<point3d> &vertices, const std::vector<triangleIndex> &indices ) const;
+		/////////////////////////////
 		
 		void drawSubdivision();
-
+		
+		// to be deprecated
         void indexDraw() const;
-
+		// to be deprecated
         void flatDraw() const;
-
+		// to be deprecated
 		void drawWireframe() const;
 
 		/**

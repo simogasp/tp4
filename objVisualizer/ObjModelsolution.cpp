@@ -311,6 +311,65 @@ GLushort ObjModel::getNewVertex( const edge &e, vector<point3d> &vertList, vecto
     }
 }
 
+
+void ObjModel::render( const RenderingParameters &params ) 
+{
+
+	if(params.obj == ORIGINAL )
+	{
+		draw( _v, _indices, _nv, params); 
+	}
+	else
+	{
+		if( _subIdx.empty() || _subNorm.empty() || _subVert.empty() )
+		{
+			linearSubdivision();
+		}
+		draw( _subVert, _subIdx, _subNorm, params);
+	}
+}
+void ObjModel::draw( const vector<point3d> &vertices, const vector<triangleIndex> &indices, vector<point3d> &vertexNormals, const RenderingParameters &params ) const
+{
+	if( params.solid )
+	{
+		drawSolid( vertices, indices, vertexNormals, params );
+	}
+	if( params.wireframe )
+	{
+		drawWireframe( vertices, indices );
+	}
+	
+}
+void ObjModel::drawSolid( const vector<point3d> &vertices, const vector<triangleIndex> &indices, vector<point3d> &vertexNormals, const RenderingParameters &params ) const
+{
+	 if (params.useIndexRendering)
+	 {
+		 indexDraw( vertices, indices, vertexNormals );
+	 }
+	 else
+	 {
+		 flatDraw( vertices, indices );
+	 }
+}
+void ObjModel::drawWireframe( const vector<point3d> &vertices, const vector<triangleIndex> &indices ) const
+{
+	glDisable(GL_LIGHTING);
+	glColor3f(0,0,0);
+	glLineWidth(2);
+	for(int i=0; i<indices.size(); i++)
+	{
+		glBegin(GL_LINE_LOOP);
+			glVertex3fv((float*)&vertices[indices[i].v1]);
+
+			glVertex3fv((float*)&vertices[indices[i].v2]);
+
+			glVertex3fv((float*)&vertices[indices[i].v3]);
+		glEnd();
+	}
+	glEnable(GL_LIGHTING);
+}
+
+// to be deprecated
 void ObjModel::drawSubdivision()
 {
 	if( _subIdx.empty() || _subNorm.empty() || _subVert.empty() )
@@ -332,23 +391,34 @@ void ObjModel::drawSubdivision()
 	glDisableClientState(GL_VERTEX_ARRAY);  // disable vertex arrays
 	glDisableClientState(GL_NORMAL_ARRAY);
 
-	glDisable(GL_LIGHTING);
-	glColor3f(1,1,1);
-	glLineWidth(2);
-	for(int i=0; i<_subIdx.size(); i++)
-	{
-		glBegin(GL_LINE_LOOP);
-			glVertex3fv((float*)&_subVert[_subIdx[i].v1]);
-
-			glVertex3fv((float*)&_subVert[_subIdx[i].v2]);
-
-			glVertex3fv((float*)&_subVert[_subIdx[i].v3]);
-		glEnd();
-	}
-	glEnable(GL_LIGHTING);
+	drawWireframe(_subVert, _subIdx);
 
 }
 
+void ObjModel::flatDraw( const vector<point3d> &vertices, const vector<triangleIndex> &indices ) const
+{
+	glShadeModel( GL_SMOOTH );
+
+	// for each triangle draw the vertices and the normals
+	for(int i=0; i<indices.size(); i++)
+	{
+		glBegin(GL_TRIANGLES);
+			//compute the normal of the triangle
+			vec3d n;
+			computeNormal( vertices[indices[i].v1], vertices[(int)indices[i].v2], vertices[(int)indices[i].v3], n);
+			glNormal3fv((float*)&n);
+
+			glVertex3fv((float*)&vertices[indices[i].v1]);
+
+			glVertex3fv((float*)&vertices[indices[i].v2]);
+
+			glVertex3fv((float*)&vertices[indices[i].v3]);
+
+		glEnd();
+	}
+}
+
+// to be deprecated
 void ObjModel::flatDraw() const
 {
 	glShadeModel( GL_SMOOTH );
@@ -373,24 +443,12 @@ void ObjModel::flatDraw() const
 
 }
 
+// to be deprecated
 void ObjModel::drawWireframe() const
 {
 
-	glDisable(GL_LIGHTING);
-	glColor3f(0,0,0);
-	glLineWidth(2);
-	for(int i=0; i<_indices.size(); i++)
-	{
-		glBegin(GL_LINE_LOOP);
-			glVertex3fv((float*)&_v[_indices[i].v1]);
-
-			glVertex3fv((float*)&_v[_indices[i].v2]);
-
-			glVertex3fv((float*)&_v[_indices[i].v3]);
-		glEnd();
-	}
-	glEnable(GL_LIGHTING);
-
+	drawWireframe(_v, _indices);
+	
 }
 
 void ObjModel::indexDraw() const
@@ -437,6 +495,49 @@ void ObjModel::indexDraw() const
 	glDisableClientState(GL_NORMAL_ARRAY);
 }
 
+void ObjModel::indexDraw( const vector<point3d> &vertices, const vector<triangleIndex> &indices, vector<point3d> &vertexNormals ) const
+{
+	glShadeModel( GL_SMOOTH );
+	//****************************************
+	// Enable vertex arrays
+	//****************************************
+	glEnableClientState(GL_VERTEX_ARRAY);
+
+	//****************************************
+	// Enable normal arrays
+	//****************************************
+	glEnableClientState(GL_NORMAL_ARRAY);
+
+	//****************************************
+	// Vertex Pointer to triangle array
+	//****************************************
+	glEnableClientState(GL_VERTEX_ARRAY);
+
+	//****************************************
+	// Normal pointer to normal array
+	//****************************************
+	glNormalPointer(GL_FLOAT, 0, (float*)&vertexNormals[0]);
+
+	//****************************************
+	// Index pointer to normal array
+	//****************************************
+	glVertexPointer(COORD_PER_VERTEX, GL_FLOAT, 0, (float*)&vertices[0]);
+
+	//****************************************
+	// Draw the triangles
+	//****************************************
+	glDrawElements(GL_TRIANGLES, indices.size()*VERTICES_PER_TRIANGLE, GL_UNSIGNED_SHORT, (GLushort*)&indices[0]);
+
+	//****************************************
+	// Disable vertex arrays
+	//****************************************
+	glDisableClientState(GL_VERTEX_ARRAY);  // disable vertex arrays
+
+	//****************************************
+	// Disable normal arrays
+	//****************************************
+	glDisableClientState(GL_NORMAL_ARRAY);
+}
 
 /**
  * It scales the model to unitary size by translating it to the origin and

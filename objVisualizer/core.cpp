@@ -25,6 +25,12 @@ float v3f::norm() const
     return sqrt(x*x+ y*y + z*z);
 }
 
+/**
+ * Translate the vector
+ * @param x the delta x of the translation
+ * @param y the delta y of the translation
+ * @param z the delta z of the translation
+ */
 void v3f::translate( float x, float y, float z )
 {
     this->x += x;

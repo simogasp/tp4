@@ -76,6 +76,13 @@ bool wireframe = true;
 bool subdivision = false;
 glutWindow win;
 
+
+// Function called every time the main window is resized
+void reshape ( int width, int height );
+void DrawAxis(float scale);
+// initialize the opengl
+void initialize ();
+
 // define a material in terms of its components
 void define_material (	GLfloat ar, GLfloat ag, GLfloat ab, // ambient
 						GLfloat dr, GLfloat dg, GLfloat db, // diffuse
@@ -109,49 +116,7 @@ void define_material (	GLfloat ar, GLfloat ag, GLfloat ab, // ambient
 }
 
 
-void DrawAxis(float scale)
-{
-    glPushMatrix();
-    glDisable(GL_LIGHTING);
 
-    glScalef(scale, scale, scale);
-
-    glBegin(GL_LINES);
-
-		glColor3f(1.0, 0.0, 0.0);
-		/*  X axis */
-		glVertex3f(0.0, 0.0, 0.0);
-		glVertex3f(1.0, 0.0, 0.0);	
-		/*  Letter X */
-		glVertex3f(.8f, 0.05f, 0.0); // "backslash""
-		glVertex3f(1.0, 0.25f, 0.0);	
-		glVertex3f(0.8f, .25f, 0.0); // "slash"
-		glVertex3f(1.0, 0.05f, 0.0);
-
-		/*  Y axis */
-		glColor3f(0.0, 1.0, 0.0);
-		glVertex3f(0.0, 0.0, 0.0);
-		glVertex3f(0.0, 1.0, 0.0);	
-
-		// z-axis
-		glVertex3f(0.0, 0.0, 0.0);
-		glVertex3f(0.0, 0.0, 1.0);	
-		/*  Letter Z */
-		glColor3f(0.0, 0.0, 1.0);
-		glVertex3f(0.0, 0.05f, 0.8);  // bottom horizontal leg
-		glVertex3f(0.0, 0.05f, 1.0);	
-		glVertex3f(0.0, 0.05f, 1.0);   // slash
-		glVertex3f(0.0, 0.25f, 0.8);
-		glVertex3f(0.0, 0.25f, 0.8);  // upper horizontal leg
-		glVertex3f(0.0, 0.25f, 1.0);	    
-	
-    glEnd();
-
-	glEnable(GL_LIGHTING);
-
-    glColor3f(1.0, 1.0, 1.0);
-    glPopMatrix();
-}
 
 // place the light in x,y,z
 void place_light (GLfloat x, GLfloat y, GLfloat z) 
@@ -231,30 +196,6 @@ void display()
 }
  
 
-// initialize the opengl
-void initialize () 
-{
-    glMatrixMode(GL_MODELVIEW);
-    glShadeModel( GL_SMOOTH );
-    
-	glEnable (GL_CULL_FACE);
-	
-    glEnable( GL_DEPTH_TEST );
-    glDepthFunc( GL_LEQUAL );
-    glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
-
-	glEnable (GL_NORMALIZE);
-	
-    glMatrixMode(GL_PROJECTION);
-	glViewport(0, 0, win.width, win.height);
-	GLfloat aspect = (GLfloat) win.width / win.height;
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-	gluPerspective(win.field_of_view_angle, aspect, win.z_near, win.z_far);
-    glMatrixMode(GL_MODELVIEW);
-}
-
-
 
  
 void keyboard ( unsigned char key, int x, int y ) 
@@ -318,28 +259,13 @@ int main(int argc, char **argv)
     win.z_near = 0.25f;
 	win.z_far = 500.0f;
 
-//    vector<point3d> myvec;
-
-//    myvec.push_back(point3d(1.f,2.f,3.f));
-//    myvec.push_back(point3d(4.f,5.f,6.f));
-//    myvec.push_back(point3d(7.f,8.f,9.f));
-
-//    float* a = (float*)&myvec[0];
-
-//    for(int i=0; i<9; ++i)
-//    {
-//        cout << a[i] << endl;
-//    }
-
-
-
- 
 	// initialize and run program
 	glutInit(&argc, argv);                                      
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH ); 
 	glutInitWindowSize(win.width,win.height);					
 	glutCreateWindow(win.title);								
 	glutDisplayFunc(display);	
+	glutReshapeFunc(reshape);
 //	glutIdleFunc( display );									// register Idle Function
     glutKeyboardFunc( keyboard );								
     glutSpecialFunc( arrows );
@@ -360,3 +286,127 @@ int main(int argc, char **argv)
 	
 	return EXIT_SUCCESS;
 }
+
+
+
+// Function called every time the main window is resized
+void reshape ( int width, int height )
+{
+	// define the viewport transformation;
+	glViewport(0,0,width,height);
+
+	GLfloat aspect = (GLfloat) win.width / win.height;
+
+	if(aspect > 1.0f) //w>h
+	{
+//		if (width < height)
+//		{
+//			glViewport(0,(height-width/aspect)/2, width, width/aspect);
+//			cout << "a" << endl;
+//		}
+//		else if ( width/height > aspect )
+//		{
+//			glViewport((width-height*aspect)/2,0,height*aspect,height);
+//			cout << "b" << endl;
+//		}
+//		else
+		if (width > height)
+		{
+			glViewport(0,(height-width/aspect)/2,width,width/aspect);
+			cout << "c " << (height-width/aspect)/2 << endl;
+		}
+		else
+		{
+			glViewport((width-height*aspect)/2,0,height*aspect,height);
+			cout << "d " << (width-height*aspect)/2 << endl;
+		}
+	}
+	else //h>h
+	{
+//		if (height < width)
+//		{
+//			glViewport((width-height*aspect)/2,0, height*aspect, height);
+//			cout << "d "<< endl;
+//		}
+//		else if ( width/height > aspect )
+//		{
+//			glViewport((width-height*aspect)/2,0,height*aspect,height);
+//			cout << "e" << endl;
+//		}
+//		else
+		{
+			glViewport((width-height*aspect)/2,0,height*aspect,height);
+			cout << "d " << (width-height*aspect)/2 << endl;
+		}
+	}
+}
+
+
+
+void DrawAxis(float scale)
+{
+	glPushMatrix();
+	glDisable(GL_LIGHTING);
+
+	glScalef(scale, scale, scale);
+
+	glBegin(GL_LINES);
+
+		glColor3f(1.0, 0.0, 0.0);
+		/*  X axis */
+		glVertex3f(0.0, 0.0, 0.0);
+		glVertex3f(1.0, 0.0, 0.0);
+		/*  Letter X */
+		glVertex3f(.8f, 0.05f, 0.0); // "backslash""
+		glVertex3f(1.0, 0.25f, 0.0);
+		glVertex3f(0.8f, .25f, 0.0); // "slash"
+		glVertex3f(1.0, 0.05f, 0.0);
+
+		/*  Y axis */
+		glColor3f(0.0, 1.0, 0.0);
+		glVertex3f(0.0, 0.0, 0.0);
+		glVertex3f(0.0, 1.0, 0.0);
+
+		// z-axis
+		glVertex3f(0.0, 0.0, 0.0);
+		glVertex3f(0.0, 0.0, 1.0);
+		/*  Letter Z */
+		glColor3f(0.0, 0.0, 1.0);
+		glVertex3f(0.0, 0.05f, 0.8);  // bottom horizontal leg
+		glVertex3f(0.0, 0.05f, 1.0);
+		glVertex3f(0.0, 0.05f, 1.0);   // slash
+		glVertex3f(0.0, 0.25f, 0.8);
+		glVertex3f(0.0, 0.25f, 0.8);  // upper horizontal leg
+		glVertex3f(0.0, 0.25f, 1.0);
+
+	glEnd();
+
+	glEnable(GL_LIGHTING);
+
+	glColor3f(1.0, 1.0, 1.0);
+	glPopMatrix();
+}
+
+
+void initialize ()
+{
+	glMatrixMode(GL_MODELVIEW);
+	glShadeModel( GL_SMOOTH );
+
+	glEnable (GL_CULL_FACE);
+
+	glEnable( GL_DEPTH_TEST );
+	glDepthFunc( GL_LEQUAL );
+	glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
+
+	glEnable (GL_NORMALIZE);
+
+	glMatrixMode(GL_PROJECTION);
+	glViewport(0, 0, win.width, win.height);
+	GLfloat aspect = (GLfloat) win.width / win.height;
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(win.field_of_view_angle, aspect, win.z_near, win.z_far);
+	glMatrixMode(GL_MODELVIEW);
+}
+

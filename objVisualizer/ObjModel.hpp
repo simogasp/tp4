@@ -21,36 +21,44 @@
 #define COORD_PER_VERTEX 3
 #define TOTAL_FLOATS_IN_TRIANGLE (VERTICES_PER_TRIANGLE*COORD_PER_VERTEX)
 
-
+typedef struct v3f point3d;
+typedef struct v3f vec3d;
+typedef struct tindex triangleIndex;
 
  /**
   */
 typedef struct BoundingBox
 {
-	float Xmax;
-	float Ymax;
-	float Zmax;
-	float Xmin;
-	float Ymin;
-	float Zmin;
+	point3d pmax;
+	point3d pmin;
 	
 	BoundingBox( ) :
-	Xmax( 0.0 ),
-	Ymax( 0.0 ),
-	Zmax( 0.0 ),
-	Xmin( 0.0 ),
-	Ymin( 0.0),
-    Zmin( 0.0 ) {}
+		pmax( point3d() ),
+		pmin( point3d() ) {}
+
+	BoundingBox( const point3d &p) :
+		pmax( p ),
+		pmin( p ) {}
+
+	void add( const point3d &p )
+	{
+		pmax.max(p);
+		pmin.min(p);
+	}
+
+	void set( const point3d &p )
+	{
+		pmax = p;
+		pmin = p;
+	}
+
+
 } BoundingBox;
  
 
 
 
-typedef struct v3f point3d;
-typedef struct v3f vec3d;
-typedef struct tindex triangleIndex;
 
- 
 class ObjModel
 {
   public: 
@@ -58,15 +66,12 @@ class ObjModel
 		
 		/**
 		 * Calculate the normal of a triangular face defined by three points
-		 * 
-         * @param[in] coord1 the first vertex
-         * @param[in] coord2 the second vertex
-         * @param[in] coord3 the third vertex
-         * @param[out] norm the normal
-         */
-        void computeNormal(const float coord1[3], const float coord2[3], const float coord3[3], float norm[3] ) const;
-
-		//@deprecated
+		 *
+		 * @param[in] v1 the first vertex
+		 * @param[in] v2 the second vertex
+		 * @param[in] cv3 the third vertex
+		 * @param[out] norm the normal
+		 */
         void computeNormal( const point3d& v1, const point3d& v2, const point3d& v3, vec3d &norm  ) const;
 
 		/**
@@ -87,11 +92,6 @@ class ObjModel
 		 */
 		int load(char *filename);	
 		
-		/**
-		 * Draws the model with the opengl primitives
-		 */
-        void draw() const;
-
 		void drawSubdivision();
 
         void indexDraw() const;
@@ -100,8 +100,19 @@ class ObjModel
 
 		void drawWireframe() const;
 
-        void subdivision();
+		void linearSubdivision();
 
+		/**
+		 * For a given edge it returns the index of the new vertex created on its middle point. If such vertex already exists it just returns the
+		 * its index; if it does not exist it creates it in vertList along it's normal and return the index
+		 * @brief ObjModel::getNewVertex
+		 * @param e the edge
+		 * @param vertList the list of vertices
+		 * @param normList the list of normals associated to the vertices
+		 * @param newVertList The list of the new vertices added so far
+		 * @return the index of the new vertex
+		 * @see EdgeList
+		 */
 		GLushort getNewVertex( const edge &e, std::vector<point3d> &vertList, std::vector<vec3d> &normList, EdgeList &newVertList ) const;
 	
 		/**
@@ -118,9 +129,9 @@ class ObjModel
 		float unitizeModel();
 
   private:
-		float* _normals;			// Stores the normals
-		float* _triangles;			// Stores the triangles
-		float* _vertices;			// Stores the points which make the object
+//		float* _normals;			// Stores the normals
+//		float* _triangles;			// Stores the triangles
+//		float* _vertices;			// Stores the points which make the object
         std::vector<triangleIndex> _indices;	// Stores the vertex indices for the triangles
         std::vector<point3d> _v;	// Stores the vertices
 		std::vector<vec3d> _nt;      // Stores the normals for the triangles @todo remove ir
@@ -131,21 +142,11 @@ class ObjModel
 		std::vector<point3d> _subVert;		// Stores the vertices
 		std::vector<vec3d> _subNorm;		// Stores the normals for the triangles
 					
-		long _numVertices;          // the actual number of loaded vertices
-		long _numTriangles;         // the actual number of loaded faces
+//		long _numVertices;          // the actual number of loaded vertices
+//		long _numTriangles;         // the actual number of loaded faces
 		
 
   private:
-  
-  
-	/**
-	 * Perform a first scan of the file in order to get the number of vertices and the number of faces
-	 * @param filename
-	 * @param vertexNum
-	 * @param faceNum
-	 */
-	void firstScan(char* filename, long &vertexNum, long &faceNum);
-	
   private:
 	  
 	// contains the bounding box of the model

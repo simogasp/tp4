@@ -150,6 +150,10 @@ struct v3f
 
     void scale( float a );
 
+	void min( const v3f& a );
+
+	void max( const v3f& a );
+
     v3f cross(const v3f& v);
 
     v3f cross(const float v[3]);
@@ -211,7 +215,27 @@ struct tindex
     GLushort v2;
     GLushort v3;
 
+	tindex() : v1(0), v2(0), v3(0) {}
+
     tindex(GLushort v1, GLushort v2, GLushort v3) : v1(v1), v2(v2), v3(v3) {}
+
+	tindex operator +(const tindex& a) const;
+	tindex& operator +=(const tindex& a);
+
+	tindex operator +(const GLushort a) const;
+	tindex& operator +=(const GLushort a);
+
+	tindex operator -(const tindex& a) const;
+	tindex& operator -=(const tindex& a);
+
+	tindex operator -(const GLushort a) const;
+	tindex& operator -=(const GLushort a);
+
+	tindex operator *(const tindex& a) const;
+	tindex& operator *=(const tindex& a);
+
+	tindex operator *(const GLushort a) const;
+	tindex& operator *=(const GLushort a);
 
 };
 

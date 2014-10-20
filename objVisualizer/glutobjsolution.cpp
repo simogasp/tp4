@@ -213,8 +213,8 @@ void display()
 			if(flat)
 			{
 	//            cout << "flat";
-				obj.draw();
-	//            obj.flatDraw();
+//				obj.draw();
+				obj.flatDraw();
 			}
 			else
 			{

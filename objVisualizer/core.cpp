@@ -5,6 +5,7 @@
 #include "core.hpp"
 
 #include <cmath>
+#include <algorithm>
 
 void v3f::normalize()
 {
@@ -53,6 +54,20 @@ void v3f::scale( float x, float y, float z )
 void v3f::scale( float a )
 {
     scale(v3f(a,a,a));
+}
+
+void v3f::min( const v3f& a )
+{
+	x = std::min( x, a.x );
+	y = std::min( y, a.y );
+	z = std::min( z, a.z );
+}
+
+void v3f::max( const v3f& a )
+{
+	x = std::max( x, a.x );
+	y = std::max( y, a.y );
+	z = std::max( z, a.z );
 }
 
 v3f v3f::operator +(const v3f& a) const
@@ -188,4 +203,84 @@ v3f v3f::cross(const float v[3])
     return v3f(y*v[2] - z*v[1],
                z*v[0] - x*v[2],
                x*v[1] - y*v[0]);
+}
+
+
+
+//**************************** tindex ***********************//
+
+// ********** SUM
+tindex tindex::operator +(const tindex& a) const
+{
+	return tindex(v1 + a.v1, v2 + a.v2, v3 + a.v3);
+
+}
+tindex& tindex::operator +=(const tindex& a)
+{
+	v1 += a.v1;
+	v2 += a.v2;
+	v3 += a.v3;
+	return *this;
+}
+
+tindex tindex::operator +(const GLushort a) const
+{
+	return tindex(v1 + a, v2 + a, v3 + a);
+}
+tindex& tindex::operator +=(const GLushort a)
+{
+	v1 += a;
+	v2 += a;
+	v3 += a;
+	return *this;
+}
+
+// ********** DIFFERENCE
+tindex tindex::operator -(const tindex& a) const
+{
+	return tindex(v1 - a.v1, v2 - a.v2, v3 - a.v3);
+}
+tindex& tindex::operator -=(const tindex& a)
+{
+	v1 -= a.v1;
+	v2 -= a.v2;
+	v3 -= a.v3;
+	return *this;
+}
+
+tindex tindex::operator -(const GLushort a) const
+{
+	return tindex(v1 - a, v2 - a, v3 - a);
+}
+tindex& tindex::operator -=(const GLushort a)
+{
+	v1 -= a;
+	v2 -= a;
+	v3 -= a;
+	return *this;
+}
+
+// ********** MULTIPLICATION
+tindex tindex::operator *(const tindex& a) const
+{
+	return tindex(v1 * a.v1, v2 * a.v2, v3 * a.v3);
+}
+tindex& tindex::operator *=(const tindex& a)
+{
+	v1 *= a.v1;
+	v2 *= a.v2;
+	v3 *= a.v3;
+	return *this;
+}
+
+tindex tindex::operator *(const GLushort a) const
+{
+	return tindex(v1 * a, v2 * a, v3 * a);
+}
+tindex& tindex::operator *=(const GLushort a)
+{
+	v1 *= a;
+	v2 *= a;
+	v3 *= a;
+	return *this;
 }

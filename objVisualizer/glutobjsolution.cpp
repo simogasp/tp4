@@ -310,15 +310,15 @@ void reshape ( int width, int height )
 //			cout << "b" << endl;
 //		}
 //		else
-		if (width > height)
+		if ( width/height < aspect )
 		{
 			glViewport(0,(height-width/aspect)/2,width,width/aspect);
-			cout << "c " << (height-width/aspect)/2 << endl;
+//			cout << "c " << (height-width/aspect)/2 << endl;
 		}
 		else
 		{
 			glViewport((width-height*aspect)/2,0,height*aspect,height);
-			cout << "d " << (width-height*aspect)/2 << endl;
+//			cout << "d " << (width-height*aspect)/2 << endl;
 		}
 	}
 	else //h>h

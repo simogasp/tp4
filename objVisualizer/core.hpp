@@ -30,19 +30,34 @@
 #define PRINTVAR( a )
 #endif
 
+/**
+ * An edge is defined as a pair of indices of the vertices
+ */
 typedef std::pair<GLushort,GLushort> edge;
 
-inline GLushort sum( edge e)
+/**
+ * Return the sum of vertex indices of an edge
+ * @param e the edge
+ * @return the sum of the indices
+ */
+inline GLushort sum( const edge &e)
 {
     return (e.first + e.second);
 }
 
-inline GLushort min( edge e)
+/**
+ * return the min index of the two vertices
+ * @param e the edge
+ * @return the min index
+ */
+inline GLushort min( const edge &e)
 {
     return ((e.first > e.second) ? (e.second) : (e.first));
 }
 
-
+/**
+ * Structure used to compare two edges
+ */
 struct edgeCompare
 {
   bool operator() (const edge &a, const edge &b) const
@@ -71,7 +86,11 @@ struct edgeCompare
 //  }
 //};
 
+/**
+ * An edge list is a map of edges (the keys) and a index of the vertex
+ */
 typedef std::map< edge, GLushort, edgeCompare > _edgeList;
+
 
 inline std::ostream& operator<<(std::ostream& os, const edge& p)
 {
@@ -93,17 +112,32 @@ class EdgeList
 public:
     EdgeList() {}
 
-    void add( edge e, GLushort idx )
+	/**
+	 * Add the edge and the index of the new vertex generated on it
+     * @param e the edge
+     * @param idx the index of the new vertex generated on the edge
+     */
+    void add( const edge &e, const GLushort &idx ) 
     {
         list[e]=idx;
     }
 
-    bool contains(edge e)
+	/**
+	 * Return true if the edge is in the map
+     * @param e the edge to search for
+     * @return 
+     */
+    bool contains(const edge &e) const
     {
         return (list.find( e ) != list.end());
     }
 
-    GLushort getIndex(edge e)
+	/**
+	 * Get the vertex index associated to the edge
+     * @param e the edge
+     * @return the index
+     */
+    GLushort getIndex(edge e) 
     {
         return (list[e]);
     }
@@ -122,42 +156,114 @@ inline std::ostream& operator<<(std::ostream& os, const EdgeList& l)
 }
 
 
+/**
+ * A generic vector of three elements
+ */
 struct v3f
 {
     float x;
     float y;
     float z;
 
+	/**
+	 * Generic constructor
+     * @param x the first element
+     * @param y the second element
+     * @param z the third element
+     */
     v3f(float x, float y, float z) : x(x), y(y), z(z) {}
 
+	/**
+	 * Default constructor, everything is initialized to 0
+     */
     v3f() : x(0), y(0), z(0) {}
 
+	/**
+	 * Constructor from an array of three elements
+     * @param a the array from which to copy the elements
+     */
     v3f(float a[3]) : x(a[0]), y(a[1]), z(a[2]) {}
 
+	/**
+	 * Normalize the vector (ie divide by the norm)
+     */
     void normalize();
 
-    float dot(const v3f &v);
+	/**
+	 * return the dot product 
+     * @param v the other vector
+     * @return the dot product
+     */
+    float dot(const v3f &v) const;
 
+	/**
+	 * Return the norm of the vector
+     * @return the norm
+     */
     float norm() const;
 
+	/**
+	 * Translate the vector
+     * @param x the delta x of the translation
+     * @param y the delta y of the translation
+     * @param z the delta z of the translation
+     */
     void translate( float x, float y, float z );
-
+	
+	/**
+	 * Translate the vector
+     * @param t the translation
+     */
     void translate( v3f t );
 
+	/**
+	 * Scale each element of the vector by the corresponding value
+     * @param t a vector containing a factor scale to apply to each element
+     */
     void scale( v3f t );
 
+	/**
+	 * Scale each element of the vector by the corresponding value
+     * @param x the scale value on x
+     * @param y the scale value on y
+     * @param z the scale value on z
+     */
     void scale( float x, float y, float z );
 
+	/**
+	 * Scale each element of the vector by the same value
+     * @param a The scalar value to apply to each element
+     */
     void scale( float a );
 
+	/**
+	 * Set each element of the current vector to the minimum value wrt another vector
+     * @param a the other vector
+     */
 	void min( const v3f& a );
 
+	/**
+	 * Set each element of the current vector to the maximum value wrt another vector
+     * @param a the other vector
+     */
 	void max( const v3f& a );
 
+	/**
+	 * Return the cross product of two vectors
+     * @param v the other vector
+     * @return the cross product
+     */
     v3f cross(const v3f& v);
 
+	/**
+	 * Return the cross product of two vectors
+     * @param v the other array
+     * @return the cross product
+     */
     v3f cross(const float v[3]);
 
+	// element-wise addition
+	
     v3f operator +(const v3f& a) const;
     v3f& operator +=(const v3f& a);
 
@@ -167,7 +273,7 @@ struct v3f
     v3f operator +(const float a) const;
     v3f& operator +=(const float a);
 
-    // subtraction
+    // element-wise subtraction
 
     v3f operator -(const v3f& a) const;
     v3f& operator -=(const v3f& a);
@@ -208,15 +314,26 @@ inline std::ostream& operator<<(std::ostream& os, const std::vector<v3f>& p)
 }
 
 
-
+/**
+ * A triplet of indices
+ */
 struct tindex
-{
-    GLushort v1;
-    GLushort v2;
-    GLushort v3;
+{ 
+    GLushort v1;	//!< the first index
+    GLushort v2;	//!< the second index
+    GLushort v3;	//!< the third index
 
+	/**
+	 * Default constructor, everything set to 0
+     */
 	tindex() : v1(0), v2(0), v3(0) {}
 
+	/**
+	 * Constructor from indices
+     * @param v1 the first index
+     * @param v2 the second index
+     * @param v3 the third index
+     */
     tindex(GLushort v1, GLushort v2, GLushort v3) : v1(v1), v2(v2), v3(v3) {}
 
 	tindex operator +(const tindex& a) const;
@@ -237,6 +354,9 @@ struct tindex
 	tindex operator *(const GLushort a) const;
 	tindex& operator *=(const GLushort a);
 
+	/**
+	 * Two index triplets are equal if their corresponding elements are equal
+	 */
 	bool operator==(const tindex& rhs) const;
 };
 

@@ -71,9 +71,12 @@ ObjModel obj;
 int angle_y=0;
 int angle_x=0;
 float camDistance = 5;
+RenderingParameters params;
+// to be deprecated
 bool flat = true;
 bool wireframe = true;
 bool subdivision = false;
+
 glutWindow win;
 
 

@@ -79,6 +79,24 @@ void v3f::max( const v3f& a )
 	z = std::max( z, a.z );
 }
 
+/**
+ * Return the minimum value among the 3 elements
+ * @return the minimum value
+ */
+float v3f::min() const
+{
+	return std::min( std::min( x, y ), z );
+}
+
+/**
+ * Return the maximum value among the 3 elements
+ * @return the maximum value
+ */
+float v3f::max() const
+{
+	return std::max( std::max( x, y ), z );
+}
+
 v3f v3f::operator +(const v3f& a) const
 {
     return v3f(x + a.x, y + a.y, z + a.z);

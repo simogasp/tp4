@@ -10,9 +10,12 @@
 void v3f::normalize()
 {
     float n = norm();
-    x /= n;
-    y /= n;
-    z /= n;
+	if (n > std::numeric_limits<float>::epsilon() )
+	{
+		x /= n;
+		y /= n;
+		z /= n;
+	}
 }
 
 float v3f::dot(const v3f &v) const

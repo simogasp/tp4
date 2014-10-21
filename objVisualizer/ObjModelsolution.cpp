@@ -114,7 +114,7 @@ int ObjModel::load(char* filename)
 			{
 
 				triangleIndex t;
-				PRINTVAR(parseFaceString(line, t));
+				assert(parseFaceString(line, t));
 
 //				// Set first character to ' '. This will allow us to use sscanf
 //				line[0] = ' ';
@@ -158,12 +158,15 @@ int ObjModel::load(char* filename)
 				//*********************************************************************
 				computeNormal( _v[ t.v1], _v[t.v2], _v[t.v3], norm );
 
-				PRINTVAR(angleAtVertex(_v[ t.v1], _v[t.v2], _v[t.v3] ));
-				PRINTVAR(angleAtVertex(_v[ t.v2], _v[t.v1], _v[t.v3] ));
-				PRINTVAR(angleAtVertex(_v[ t.v3], _v[t.v1], _v[t.v2] ));
-				_nv[t.v1] += (vec3d(norm) * angleAtVertex(_v[ t.v1], _v[t.v2], _v[t.v3]));
-				_nv[t.v2] += (vec3d(norm) * angleAtVertex(_v[ t.v2], _v[t.v1], _v[t.v3]));
-				_nv[t.v3] += (vec3d(norm) * angleAtVertex(_v[ t.v3], _v[t.v1], _v[t.v2]));
+//				PRINTVAR(angleAtVertex(_v[ t.v1], _v[t.v2], _v[t.v3] ));
+//				PRINTVAR(angleAtVertex(_v[ t.v2], _v[t.v1], _v[t.v3] ));
+//				PRINTVAR(angleAtVertex(_v[ t.v3], _v[t.v1], _v[t.v2] ));
+//				_nv[t.v1] += (vec3d(norm) * angleAtVertex(_v[ t.v1], _v[t.v2], _v[t.v3]));
+//				_nv[t.v2] += (vec3d(norm) * angleAtVertex(_v[ t.v2], _v[t.v1], _v[t.v3]));
+//				_nv[t.v3] += (vec3d(norm) * angleAtVertex(_v[ t.v3], _v[t.v1], _v[t.v2]));
+				_nv[t.v1] += ( vec3d(norm) );
+				_nv[t.v2] += ( vec3d(norm) );
+				_nv[t.v3] += ( vec3d(norm) );
 				
 			}
 		}
@@ -172,6 +175,8 @@ int ObjModel::load(char* filename)
 		PRINTVAR( _indices );
 		PRINTVAR( _v );
 		PRINTVAR( _nv );
+		
+		// normalize the sum of normals
 		for(int i=0; i<_nv.size(); _nv[i++].normalize());
 		PRINTVAR( _nv );
 		
@@ -209,8 +214,18 @@ float ObjModel::angleAtVertex( const point3d& baseV, const point3d& v1, const po
 //	PRINTVAR(e1.norm());
 //	PRINTVAR(e2.norm());
 //	PRINTVAR((e1.norm()*e1.norm()));
-//	PRINTVAR((e1).dot(e2) / (e1.norm()*e1.norm()));
-	return ( acos( (e1).dot(e2) / (e1.norm()*e2.norm()) ) );
+//	PRINTVAR((e1).dot(e2) / (e1.norm()*e2.norm()));
+//	PRINTVAR( acos( (e1).dot(e2) / (e1.norm()*e2.norm()) ));
+	//safe acos...
+	if(fabs( (e1).dot(e2) / (e1.norm()*e2.norm()) ) >= 1.0f )
+	{
+		 cerr << "warning: using safe acos" << endl;
+		 return (acos(1.0f));
+	}
+	else
+	{
+		return ( acos( (e1).dot(e2) / (e1.norm()*e2.norm()) ) );
+	}
 }
 
 /**
@@ -554,9 +569,9 @@ float ObjModel::unitizeModel()
 		// depth using the bounding box
 		//****************************************
 		float w,h,d;
-		w = fabs(_bb.pmax.x) - fabs(_bb.pmin.x);
-		h = fabs(_bb.pmax.y) - fabs(_bb.pmin.y);
-		d = fabs(_bb.pmax.z) - fabs(_bb.pmin.z);
+		w = fabs(_bb.pmax.x - _bb.pmin.x);
+		h = fabs(_bb.pmax.y - _bb.pmin.y);
+		d = fabs(_bb.pmax.z - _bb.pmin.z);
 		
 cout << "size: w: " << w << " h " << h << " d " << d <<  endl;
 		//****************************************

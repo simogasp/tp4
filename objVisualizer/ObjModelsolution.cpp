@@ -235,9 +235,9 @@ void ObjModel::linearSubdivision()
 	_subVert = _v;
 	_subIdx = _indices;
 	_subNorm = _nv;
-
-	PRINTVAR(_subVert);
-	PRINTVAR(_v);
+	
+//	PRINTVAR(_subVert);
+//	PRINTVAR(_v);
 	// create a list of the new vertices creates witht the reference to the edge
 	EdgeList newVertices;
 
@@ -272,8 +272,37 @@ void ObjModel::linearSubdivision()
 		_subIdx.push_back( triangleIndex( a, v2, b ) );
 		_subIdx.push_back( triangleIndex( c, b, v3 ) );
 	}
+	
+	vector<uint> valence(_subVert.size(), 0 ); // if initialize at 0 need to update the count before applying loop
+	
+	vector<point3d> tmp ( _subVert.size() ) ; // a copy
+	
+	for(int i = 0; i < _subIdx.size(); ++i )
+	{
+		applyLoop(_subIdx[i], _subVert, valence, tmp );
+	}
+	
+	for(int i = 0; i < _subVert.size(); ++i )
+	{
+		_subVert[i] = tmp[i]/valence[i];
+	}
 
-	PRINTVAR(newVertices);
+	
+	//PRINTVAR(newVertices);
+}
+
+// using running "average"
+void ObjModel::applyLoop( const triangleIndex &t, const std::vector<point3d> &orig, std::vector<uint> &valence,  std::vector<point3d> &dest ) const
+{
+	valence[t.v1]++;
+	dest[t.v1] += ( 0.25f*orig[t.v1] + 0.375f*orig[t.v2] + 0.375f*orig[t.v3] ) ;
+	PRINTVAR(valence[t.v1]);
+	
+	valence[t.v2]++;
+	dest[t.v2] += ( 0.25f*orig[t.v2] + 0.375f*orig[t.v1] + 0.375f*orig[t.v3] )  ;
+	
+	valence[t.v3]++;
+	dest[t.v3] += ( 0.25f*orig[t.v3] + 0.375f*orig[t.v2] + 0.375f*orig[t.v1] )  ;
 }
 
 /**

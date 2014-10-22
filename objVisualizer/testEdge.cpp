@@ -50,4 +50,7 @@ int main(int argc, char **argv)
 	PRINTVAR(line);
 	PRINTVAR( (sscanf(line.c_str(), "f %u//%u %u//%u %u//%u", &(out.v1), &a, &(out.v2), &a, &(out.v3), &a) == 6) );
 	std::cout << out << a << b << std::endl;
+	
+	PRINTVAR(point3d(1,2,4)*10.f);
+	PRINTVAR(10.f*point3d(1,2,4));
 }

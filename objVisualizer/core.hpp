@@ -307,27 +307,81 @@ struct v3f {
 
     v3f operator *(const float a) const;
     v3f& operator *=(const float a);
+    
+    // element-wise ratio
 
+    v3f operator /(const v3f& a) const;
+    v3f& operator /=(const v3f& a);
 
+    v3f operator /(const float a[3]) const;
+    v3f& operator /=(const float a[3]);
 
+    v3f operator /(const float a) const;
+    v3f& operator /=(const float a);
 
 };
 
-inline std::ostream& operator<<(std::ostream& os, const v3f& p) {
+inline std::ostream& operator<<(std::ostream& os, const v3f& p) 
+{
     return os << "[" << p.x << "," << p.y << "," << p.z << "]";
 }
 
-inline std::ostream& operator<<(std::ostream& os, const std::vector<v3f>& p) {
+inline std::ostream& operator<<(std::ostream& os, const std::vector<v3f>& p) 
+{
     os << std::endl;
     for (int i = 0; i < p.size(); ++i)
         os << "\t" << p[i] << std::endl;
     return os;
 }
 
+
+
+// REFLEXIVE OPERATORS FOR V3F
+inline v3f operator +(const float a, const v3f& p) 
+{
+    return (p+a);
+}
+
+inline v3f operator +(const float a[3], const v3f& p) 
+{
+    return (p+a[3]);
+}
+
+inline v3f operator -(const float a, const v3f& p) 
+{
+    return (p-a);
+}
+
+inline v3f operator -(const float a[3], const v3f& p) 
+{
+    return (p-a[3]);
+}
+
+inline v3f operator *(const float a[3], const v3f& p) 
+{
+    return (p*a[3]);
+}
+
+inline v3f operator *(const float a, const v3f& p) 
+{
+    return (p*a);
+}
+
+inline v3f operator /(const float a[3], const v3f& p) 
+{
+    return (p/a[3]);
+}
+
+inline v3f operator /(const float a, const v3f& p) 
+{
+    return (p/a);
+}
+
 /**
  * A triplet of indices
  */
-struct tindex {
+struct tindex 
+{
     idxtype v1; //!< the first index
     idxtype v2; //!< the second index
     idxtype v3; //!< the third index
@@ -335,8 +389,7 @@ struct tindex {
     /**
      * Default constructor, everything set to 0
      */
-    tindex() : v1(0), v2(0), v3(0) {
-    }
+    tindex() : v1(0), v2(0), v3(0) { }
 
     /**
      * Constructor from indices
@@ -344,8 +397,7 @@ struct tindex {
      * @param v2 the second index
      * @param v3 the third index
      */
-    tindex(idxtype v1, idxtype v2, idxtype v3) : v1(v1), v2(v2), v3(v3) {
-    }
+    tindex(idxtype v1, idxtype v2, idxtype v3) : v1(v1), v2(v2), v3(v3) { }
 
     tindex operator +(const tindex& a) const;
     tindex& operator +=(const tindex& a);
@@ -371,11 +423,13 @@ struct tindex {
     bool operator==(const tindex& rhs) const;
 };
 
-inline std::ostream& operator<<(std::ostream& os, const tindex& p) {
+inline std::ostream& operator<<(std::ostream& os, const tindex& p) 
+{
     return os << "[" << p.v1 << "," << p.v2 << "," << p.v3 << "]";
 }
 
-inline std::ostream& operator<<(std::ostream& os, const std::vector<tindex>& p) {
+inline std::ostream& operator<<(std::ostream& os, const std::vector<tindex>& p) 
+{
     os << std::endl;
     for (int i = 0; i < p.size(); ++i)
         os << "\t" << p[i] << std::endl;

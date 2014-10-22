@@ -98,6 +98,22 @@ float v3f::max() const
 	return std::max( std::max( x, y ), z );
 }
 
+v3f v3f::cross(const v3f& v)
+{
+    return v3f(y*v.z - z*v.y,
+               z*v.x - x*v.z,
+               x*v.y - y*v.x);
+}
+
+v3f v3f::cross(const float v[3])
+{
+    return v3f(y*v[2] - z*v[1],
+               z*v[0] - x*v[2],
+               x*v[1] - y*v[0]);
+}
+
+// OPERATOR OVERLOADINGS
+
 v3f v3f::operator +(const v3f& a) const
 {
     return v3f(x + a.x, y + a.y, z + a.z);
@@ -219,21 +235,43 @@ v3f& v3f::operator *=(const float a)
     return *this;
 }
 
-v3f v3f::cross(const v3f& v)
+// element-wise ratio
+
+v3f v3f::operator /(const v3f& a) const
 {
-    return v3f(y*v.z - z*v.y,
-               z*v.x - x*v.z,
-               x*v.y - y*v.x);
+	return v3f(x / a.x, y / a.y, z / a.z);
+}
+v3f& v3f::operator /=(const v3f& a)
+{
+	x /= a.x;
+    y /= a.y;
+    z /= a.z;
+    return *this;
 }
 
-v3f v3f::cross(const float v[3])
+v3f v3f::operator /(const float a[3]) const
 {
-    return v3f(y*v[2] - z*v[1],
-               z*v[0] - x*v[2],
-               x*v[1] - y*v[0]);
+	return v3f(x / a[0], y / a[1], z / a[2]);
+}
+v3f& v3f::operator /=(const float a[3])
+{
+	x /= a[0];
+    y /= a[1];
+    z /= a[2];
+    return *this;
 }
 
-
+v3f v3f::operator /(const float a) const
+{
+	return v3f(x / a, y / a, z / a);
+}
+v3f& v3f::operator /=(const float a)
+{
+	x /= a;
+    y /= a;
+    z /= a;
+    return *this;
+}
 
 //**************************** tindex ***********************//
 

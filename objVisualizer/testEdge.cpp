@@ -48,6 +48,6 @@ int main(int argc, char **argv)
 //	PRINTVAR(parser.fail());
 //	std::cout << out << a << b << std::endl;
 	PRINTVAR(line);
-	PRINTVAR( (sscanf(line.c_str(), "f %hu//%hu %hu//%hu %hu//%hu", &(out.v1), &a, &(out.v2), &a, &(out.v3), &a) == 6) );
+	PRINTVAR( (sscanf(line.c_str(), "f %u//%u %u//%u %u//%u", &(out.v1), &a, &(out.v2), &a, &(out.v3), &a) == 6) );
 	std::cout << out << a << b << std::endl;
 }

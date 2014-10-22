@@ -273,7 +273,8 @@ void ObjModel::linearSubdivision()
 		_subIdx.push_back( triangleIndex( c, b, v3 ) );
 	}
 	
-	vector<uint> valence(_subVert.size(), 0 ); // if initialize at 0 need to update the count before applying loop
+	// if initialize at 0 need to update the count before applying loop
+	vector<uint> valence(_subVert.size(), 0 ); 
 	
 	vector<point3d> tmp ( _subVert.size() ) ; // a copy
 	
@@ -287,7 +288,29 @@ void ObjModel::linearSubdivision()
 		_subVert[i] = tmp[i]/valence[i];
 	}
 
+	//@todo redo the normals.
+	_subNorm.clear();
+	_subNorm = vector<vec3d>( _subVert.size() ) ;
 	
+	//for each face
+	for(int i = 0; i < _subIdx.size(); ++i )
+	{
+		//*********************************************************************
+		//  Calculate the normal of the triangles, it will be the same for each vertex
+		//*********************************************************************
+		vec3d norm;
+
+		//*********************************************************************
+		//  compute the normal for the 3 vertices we just added
+		//*********************************************************************
+		computeNormal( _subVert[ _subIdx[i].v1], _subVert[_subIdx[i].v2], _subVert[_subIdx[i].v3], norm );
+		
+		_subNorm[_subIdx[i].v1] += ( vec3d(norm) );
+		_subNorm[_subIdx[i].v2] += ( vec3d(norm) );
+		_subNorm[_subIdx[i].v3] += ( vec3d(norm) );
+		
+	}
+	for(int i=0; i<_subNorm.size(); _subNorm[i++].normalize());
 	//PRINTVAR(newVertices);
 }
 

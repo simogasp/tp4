@@ -274,7 +274,7 @@ void ObjModel::linearSubdivision()
 	}
 	
 	// if initialize at 0 need to update the count before applying loop
-	vector<uint> valence(_subVert.size(), 0 ); 
+	vector<size_t> valence(_subVert.size(), 0 ); 
 	
 	vector<point3d> tmp ( _subVert.size() ) ; // a copy
 	
@@ -315,7 +315,7 @@ void ObjModel::linearSubdivision()
 }
 
 // using running "average"
-void ObjModel::applyLoop( const triangleIndex &t, const std::vector<point3d> &orig, std::vector<uint> &valence,  std::vector<point3d> &dest ) const
+void ObjModel::applyLoop( const triangleIndex &t, const std::vector<point3d> &orig, std::vector<size_t> &valence,  std::vector<point3d> &dest ) const
 {
 	valence[t.v1]++;
 	dest[t.v1] += ( 0.25f*orig[t.v1] + 0.375f*orig[t.v2] + 0.375f*orig[t.v3] ) ;

@@ -73,13 +73,13 @@ typedef struct RenderingParameters
 	bool wireframe;
 	bool solid;
 	bool useIndexRendering;
-	obj2render obj;
+	bool subdivision;
 	
 	RenderingParameters() :
 		wireframe(true),
 		solid(true),
 		useIndexRendering(false),
-		obj(ORIGINAL) {}
+		subdivision(false) {}
 	
 } RenderingParameters;
 
@@ -144,14 +144,14 @@ private:
 		void flatDraw( const std::vector<point3d> &vertices, const std::vector<triangleIndex> &indices ) const;
 		/////////////////////////////
 		
-		void drawSubdivision();
+		DEPRECATED(void drawSubdivision());
 		
 		// to be deprecated
-        void indexDraw() const;
+                DEPRECATED(void indexDraw() const ); 
 		// to be deprecated
-        void flatDraw() const;
+                DEPRECATED(void flatDraw() const);
 		// to be deprecated
-		void drawWireframe() const;
+		DEPRECATED(void drawWireframe() const);
 
 		/**
 		 * Release the model

@@ -304,7 +304,7 @@ idxtype ObjModel::getNewVertex( const edge &e, vector<point3d> &vertList, vector
         // generate new vertex
         point3d nvert = (vertList[e.first] + vertList[e.second])*0.5;
 		// append it to the list of vertices
-	cout << "new vertex created " << endl;
+//	cout << "new vertex created " << endl;
 //	PRINTVAR(nvert);
 //	PRINTVAR(e);
         vertList.push_back( nvert );
@@ -328,7 +328,7 @@ idxtype ObjModel::getNewVertex( const edge &e, vector<point3d> &vertList, vector
 void ObjModel::render( const RenderingParameters &params ) 
 {
 
-	if(params.obj == ORIGINAL )
+	if(!params.subdivision )
 	{
 		draw( _v, _indices, _nv, params); 
 	}
@@ -364,6 +364,7 @@ void ObjModel::drawSolid( const vector<point3d> &vertices, const vector<triangle
 		 flatDraw( vertices, indices );
 	 }
 }
+
 void ObjModel::drawWireframe( const vector<point3d> &vertices, const vector<triangleIndex> &indices ) const
 {
 	glDisable(GL_LIGHTING);
@@ -418,7 +419,7 @@ void ObjModel::flatDraw( const vector<point3d> &vertices, const vector<triangleI
 		glBegin(GL_TRIANGLES);
 			//compute the normal of the triangle
 			vec3d n;
-			computeNormal( vertices[indices[i].v1], vertices[(int)indices[i].v2], vertices[(int)indices[i].v3], n);
+			computeNormal( vertices[indices[i].v1], vertices[indices[i].v2], vertices[indices[i].v3], n);
 			glNormal3fv((float*)&n);
 
 			glVertex3fv((float*)&vertices[indices[i].v1]);
@@ -464,6 +465,7 @@ void ObjModel::drawWireframe() const
 	
 }
 
+// to be deprecated
 void ObjModel::indexDraw() const
 {
 	glShadeModel( GL_SMOOTH );
@@ -539,7 +541,7 @@ void ObjModel::indexDraw( const vector<point3d> &vertices, const vector<triangle
 	//****************************************
 	// Draw the triangles
 	//****************************************
-	glDrawElements(GL_TRIANGLES, indices.size()*VERTICES_PER_TRIANGLE, GL_UNSIGNED_SHORT, (idxtype*)&indices[0]);
+	glDrawElements(GL_TRIANGLES, indices.size()*VERTICES_PER_TRIANGLE, GL_UNSIGNED_INT, (idxtype*)&indices[0]);
 
 	//****************************************
 	// Disable vertex arrays
@@ -617,7 +619,7 @@ cout << "scale: " << scale << " cx " << c.x << " cy " << c.y << " cz " << c.z <<
 	return 0;
 }
 
-void ObjModel::release()
+void ObjModel::release( )
 {
 }
 

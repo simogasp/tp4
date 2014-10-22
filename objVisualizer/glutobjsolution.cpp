@@ -172,26 +172,27 @@ void display()
 		//***********************************************
 		// draw the model
 		//***********************************************
-		if(subdivision)
-		{
-			obj.drawSubdivision();
-		}
-		else
-		{
-			if(flat)
-			{
-	//            cout << "flat";
-//				obj.draw();
-				obj.flatDraw();
-			}
-			else
-			{
-	//            cout << "noflat";
-				obj.indexDraw();
-			}
-			if(wireframe)
-				obj.drawWireframe();
-		}
+//		if(subdivision)
+//		{
+//			obj.drawSubdivision();
+//		}
+//		else
+//		{
+//			if(flat)
+//			{
+//	//            cout << "flat";
+////				obj.draw();
+//				obj.flatDraw();
+//			}
+//			else
+//			{
+//	//            cout << "noflat";
+//				obj.indexDraw();
+//			}
+//			if(wireframe)
+//				obj.drawWireframe();
+//		}
+		obj.render( params );
 		
 	glPopMatrix();
 	
@@ -208,16 +209,19 @@ void keyboard ( unsigned char key, int x, int y )
       exit ( 0 );   
       break;
   case 's':
+	  params.useIndexRendering = !params.useIndexRendering;
       PRINTVAR(flat);
       flat = !flat;
     break;
   case 'w':
+	  params.wireframe = ! params.wireframe;
       PRINTVAR(wireframe);
       wireframe = !wireframe;
     break;
   case 'h':
 	  PRINTVAR(subdivision);
 	  subdivision = !subdivision;
+	  params.subdivision = !params.subdivision;
 	break;
     default:      
       break;

@@ -4,8 +4,6 @@
 
 #include "ObjModel.hpp"
 
-
-
 #include <iostream>
 #include <fstream>
 #include <stdio.h>
@@ -247,15 +245,15 @@ void ObjModel::linearSubdivision()
 	for(int i = 0; i < _indices.size(); ++i )
 	{
 		// get the indices of the triangle vertices
-		GLushort v1 = _indices[i].v1;
-		GLushort v2 = _indices[i].v2;
-		GLushort v3 = _indices[i].v3;
+		idxtype v1 = _indices[i].v1;
+		idxtype v2 = _indices[i].v2;
+		idxtype v3 = _indices[i].v3;
 
 		// for each edge get the index of the vertex of the midpoint
 		// if it does not exist it will be generated.
-		GLushort a = getNewVertex( edge(v1,v2), _subVert, _subNorm, newVertices );
-		GLushort b = getNewVertex( edge(v2,v3), _subVert, _subNorm, newVertices );
-		GLushort c = getNewVertex( edge(v3,v1), _subVert, _subNorm ,newVertices );
+		idxtype a = getNewVertex( edge(v1,v2), _subVert, _subNorm, newVertices );
+		idxtype b = getNewVertex( edge(v2,v3), _subVert, _subNorm, newVertices );
+		idxtype c = getNewVertex( edge(v3,v1), _subVert, _subNorm ,newVertices );
 
 		// create the four new triangle
 		// BE CAREFULL WITH THE VERTEX ORDER!!
@@ -289,7 +287,7 @@ void ObjModel::linearSubdivision()
  * @return the index of the new vertex
  * @see EdgeList
  */
-GLushort ObjModel::getNewVertex( const edge &e, vector<point3d> &vertList, vector<vec3d> &normList, EdgeList &newVertList ) const
+idxtype ObjModel::getNewVertex( const edge &e, vector<point3d> &vertList, vector<vec3d> &normList, EdgeList &newVertList ) const
 {
 //	PRINTVAR(e);
 //	PRINTVAR(newVertList);
@@ -297,7 +295,7 @@ GLushort ObjModel::getNewVertex( const edge &e, vector<point3d> &vertList, vecto
 	if( !newVertList.contains( e ) )
     {
         // generate new index (vertex.size)
-        GLushort idxnew = vertList.size();
+        idxtype idxnew = vertList.size();
 //		PRINTVAR(vertList);
 //		PRINTVAR(idxnew);
         // add the edge and index to the map
@@ -400,7 +398,7 @@ void ObjModel::drawSubdivision()
 	glNormalPointer(GL_FLOAT, 0, (float*)&_subNorm[0]);
 	glVertexPointer(COORD_PER_VERTEX, GL_FLOAT, 0, (float*)&_subVert[0]);
 
-	glDrawElements(GL_TRIANGLES, _subIdx.size()*VERTICES_PER_TRIANGLE, GL_UNSIGNED_SHORT, (GLushort*)&_subIdx[0]);
+	glDrawElements(GL_TRIANGLES, _subIdx.size()*VERTICES_PER_TRIANGLE, GL_UNSIGNED_SHORT, (idxtype*)&_subIdx[0]);
 
 
 	glDisableClientState(GL_VERTEX_ARRAY);  // disable vertex arrays
@@ -497,7 +495,7 @@ void ObjModel::indexDraw() const
 	//****************************************
 	// Draw the triangles
 	//****************************************
-	glDrawElements(GL_TRIANGLES, _indices.size()*VERTICES_PER_TRIANGLE, GL_UNSIGNED_SHORT, (GLushort*)&_indices[0]);
+	glDrawElements(GL_TRIANGLES, _indices.size()*VERTICES_PER_TRIANGLE, GL_UNSIGNED_INT, (idxtype*)&_indices[0]);
 
 	//****************************************
 	// Disable vertex arrays
@@ -541,7 +539,7 @@ void ObjModel::indexDraw( const vector<point3d> &vertices, const vector<triangle
 	//****************************************
 	// Draw the triangles
 	//****************************************
-	glDrawElements(GL_TRIANGLES, indices.size()*VERTICES_PER_TRIANGLE, GL_UNSIGNED_SHORT, (GLushort*)&indices[0]);
+	glDrawElements(GL_TRIANGLES, indices.size()*VERTICES_PER_TRIANGLE, GL_UNSIGNED_SHORT, (idxtype*)&indices[0]);
 
 	//****************************************
 	// Disable vertex arrays
@@ -633,29 +631,29 @@ bool ObjModel::parseFaceString( const string &toParse, triangleIndex &out) const
 {
 	if (toParse.c_str()[0] == 'f')
 	{
-		GLushort a;
+		idxtype a;
 		// now check the different formats: %d, %d//%d, %d/%d, %d/%d/%d
 		if (strstr(toParse.c_str(), "//"))
 		{
 			// v//n
-			return ( sscanf(toParse.c_str(), "f %hu//%hu %hu//%hu %hu//%hu", &(out.v1), &a, &(out.v2), &a, &(out.v3), &a) == 6 );
+			return ( sscanf(toParse.c_str(), "f %u//%u %u//%u %u//%u", &(out.v1), &a, &(out.v2), &a, &(out.v3), &a) == 6 );
 		}
-		else if (sscanf(toParse.c_str(), "f %hu/%hu/%hu", &a, &a, &a) == 3)
+		else if (sscanf(toParse.c_str(), "f %u/%u/%u", &a, &a, &a) == 3)
 		{
 			// v/t/n
-			return ( sscanf(toParse.c_str(), "f %hu/%hu/%hu %hu/%hu/%hu %hu/%hu/%hu", &(out.v1), &a, &a, &(out.v2), &a, &a, &(out.v3), &a, &a) == 9 );
+			return ( sscanf(toParse.c_str(), "f %u/%u/%u %u/%u/%u %u/%u/%u", &(out.v1), &a, &a, &(out.v2), &a, &a, &(out.v3), &a, &a) == 9 );
 		}
-		else if (sscanf(toParse.c_str(), "f %hu/%hu", &a, &a) == 2)
+		else if (sscanf(toParse.c_str(), "f %u/%u", &a, &a) == 2)
 		{
 			// v/t .
-			return ( sscanf(toParse.c_str(), "f %hu/%hu %hu/%hu %hu/%hu", &(out.v1), &a, &(out.v2), &a, &(out.v3), &a) == 6 );
+			return ( sscanf(toParse.c_str(), "f %u/%u %u/%u %u/%u", &(out.v1), &a, &(out.v2), &a, &(out.v3), &a) == 6 );
 		}
 		else
 		{
 			// v
-			sscanf(toParse.c_str(), "f %hu %hu %hu", &(out.v1), &(out.v2), &(out.v3));
+			sscanf(toParse.c_str(), "f %u %u %u", &(out.v1), &(out.v2), &(out.v3));
 			PRINTVAR(out);
-			return ( sscanf(toParse.c_str(), "f %hu %hu %hu", &(out.v1), &(out.v2), &(out.v3)) == 3 );
+			return ( sscanf(toParse.c_str(), "f %u %u %u", &(out.v1), &(out.v2), &(out.v3)) == 3 );
 		}
 	}
 	else

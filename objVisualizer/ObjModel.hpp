@@ -102,27 +102,27 @@ private:
 	BoundingBox _bb;							//!< the current bounding box of the model
 
   public: 
-		ObjModel();			
+	ObjModel();			
 		
-		/**
-		 * Calculate the normal of a triangular face defined by three points
-		 *
-		 * @param[in] v1 the first vertex
-		 * @param[in] v2 the second vertex
-		 * @param[in] cv3 the third vertex
-		 * @param[out] norm the normal
-		 */
+        /**
+         * Calculate the normal of a triangular face defined by three points
+         *
+         * @param[in] v1 the first vertex
+         * @param[in] v2 the second vertex
+         * @param[in] cv3 the third vertex
+         * @param[out] norm the normal
+         */
         void computeNormal( const point3d& v1, const point3d& v2, const point3d& v3, vec3d &norm  ) const;
 
-		/**
-		 * Computes the angle at vertex baseV formed by the edges connecting it with the
-		 * vertices v1 and v2 respectively, ie the baseV-v1 and baseV-v2 edges
-		 * @brief Computes the angle at vertex
-		 * @param baseV the vertex at which to compute the angle
-		 * @param v1 the other vertex of the first edge baseV-v1
-		 * @param v2 the other vertex of the second edge baseV-v2
-		 * @return the angle in radiants
-		 */
+        /**
+         * Computes the angle at vertex baseV formed by the edges connecting it with the
+         * vertices v1 and v2 respectively, ie the baseV-v1 and baseV-v2 edges
+         * @brief Computes the angle at vertex
+         * @param baseV the vertex at which to compute the angle
+         * @param v1 the other vertex of the first edge baseV-v1
+         * @param v2 the other vertex of the second edge baseV-v2
+         * @return the angle in radiants
+         */
         float angleAtVertex( const point3d& v1, const point3d& v2, const point3d& v3 ) const;
 
 		/**
@@ -184,7 +184,7 @@ private:
 		 * @return the index of the new vertex
 		 * @see EdgeList
 		 */
-		GLushort getNewVertex( const edge &e, std::vector<point3d> &vertList, std::vector<vec3d> &normList, EdgeList &newVertList ) const;
+		idxtype getNewVertex( const edge &e, std::vector<point3d> &vertList, std::vector<vec3d> &normList, EdgeList &newVertList ) const;
 		
 		/**
 		 * @brief ObjModel::parseFaceString

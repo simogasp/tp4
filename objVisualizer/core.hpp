@@ -30,17 +30,19 @@
 #define PRINTVAR( a )
 #endif
 
+typedef GLuint idxtype;
+
 /**
  * An edge is defined as a pair of indices of the vertices
  */
-typedef std::pair<GLushort, GLushort> edge;
+typedef std::pair<idxtype, idxtype> edge;
 
 /**
  * Return the sum of vertex indices of an edge
  * @param e the edge
  * @return the sum of the indices
  */
-inline GLushort sum(const edge &e) {
+inline idxtype sum(const edge &e) {
     return (e.first + e.second);
 }
 
@@ -49,7 +51,7 @@ inline GLushort sum(const edge &e) {
  * @param e the edge
  * @return the min index
  */
-inline GLushort min(const edge &e) {
+inline idxtype min(const edge &e) {
     return ((e.first > e.second) ? (e.second) : (e.first));
 }
 
@@ -86,7 +88,7 @@ struct edgeCompare {
 /**
  * An edge list is a map of edges (the keys) and a index of the vertex
  */
-typedef std::map< edge, GLushort, edgeCompare > _edgeList;
+typedef std::map< edge, idxtype, edgeCompare > _edgeList;
 
 inline std::ostream& operator<<(std::ostream& os, const edge& p) {
     return os << "[" << p.first << "," << p.second << "]";
@@ -110,7 +112,7 @@ public:
      * @param e the edge
      * @param idx the index of the new vertex generated on the edge
      */
-    void add(const edge &e, const GLushort &idx) {
+    void add(const edge &e, const idxtype &idx) {
         list[e] = idx;
     }
 
@@ -128,7 +130,7 @@ public:
      * @param e the edge
      * @return the index
      */
-    GLushort getIndex(edge e) {
+    idxtype getIndex(edge e) {
         return (list[e]);
     }
 
@@ -317,9 +319,9 @@ inline std::ostream& operator<<(std::ostream& os, const std::vector<v3f>& p) {
  * A triplet of indices
  */
 struct tindex {
-    GLushort v1; //!< the first index
-    GLushort v2; //!< the second index
-    GLushort v3; //!< the third index
+    idxtype v1; //!< the first index
+    idxtype v2; //!< the second index
+    idxtype v3; //!< the third index
 
     /**
      * Default constructor, everything set to 0
@@ -333,26 +335,26 @@ struct tindex {
      * @param v2 the second index
      * @param v3 the third index
      */
-    tindex(GLushort v1, GLushort v2, GLushort v3) : v1(v1), v2(v2), v3(v3) {
+    tindex(idxtype v1, idxtype v2, idxtype v3) : v1(v1), v2(v2), v3(v3) {
     }
 
     tindex operator +(const tindex& a) const;
     tindex& operator +=(const tindex& a);
 
-    tindex operator +(const GLushort a) const;
-    tindex& operator +=(const GLushort a);
+    tindex operator +(const idxtype a) const;
+    tindex& operator +=(const idxtype a);
 
     tindex operator -(const tindex& a) const;
     tindex& operator -=(const tindex& a);
 
-    tindex operator -(const GLushort a) const;
-    tindex& operator -=(const GLushort a);
+    tindex operator -(const idxtype a) const;
+    tindex& operator -=(const idxtype a);
 
     tindex operator *(const tindex& a) const;
     tindex& operator *=(const tindex& a);
 
-    tindex operator *(const GLushort a) const;
-    tindex& operator *=(const GLushort a);
+    tindex operator *(const idxtype a) const;
+    tindex& operator *=(const idxtype a);
 
     /**
      * Two index triplets are equal if their corresponding elements are equal

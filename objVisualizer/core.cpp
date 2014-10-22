@@ -6,11 +6,12 @@
 
 #include <cmath>
 #include <algorithm>
+#include <limits>
 
 void v3f::normalize()
 {
     float n = norm();
-	if (n > std::numeric_limits<float>::epsilon() )
+	if (n > (100.f * std::numeric_limits<float>::epsilon()) )
 	{
 		x /= n;
 		y /= n;
@@ -250,11 +251,11 @@ tindex& tindex::operator +=(const tindex& a)
 	return *this;
 }
 
-tindex tindex::operator +(const GLushort a) const
+tindex tindex::operator +(const idxtype a) const
 {
 	return tindex(v1 + a, v2 + a, v3 + a);
 }
-tindex& tindex::operator +=(const GLushort a)
+tindex& tindex::operator +=(const idxtype a)
 {
 	v1 += a;
 	v2 += a;
@@ -275,11 +276,11 @@ tindex& tindex::operator -=(const tindex& a)
 	return *this;
 }
 
-tindex tindex::operator -(const GLushort a) const
+tindex tindex::operator -(const idxtype a) const
 {
 	return tindex(v1 - a, v2 - a, v3 - a);
 }
-tindex& tindex::operator -=(const GLushort a)
+tindex& tindex::operator -=(const idxtype a)
 {
 	v1 -= a;
 	v2 -= a;
@@ -300,11 +301,11 @@ tindex& tindex::operator *=(const tindex& a)
 	return *this;
 }
 
-tindex tindex::operator *(const GLushort a) const
+tindex tindex::operator *(const idxtype a) const
 {
 	return tindex(v1 * a, v2 * a, v3 * a);
 }
-tindex& tindex::operator *=(const GLushort a)
+tindex& tindex::operator *=(const idxtype a)
 {
 	v1 *= a;
 	v2 *= a;

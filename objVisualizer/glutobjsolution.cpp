@@ -204,29 +204,37 @@ void display()
  
 void keyboard ( unsigned char key, int x, int y ) 
 {
-  switch ( key ) {
-    case KEY_ESCAPE:        
-      exit ( 0 );   
-      break;
-  case 's':
-	  params.useIndexRendering = !params.useIndexRendering;
-      PRINTVAR(flat);
-      flat = !flat;
-    break;
-  case 'w':
-	  params.wireframe = ! params.wireframe;
-      PRINTVAR(wireframe);
-      wireframe = !wireframe;
-    break;
-  case 'h':
-	  PRINTVAR(subdivision);
-	  subdivision = !subdivision;
-	  params.subdivision = !params.subdivision;
-	break;
-    default:      
-      break;
-  }
-  glutPostRedisplay ();
+	switch (key) 
+	{
+		case KEY_ESCAPE:
+			exit(0);
+			break;
+		case 's':
+			params.useIndexRendering = !params.useIndexRendering;
+			PRINTVAR(flat);
+			flat = !flat;
+			break;
+		case 'w':
+			params.wireframe = !params.wireframe;
+			PRINTVAR(wireframe);
+			wireframe = !wireframe;
+			break;
+		case 'h':
+			PRINTVAR(subdivision);
+			subdivision = !subdivision;
+			params.subdivision = !params.subdivision;
+			break;
+		case 'd':
+			params.solid = !params.solid;
+			break;
+		case 'a':
+			params.smooth = !params.smooth;
+			break;
+
+		default:
+			break;
+	}
+	glutPostRedisplay ();
 }
 
 void arrows (int key, int x, int y) {

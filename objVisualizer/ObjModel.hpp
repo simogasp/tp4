@@ -70,15 +70,17 @@ enum obj2render {ORIGINAL, SUBDIVISION};
 
 typedef struct RenderingParameters
 {
-	bool wireframe;
-	bool solid;
-	bool useIndexRendering;
-	bool subdivision;
+	bool wireframe;                 //!< wireframe on/off
+	bool solid;                     //!< draw the mesh on/off
+	bool useIndexRendering;         //!< use opengl drawElements on/off
+	bool subdivision;               //!< subdivision on/off
+        bool smooth;                    //!< GL_SMOOTH on/off
 	
 	RenderingParameters() :
 		wireframe(true),
 		solid(true),
 		useIndexRendering(false),
+                smooth(false),
 		subdivision(false) {}
 	
 } RenderingParameters;
@@ -90,16 +92,16 @@ class ObjModel
 {
 private:
 
-	std::vector<triangleIndex> _indices;	//!< Stores the vertex indices for the triangles
-	std::vector<point3d> _v;				//!< Stores the vertices
-	std::vector<vec3d> _nv;					//!< Stores the normals for the triangles
+	std::vector<triangleIndex> _indices;            //!< Stores the vertex indices for the triangles
+	std::vector<point3d> _v;			//!< Stores the vertices
+	std::vector<vec3d> _nv;				//!< Stores the normals for the triangles
 
 	// Subdivision
 	std::vector<triangleIndex> _subIdx;		//!< Stores the vertex indices for the triangles
 	std::vector<point3d> _subVert;			//!< Stores the vertices
 	std::vector<vec3d> _subNorm;			//!< Stores the normals for the triangles
 
-	BoundingBox _bb;							//!< the current bounding box of the model
+	BoundingBox _bb;				//!< the current bounding box of the model
 
   public: 
 	ObjModel();			
@@ -132,28 +134,13 @@ private:
 		 */
 		int load(char *filename);	
 		
-		/////////////////////////////
-		// refactor attempt
-		void render( const RenderingParameters &params); 
-		
-		//private:
-		void draw( const std::vector<point3d> &vertices, const std::vector<triangleIndex> &indices, std::vector<point3d> &vertexNormals, const RenderingParameters &params ) const;
-		void drawSolid( const std::vector<point3d> &vertices, const std::vector<triangleIndex> &indices, std::vector<point3d> &vertexNormals, const RenderingParameters &params ) const; 
-		void drawWireframe( const std::vector<point3d> &vertices, const std::vector<triangleIndex> &indices) const; 
-		void indexDraw( const std::vector<point3d> &vertices, const std::vector<triangleIndex> &indices, std::vector<point3d> &vertexNormals ) const;
-		void flatDraw( const std::vector<point3d> &vertices, const std::vector<triangleIndex> &indices ) const;
-		/////////////////////////////
-		
-		DEPRECATED(void drawSubdivision());
-		
-		// to be deprecated
-                DEPRECATED(void indexDraw() const ); 
-		// to be deprecated
-                DEPRECATED(void flatDraw() const);
-		// to be deprecated
-		DEPRECATED(void drawWireframe() const);
-
-		/**
+                /**
+                 * Render the model according to the provided parameters
+                 * @param params The rendering parameters
+                 */
+		void render( const RenderingParameters &params = RenderingParameters()); 
+                
+                /**
 		 * Release the model
 		 */
 		void release();				 
@@ -165,12 +152,29 @@ private:
 		 * @return the scale factor used to transform the model
 		 */
 		float unitizeModel();
+		
+		
+private:
+		void draw( const std::vector<point3d> &vertices, const std::vector<triangleIndex> &indices, std::vector<point3d> &vertexNormals, const RenderingParameters &params ) const;
+		void drawSolid( const std::vector<point3d> &vertices, const std::vector<triangleIndex> &indices, std::vector<point3d> &vertexNormals, const RenderingParameters &params ) const; 
+		void drawWireframe( const std::vector<point3d> &vertices, const std::vector<triangleIndex> &indices, const RenderingParameters &params ) const; 
+		void indexDraw( const std::vector<point3d> &vertices, const std::vector<triangleIndex> &indices, std::vector<point3d> &vertexNormals, const RenderingParameters &params ) const;
+		void flatDraw( const std::vector<point3d> &vertices, const std::vector<triangleIndex> &indices, const RenderingParameters &params ) const;
+                
+		/////////////////////////////
+		// DEPRECATED METHODS
+		DEPRECATED(void drawSubdivision());
+                DEPRECATED(void indexDraw() const ); 
+                DEPRECATED(void flatDraw() const);
+		DEPRECATED(void drawWireframe() const);
+
+
 
 	private:
 		
 		/**
 		 * Compute a new model with one subdivision step
-         */
+                */
 		void linearSubdivision();
 
 		/**

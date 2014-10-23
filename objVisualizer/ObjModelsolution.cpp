@@ -384,7 +384,10 @@ void ObjModel::render( const RenderingParameters &params )
 	if(!params.subdivision )
 	{
 		draw( _v, _indices, _nv, params); 
-		drawNormals( _v, _nv );
+		if(!params.normals )
+		{
+			drawNormals( _v, _nv );
+		}
 	}
 	else
 	{
@@ -393,7 +396,10 @@ void ObjModel::render( const RenderingParameters &params )
 			loopSubdivision();
 		}
 		draw( _subVert, _subIdx, _subNorm, params);
-		drawNormals( _subVert, _subNorm );
+		if(!params.normals )
+		{
+			drawNormals( _subVert, _subNorm );
+		}
 	}
 }
 void ObjModel::draw( const vector<point3d> &vertices, const vector<triangleIndex> &indices, vector<vec3d> &vertexNormals, const RenderingParameters &params ) const

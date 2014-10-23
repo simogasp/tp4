@@ -75,14 +75,16 @@ typedef struct RenderingParameters
 	bool solid;                     //!< draw the mesh on/off
 	bool useIndexRendering;         //!< use opengl drawElements on/off
 	bool subdivision;               //!< subdivision on/off
-        bool smooth;                    //!< GL_SMOOTH on/off
+    bool smooth;                    //!< GL_SMOOTH on/off
+	bool normals;					//!< show normals on/off
 	
 	RenderingParameters() :
 		wireframe(true),
 		solid(true),
 		useIndexRendering(false),
-                smooth(false),
-		subdivision(false) {}
+        smooth(false),
+		subdivision(false),
+		normals(true ){}
 	
 } RenderingParameters;
 

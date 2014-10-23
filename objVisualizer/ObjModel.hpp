@@ -17,6 +17,7 @@
 #include <ostream>
 #include <math.h>
 
+
 #define VERTICES_PER_TRIANGLE 3
 #define COORD_PER_VERTEX 3
 #define TOTAL_FLOATS_IN_TRIANGLE (VERTICES_PER_TRIANGLE*COORD_PER_VERTEX)
@@ -198,7 +199,7 @@ private:
 		 */
 		bool parseFaceString( const std::string &toParse, triangleIndex &out) const;
                 
-                void applyLoop( const triangleIndex &t, const std::vector<point3d> &orig, std::vector<uint> &valence,  std::vector<point3d> &dest ) const;
+        void applyLoop( const triangleIndex &t, const std::vector<point3d> &orig, std::vector<size_t> &valence,  std::vector<point3d> &dest ) const;
  
 };
  

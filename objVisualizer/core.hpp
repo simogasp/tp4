@@ -115,7 +115,7 @@ struct edgeEquivalent
     }
 };
 
-#endif
+
 
 // to be used with unordered
 struct edgeHash
@@ -131,6 +131,7 @@ struct edgeHash
 											(std::to_string(a.first)+std::to_string(a.second)) ));
 	}
 };
+#endif
 
 /**
  * An edge list is a map of edges (the keys) and a index of the vertex

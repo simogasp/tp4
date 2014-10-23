@@ -229,7 +229,7 @@ float ObjModel::angleAtVertex( const point3d& baseV, const point3d& v1, const po
 /**
  * @brief ObjModel::subdivision
  */
-void ObjModel::linearSubdivision()
+void ObjModel::loopSubdivision()
 {
 	// copy the data in new arrays
 	_subVert = _v;
@@ -388,7 +388,7 @@ void ObjModel::render( const RenderingParameters &params )
 	{
 		if( _subIdx.empty() || _subNorm.empty() || _subVert.empty() )
 		{
-			linearSubdivision();
+			loopSubdivision();
 		}
 		draw( _subVert, _subIdx, _subNorm, params);
 	}
@@ -727,7 +727,7 @@ void ObjModel::drawSubdivision()
 {
 	if( _subIdx.empty() || _subNorm.empty() || _subVert.empty() )
 	{
-		linearSubdivision();
+		loopSubdivision();
 	}
 
 	glShadeModel( GL_SMOOTH );

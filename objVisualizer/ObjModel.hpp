@@ -175,7 +175,7 @@ private:
 		/**
 		 * Compute a new model with one subdivision step
                 */
-		void linearSubdivision();
+		void loopSubdivision();
 
 		/**
 		 * For a given edge it returns the index of the new vertex created on its middle point. If such vertex already exists it just returns the

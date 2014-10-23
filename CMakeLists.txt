@@ -37,6 +37,24 @@ else()
 	message( "-- Found GLUT" )
 endif(NOT GLUT_FOUND)
 
+
+#########################################################
+# SET COMPILATION FLAGS FOR C++11 
+#########################################################
+
+if (CMAKE_COMPILER_IS_GNUCC)
+    execute_process(COMMAND ${CMAKE_C_COMPILER} -dumpversion
+                    OUTPUT_VARIABLE GCC_VERSION)
+    if (GCC_VERSION VERSION_LESSER 4.7 )
+        message(STATUS "Version < 4.7")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+    else(GCC_VERSION VERSION_LESSER 4.7)
+        message(STATUS "Version >= 4.7")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+    endif(CC_VERSION VERSION_LESSER 4.7)
+endif(CMAKE_COMPILER_IS_GNUCC)
+
+
 #########################################################
 # FIND UNORDERED MAP
 #########################################################

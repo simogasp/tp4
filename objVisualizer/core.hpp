@@ -127,8 +127,8 @@ struct edgeHash
 	#else
 		  std::hash<std::string> fun;
 	#endif
-	  return (fun( (a.first > a.second) ? (std::to_string(a.second)+std::to_string(a.first) ) :
-											(std::to_string(a.first)+std::to_string(a.second)) ));
+	  return (fun( (a.first > a.second) ? ("v"+std::to_string(a.second)+"-"+std::to_string(a.first) ) :
+											("v"+std::to_string(a.first)+"-"+std::to_string(a.second)) ));
 	}
 };
 #endif

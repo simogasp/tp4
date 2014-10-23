@@ -156,12 +156,12 @@ private:
 		
 		
 private:
-		void draw( const std::vector<point3d> &vertices, const std::vector<triangleIndex> &indices, std::vector<point3d> &vertexNormals, const RenderingParameters &params ) const;
-		void drawSolid( const std::vector<point3d> &vertices, const std::vector<triangleIndex> &indices, std::vector<point3d> &vertexNormals, const RenderingParameters &params ) const; 
+		void draw( const std::vector<point3d> &vertices, const std::vector<triangleIndex> &indices, std::vector<vec3d> &vertexNormals, const RenderingParameters &params ) const;
+		void drawSolid( const std::vector<point3d> &vertices, const std::vector<triangleIndex> &indices, std::vector<vec3d> &vertexNormals, const RenderingParameters &params ) const; 
 		void drawWireframe( const std::vector<point3d> &vertices, const std::vector<triangleIndex> &indices, const RenderingParameters &params ) const; 
-		void indexDraw( const std::vector<point3d> &vertices, const std::vector<triangleIndex> &indices, std::vector<point3d> &vertexNormals, const RenderingParameters &params ) const;
+		void indexDraw( const std::vector<point3d> &vertices, const std::vector<triangleIndex> &indices, std::vector<vec3d> &vertexNormals, const RenderingParameters &params ) const;
 		void flatDraw( const std::vector<point3d> &vertices, const std::vector<triangleIndex> &indices, const RenderingParameters &params ) const;
-                
+        void drawNormals( const std::vector<point3d> &vertices, std::vector<vec3d> &vertexNormals ) const;        
 		/////////////////////////////
 		// DEPRECATED METHODS
 		DEPRECATED(void drawSubdivision());

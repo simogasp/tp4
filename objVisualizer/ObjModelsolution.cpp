@@ -169,7 +169,7 @@ int ObjModel::load(char* filename)
 			}
 		}
 
-		cout << "Found :\n\tNumber of triangles (_indices) "<< _indices.size() << "\n\tNumber of Vertices: " << _v.size() << "\n\tNumber of Normals: " << _nv.size() << endl;
+		cerr << "Found :\n\tNumber of triangles (_indices) "<< _indices.size() << "\n\tNumber of Vertices: " << _v.size() << "\n\tNumber of Normals: " << _nv.size() << endl;
 		PRINTVAR( _indices );
 		PRINTVAR( _v );
 		PRINTVAR( _nv );
@@ -273,44 +273,45 @@ void ObjModel::loopSubdivision()
 		_subIdx.push_back( triangleIndex( c, b, v3 ) );
 	}
 	
-	// if initialize at 0 need to update the count before applying loop
-	vector<size_t> valence(_subVert.size(), 0 ); 
-	
-	vector<point3d> tmp ( _subVert.size() ) ; // a copy
-	
-	for(int i = 0; i < _subIdx.size(); ++i )
-	{
-		applyLoop(_subIdx[i], _subVert, valence, tmp );
-	}
-	
-	for(int i = 0; i < _subVert.size(); ++i )
-	{
-		_subVert[i] = tmp[i]/valence[i];
-	}
-
-	//@todo redo the normals.
-	_subNorm.clear();
-	_subNorm = vector<vec3d>( _subVert.size() ) ;
-	
-	//for each face
-	for(int i = 0; i < _subIdx.size(); ++i )
-	{
-		//*********************************************************************
-		//  Calculate the normal of the triangles, it will be the same for each vertex
-		//*********************************************************************
-		vec3d norm;
-
-		//*********************************************************************
-		//  compute the normal for the 3 vertices we just added
-		//*********************************************************************
-		computeNormal( _subVert[ _subIdx[i].v1], _subVert[_subIdx[i].v2], _subVert[_subIdx[i].v3], norm );
-		
-		_subNorm[_subIdx[i].v1] += ( vec3d(norm) );
-		_subNorm[_subIdx[i].v2] += ( vec3d(norm) );
-		_subNorm[_subIdx[i].v3] += ( vec3d(norm) );
-		
-	}
-	for(int i=0; i<_subNorm.size(); _subNorm[i++].normalize());
+//	// if initialize at 0 need to update the count before applying loop
+//	vector<size_t> valence(_subVert.size(), 0 ); 
+//	
+//	vector<point3d> tmp ( _subVert.size() ) ; // a copy
+//	
+//	for(int i = 0; i < _subIdx.size(); ++i )
+//	{
+//		applyLoop(_subIdx[i], _subVert, valence, tmp );
+//	}
+//	
+//	for(int i = 0; i < _subVert.size(); ++i )
+//	{
+//		assert(valence[i]!=0);
+//		_subVert[i] = tmp[i]/valence[i];
+//	}
+//
+//	//@todo redo the normals.
+//	_subNorm.clear();
+//	_subNorm = vector<vec3d>( _subVert.size() ) ;
+//	
+//	//for each face
+//	for(int i = 0; i < _subIdx.size(); ++i )
+//	{
+//		//*********************************************************************
+//		//  Calculate the normal of the triangles, it will be the same for each vertex
+//		//*********************************************************************
+//		vec3d norm;
+//
+//		//*********************************************************************
+//		//  compute the normal for the 3 vertices we just added
+//		//*********************************************************************
+//		computeNormal( _subVert[ _subIdx[i].v1], _subVert[_subIdx[i].v2], _subVert[_subIdx[i].v3], norm );
+//		
+//		_subNorm[_subIdx[i].v1] += ( vec3d(norm) );
+//		_subNorm[_subIdx[i].v2] += ( vec3d(norm) );
+//		_subNorm[_subIdx[i].v3] += ( vec3d(norm) );
+//		
+//	}
+//	for(int i=0; i<_subNorm.size(); _subNorm[i++].normalize());
 	//PRINTVAR(newVertices);
 }
 
@@ -383,6 +384,7 @@ void ObjModel::render( const RenderingParameters &params )
 	if(!params.subdivision )
 	{
 		draw( _v, _indices, _nv, params); 
+		drawNormals( _v, _nv );
 	}
 	else
 	{
@@ -391,9 +393,10 @@ void ObjModel::render( const RenderingParameters &params )
 			loopSubdivision();
 		}
 		draw( _subVert, _subIdx, _subNorm, params);
+		drawNormals( _subVert, _subNorm );
 	}
 }
-void ObjModel::draw( const vector<point3d> &vertices, const vector<triangleIndex> &indices, vector<point3d> &vertexNormals, const RenderingParameters &params ) const
+void ObjModel::draw( const vector<point3d> &vertices, const vector<triangleIndex> &indices, vector<vec3d> &vertexNormals, const RenderingParameters &params ) const
 {
 	if( params.solid )
 	{
@@ -405,7 +408,7 @@ void ObjModel::draw( const vector<point3d> &vertices, const vector<triangleIndex
 	}
 	
 }
-void ObjModel::drawSolid( const vector<point3d> &vertices, const vector<triangleIndex> &indices, vector<point3d> &vertexNormals, const RenderingParameters &params ) const
+void ObjModel::drawSolid( const vector<point3d> &vertices, const vector<triangleIndex> &indices, vector<vec3d> &vertexNormals, const RenderingParameters &params ) const
 {
 	 if (params.useIndexRendering)
 	 {
@@ -474,7 +477,28 @@ void ObjModel::flatDraw( const vector<point3d> &vertices, const vector<triangleI
 	}
 }
 
-void ObjModel::indexDraw( const vector<point3d> &vertices, const vector<triangleIndex> &indices, vector<point3d> &vertexNormals, const RenderingParameters &params ) const
+void ObjModel::drawNormals( const std::vector<point3d> &vertices, std::vector<vec3d> &vertexNormals ) const
+{
+	glDisable(GL_LIGHTING);
+
+	glColor3f(0.8, 0, 0);
+	glLineWidth(2);
+	
+	for(int i=0; i<vertices.size(); i++)
+	{
+		glBegin(GL_LINES);
+		
+			vec3d newP = vertices[i] + 0.1*vertexNormals[i];
+			glVertex3fv((float*)&vertices[i]);
+
+			glVertex3f(newP.x, newP.y, newP.z);
+
+		glEnd();
+	}
+	glEnable(GL_LIGHTING);
+}
+
+void ObjModel::indexDraw( const vector<point3d> &vertices, const vector<triangleIndex> &indices, vector<vec3d> &vertexNormals, const RenderingParameters &params ) const
 {
 	if(params.smooth)
 	{

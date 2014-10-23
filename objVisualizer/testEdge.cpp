@@ -2,6 +2,22 @@
 #include <sstream>
 #include <stdio.h>
 
+#if HAVE_STD_UNORDERED_MAP
+#include <unordered_map>
+#elif HAVE_TR1_UNORDERED_MAP
+#include <tr1/unordered_map>
+#elif HAVE_NO_UNORDERED_MAP
+#include <map>
+#endif
+
+#if HAVE_TR1_UNORDERED_MAP || HAVE_STD_UNORDERED_MAP_IN_TR1_NAMESPACE
+std::tr1::unordered_map< int, int > map;
+#elif HAVE_STD_UNORDERED_MAP
+std::unordered_map< int, int > map;
+#else
+std::map< int, int > map;
+#endif
+
 
 int main(int argc, char **argv)
 {

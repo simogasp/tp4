@@ -3,6 +3,8 @@ include(ExternalProject)
 
 project( OpenGLlabs )
 
+set(WITH_UNORDERED_MAP "FALSE" CACHE BOOL "Use unordered map for efficiency")
+
 #########################################################
 #
 # EXTERNAL LIBRARIES
@@ -55,109 +57,114 @@ if (CMAKE_COMPILER_IS_GNUCC)
 endif(CMAKE_COMPILER_IS_GNUCC)
 
 
+IF (WITH_UNORDERED_MAP)
 #########################################################
 # FIND UNORDERED MAP
 #########################################################
 
-INCLUDE(CheckIncludeFileCXX)
-CHECK_INCLUDE_FILE_CXX(unordered_map HAVE_STD_UNORDERED_MAP_HEADER)
-IF (HAVE_STD_UNORDERED_MAP_HEADER)
-	# Even so we've found unordered_map header file it doesn't
-	# mean unordered_map and unordered_set will be declared in
-	# std namespace.
-	#
-	# Namely, MSVC 2008 have unordered_map header which declares
-	# unordered_map class in std::tr1 namespace. In order to support
-	# this, we do extra check to see which exactly namespace is
-	# to be used.
+	INCLUDE(CheckIncludeFileCXX)
+	CHECK_INCLUDE_FILE_CXX(unordered_map HAVE_STD_UNORDERED_MAP_HEADER)
+	IF (HAVE_STD_UNORDERED_MAP_HEADER)
+		# Even so we've found unordered_map header file it doesn't
+		# mean unordered_map and unordered_set will be declared in
+		# std namespace.
+		#
+		# Namely, MSVC 2008 have unordered_map header which declares
+		# unordered_map class in std::tr1 namespace. In order to support
+		# this, we do extra check to see which exactly namespace is
+		# to be used.
 
-	INCLUDE(CheckCXXSourceCompiles)
-	CHECK_CXX_SOURCE_COMPILES("#include <unordered_map>
-		int main() {
-		std::unordered_map<int, int> map;
-		return 0;
-		}"
-		HAVE_UNORDERED_MAP_IN_STD_NAMESPACE)
-	IF (HAVE_UNORDERED_MAP_IN_STD_NAMESPACE)
-		ADD_DEFINITIONS(-DHAVE_STD_UNORDERED_MAP)
-		MESSAGE("-- Found unordered_map/set in std namespace.")
-	ELSE (HAVE_UNORDERED_MAP_IN_STD_NAMESPACE)
+		INCLUDE(CheckCXXSourceCompiles)
 		CHECK_CXX_SOURCE_COMPILES("#include <unordered_map>
 			int main() {
-			std::tr1::unordered_map<int, int> map;
+			std::unordered_map<int, int> map;
 			return 0;
 			}"
-			HAVE_UNORDERED_MAP_IN_TR1_NAMESPACE)
-		IF (HAVE_UNORDERED_MAP_IN_TR1_NAMESPACE)
-			ADD_DEFINITIONS(-DHAVE_STD_UNORDERED_MAP_IN_TR1_NAMESPACE)
-			MESSAGE("-- Found unordered_map/set in std::tr1 namespace.")
-		ELSE (HAVE_UNORDERED_MAP_IN_TR1_NAMESPACE)
-			MESSAGE("-- Found <unordered_map> but cannot find either std::unordered_map "
-				"or std::tr1::unordered_map.")
+			HAVE_UNORDERED_MAP_IN_STD_NAMESPACE)
+		IF (HAVE_UNORDERED_MAP_IN_STD_NAMESPACE)
+			ADD_DEFINITIONS(-DHAVE_STD_UNORDERED_MAP)
+			MESSAGE("-- Found unordered_map/set in std namespace.")
+		ELSE (HAVE_UNORDERED_MAP_IN_STD_NAMESPACE)
+			CHECK_CXX_SOURCE_COMPILES("#include <unordered_map>
+				int main() {
+				std::tr1::unordered_map<int, int> map;
+				return 0;
+				}"
+				HAVE_UNORDERED_MAP_IN_TR1_NAMESPACE)
+			IF (HAVE_UNORDERED_MAP_IN_TR1_NAMESPACE)
+				ADD_DEFINITIONS(-DHAVE_STD_UNORDERED_MAP_IN_TR1_NAMESPACE)
+				MESSAGE("-- Found unordered_map/set in std::tr1 namespace.")
+			ELSE (HAVE_UNORDERED_MAP_IN_TR1_NAMESPACE)
+				MESSAGE("-- Found <unordered_map> but cannot find either std::unordered_map "
+					"or std::tr1::unordered_map.")
+				MESSAGE("-- Replacing unordered_map/set with map/set (warning: slower!)")
+				ADD_DEFINITIONS(-DHAVE_NO_UNORDERED_MAP)
+			ENDIF (HAVE_UNORDERED_MAP_IN_TR1_NAMESPACE)
+		ENDIF (HAVE_UNORDERED_MAP_IN_STD_NAMESPACE)
+	ELSE (HAVE_STD_UNORDERED_MAP_HEADER)
+		CHECK_INCLUDE_FILE_CXX("tr1/unordered_map" UNORDERED_MAP_IN_TR1_NAMESPACE)
+		IF (UNORDERED_MAP_IN_TR1_NAMESPACE)
+			ADD_DEFINITIONS(-DHAVE_TR1_UNORDERED_MAP)
+			MESSAGE("-- Found tr1/unordered_map/set in std::tr1 namespace.")
+		ELSE (UNORDERED_MAP_IN_TR1_NAMESPACE)
+			MESSAGE("-- Unable to find <unordered_map> or <tr1/unordered_map>. ")
 			MESSAGE("-- Replacing unordered_map/set with map/set (warning: slower!)")
 			ADD_DEFINITIONS(-DHAVE_NO_UNORDERED_MAP)
-		ENDIF (HAVE_UNORDERED_MAP_IN_TR1_NAMESPACE)
-	ENDIF (HAVE_UNORDERED_MAP_IN_STD_NAMESPACE)
-ELSE (HAVE_STD_UNORDERED_MAP_HEADER)
-	CHECK_INCLUDE_FILE_CXX("tr1/unordered_map" UNORDERED_MAP_IN_TR1_NAMESPACE)
-	IF (UNORDERED_MAP_IN_TR1_NAMESPACE)
-		ADD_DEFINITIONS(-DHAVE_TR1_UNORDERED_MAP)
-		MESSAGE("-- Found tr1/unordered_map/set in std::tr1 namespace.")
-	ELSE (UNORDERED_MAP_IN_TR1_NAMESPACE)
-		MESSAGE("-- Unable to find <unordered_map> or <tr1/unordered_map>. ")
-		MESSAGE("-- Replacing unordered_map/set with map/set (warning: slower!)")
-		ADD_DEFINITIONS(-DHAVE_NO_UNORDERED_MAP)
-	ENDIF (UNORDERED_MAP_IN_TR1_NAMESPACE)
-ENDIF (HAVE_STD_UNORDERED_MAP_HEADER)
+		ENDIF (UNORDERED_MAP_IN_TR1_NAMESPACE)
+	ENDIF (HAVE_STD_UNORDERED_MAP_HEADER)
 
-#########################################################
-# FIND HASH
-#########################################################
-CHECK_INCLUDE_FILE_CXX(functional HAVE_STD_FUNCTIONAL_HEADER)
-IF (HAVE_STD_FUNCTIONAL_HEADER)
-	# Even so we've found functional header file it doesn't
-	# mean functional and functional will be declared in
-	# std namespace.
-	#
-	# Namely, MSVC 2008 have functional header which declares
-	# functional class in std::tr1 namespace. In order to support
-	# this, we do extra check to see which exactly namespace is
-	# to be used.
+	#########################################################
+	# FIND HASH
+	#########################################################
+	CHECK_INCLUDE_FILE_CXX(functional HAVE_STD_FUNCTIONAL_HEADER)
+	IF (HAVE_STD_FUNCTIONAL_HEADER)
+		# Even so we've found functional header file it doesn't
+		# mean functional and functional will be declared in
+		# std namespace.
+		#
+		# Namely, MSVC 2008 have functional header which declares
+		# functional class in std::tr1 namespace. In order to support
+		# this, we do extra check to see which exactly namespace is
+		# to be used.
 
-	INCLUDE(CheckCXXSourceCompiles)
-	CHECK_CXX_SOURCE_COMPILES("#include <functional>
-		int main() {
-		std::hash<int> fun;
-		return 0;
-		}"
-		HAVE_FUNCTIONAL_IN_STD_NAMESPACE)
-	IF (HAVE_FUNCTIONAL_IN_STD_NAMESPACE)
-		ADD_DEFINITIONS(-DHAVE_STD_FUNCTIONAL)
-		MESSAGE("-- Found functional/hash in std namespace.")
-	ELSE (HAVE_FUNCTIONAL_IN_STD_NAMESPACE)
+		INCLUDE(CheckCXXSourceCompiles)
 		CHECK_CXX_SOURCE_COMPILES("#include <functional>
 			int main() {
-			std::tr1::hash<int> fun;
+			std::hash<int> fun;
 			return 0;
 			}"
-			HAVE_FUNCTIONAL_IN_TR1_NAMESPACE)
-		IF (HAVE_FUNCTIONAL_IN_TR1_NAMESPACE)
-			ADD_DEFINITIONS(-DHAVE_STD_HASH_IN_TR1_NAMESPACE)
-			MESSAGE("-- Found functional/hash in std::tr1 namespace.")
-		ELSE (HAVE_FUNCTIONAL_IN_TR1_NAMESPACE) 
-			MESSAGE( FATAL_ERROR "-- Found <functional> but cannot find either std::hash "
-				"or std::tr1::hash.")
-		ENDIF (HAVE_FUNCTIONAL_IN_TR1_NAMESPACE)
-	ENDIF (HAVE_FUNCTIONAL_IN_STD_NAMESPACE)
-ELSE (HAVE_STD_FUNCTIONAL_HEADER)
-	CHECK_INCLUDE_FILE_CXX("tr1/functional" FUNCTIONAL_IN_TR1_NAMESPACE)
-	IF (FUNCTIONAL_IN_TR1_NAMESPACE)
-		ADD_DEFINITIONS(-DHAVE_TR1_FUNCTIONAL)
-		MESSAGE("-- Found tr1/functional/set in std::tr1 namespace.")
-	ELSE (FUNCTIONAL_IN_TR1_NAMESPACE)
-		MESSAGE(FATAL_ERROR "-- Unable to find <functional> or <tr1/functional>. ")
-	ENDIF (FUNCTIONAL_IN_TR1_NAMESPACE)
-ENDIF (HAVE_STD_FUNCTIONAL_HEADER)
+			HAVE_FUNCTIONAL_IN_STD_NAMESPACE)
+		IF (HAVE_FUNCTIONAL_IN_STD_NAMESPACE)
+			ADD_DEFINITIONS(-DHAVE_STD_FUNCTIONAL)
+			MESSAGE("-- Found functional/hash in std namespace.")
+		ELSE (HAVE_FUNCTIONAL_IN_STD_NAMESPACE)
+			CHECK_CXX_SOURCE_COMPILES("#include <functional>
+				int main() {
+				std::tr1::hash<int> fun;
+				return 0;
+				}"
+				HAVE_FUNCTIONAL_IN_TR1_NAMESPACE)
+			IF (HAVE_FUNCTIONAL_IN_TR1_NAMESPACE)
+				ADD_DEFINITIONS(-DHAVE_STD_HASH_IN_TR1_NAMESPACE)
+				MESSAGE("-- Found functional/hash in std::tr1 namespace.")
+			ELSE (HAVE_FUNCTIONAL_IN_TR1_NAMESPACE) 
+				MESSAGE( FATAL_ERROR "-- Found <functional> but cannot find either std::hash "
+					"or std::tr1::hash.")
+			ENDIF (HAVE_FUNCTIONAL_IN_TR1_NAMESPACE)
+		ENDIF (HAVE_FUNCTIONAL_IN_STD_NAMESPACE)
+	ELSE (HAVE_STD_FUNCTIONAL_HEADER)
+		CHECK_INCLUDE_FILE_CXX("tr1/functional" FUNCTIONAL_IN_TR1_NAMESPACE)
+		IF (FUNCTIONAL_IN_TR1_NAMESPACE)
+			ADD_DEFINITIONS(-DHAVE_TR1_FUNCTIONAL)
+			MESSAGE("-- Found tr1/functional/set in std::tr1 namespace.")
+		ELSE (FUNCTIONAL_IN_TR1_NAMESPACE)
+			MESSAGE(FATAL_ERROR "-- Unable to find <functional> or <tr1/functional>. ")
+		ENDIF (FUNCTIONAL_IN_TR1_NAMESPACE)
+	ENDIF (HAVE_STD_FUNCTIONAL_HEADER)
+
+ELSE(WITH_UNORDERED_MAP)
+	ADD_DEFINITIONS(-DHAVE_NO_UNORDERED_MAP)
+ENDIF(WITH_UNORDERED_MAP)
 
 # PUT ALL THE BINARY IN A BIN DIRECTORY
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)

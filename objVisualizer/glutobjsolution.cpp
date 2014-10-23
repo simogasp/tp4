@@ -72,10 +72,6 @@ int angle_y=0;
 int angle_x=0;
 float camDistance = 5;
 RenderingParameters params;
-// to be deprecated
-bool flat = true;
-bool wireframe = true;
-bool subdivision = false;
 
 glutWindow win;
 
@@ -211,24 +207,23 @@ void keyboard ( unsigned char key, int x, int y )
 			break;
 		case 's':
 			params.useIndexRendering = !params.useIndexRendering;
-			PRINTVAR(flat);
-			flat = !flat;
+			PRINTVAR(params.useIndexRendering);
 			break;
 		case 'w':
 			params.wireframe = !params.wireframe;
-			PRINTVAR(wireframe);
-			wireframe = !wireframe;
+			PRINTVAR(params.wireframe);
 			break;
 		case 'h':
-			PRINTVAR(subdivision);
-			subdivision = !subdivision;
 			params.subdivision = !params.subdivision;
+			PRINTVAR(params.subdivision);
 			break;
 		case 'd':
 			params.solid = !params.solid;
+			PRINTVAR(params.solid);
 			break;
 		case 'a':
 			params.smooth = !params.smooth;
+			PRINTVAR(params.smooth);
 			break;
 
 		default:

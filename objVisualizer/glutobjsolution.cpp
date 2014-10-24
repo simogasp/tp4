@@ -225,6 +225,10 @@ void keyboard ( unsigned char key, int x, int y )
 			params.smooth = !params.smooth;
 			PRINTVAR(params.smooth);
 			break;
+		case 'n':
+			params.normals = !params.normals;
+			PRINTVAR(params.normals);
+			break;
 
 		default:
 			break;

@@ -151,7 +151,7 @@ void display()
 	glLoadIdentity();
 
 	glPushMatrix();
-		place_light (0, 0, 4);
+		place_light (0, 0, 140);
 		glTranslatef (0, 0, -camDistance);
 		glRotatef (angle_x, 1, 0, 0);
 		glRotatef (angle_y, 0, 1, 0);
@@ -266,8 +266,8 @@ void arrows (int key, int x, int y) {
 int main(int argc, char **argv) 
 {
 	// set window values
-	win.width = 640;
-	win.height = 480;
+	win.width = 1024;
+	win.height = 760;
 	win.title = "OpenGL/GLUT OBJ Loader.";
 	win.field_of_view_angle = 45;
     win.z_near = 0.25f;

@@ -84,15 +84,15 @@ struct edgeCompare {
 };
 
 // to be used with unordered
-//struct edgeHash
-//{
-//  size_t operator() (const edge &a ) const
-//  {
-//      std::hash<std::string> fun;
-//      return (fun( (a.first > a.second) ? (std::to_string(a.second)+std::to_string(a.first) ) :
-//                                          (std::to_string(a.first)+std::to_string(a.second)) ));
-//  }
-//};
+struct edgeHash
+{
+  size_t operator() (const edge &a ) const
+  {
+      std::hash<std::string> fun;
+      return (fun( (a.first > a.second) ? (std::to_string(a.second)+std::to_string(a.first) ) :
+                                          (std::to_string(a.first)+std::to_string(a.second)) ));
+  }
+};
 
 /**
  * An edge list is a map of edges (the keys) and a index of the vertex
@@ -158,7 +158,8 @@ inline std::ostream& operator<<(std::ostream& os, const EdgeList& l) {
 /**
  * A generic vector of three elements
  */
-struct v3f {
+struct v3f 
+{
     float x;
     float y;
     float z;
@@ -169,21 +170,18 @@ struct v3f {
      * @param y the second element
      * @param z the third element
      */
-    v3f(float x, float y, float z) : x(x), y(y), z(z) {
-    }
+    v3f(float x, float y, float z) : x(x), y(y), z(z) { }
 
     /**
      * Default constructor, everything is initialized to 0
      */
-    v3f() : x(0), y(0), z(0) {
-    }
+    v3f() : x(0), y(0), z(0) { }
 
     /**
      * Constructor from an array of three elements
      * @param a the array from which to copy the elements
      */
-    v3f(float a[3]) : x(a[0]), y(a[1]), z(a[2]) {
-    }
+    v3f(float a[3]) : x(a[0]), y(a[1]), z(a[2]) { }
 
     /**
      * Normalize the vector (ie divide by the norm)

@@ -1,4 +1,5 @@
 #include "core.hpp"
+#include "ObjModel.hpp"
 #include <sstream>
 #include <stdio.h>
 
@@ -73,4 +74,17 @@ int main(int argc, char **argv)
 	PRINTVAR((edge(3,5)==edge(3,5)));
 	PRINTVAR((edge(3,5)==edge(5,3)));
 	PRINTVAR((edge(1,2)==edge(3,5)));
+	
+	idxtype idx;
+	
+	PRINTVAR((triangleIndex(1,2,3).containsEdge( edge(3,5), idx )));
+	PRINTVAR( idx );
+	PRINTVAR((triangleIndex(1,2,3).containsEdge( edge(2,3), idx )));
+	PRINTVAR( idx );
+	PRINTVAR((triangleIndex(1,2,3).containsEdge( edge(3,2), idx )));
+	PRINTVAR( idx );
+	PRINTVAR((triangleIndex(1,2,3).containsEdge( edge(0,2), idx )));
+	PRINTVAR( idx );
+	PRINTVAR((triangleIndex(1,2,3).containsEdge( edge(3,1), idx )));
+	PRINTVAR( idx );
 }

@@ -292,12 +292,12 @@ bool tindex::containsEdge(const edge e, idxtype &oppositeVertex) const
 		oppositeVertex = v3;
 		return true;
 	} 
-	else if ( edge(v3, v1) == e )
+	else if ( edge(v2, v3) == e )
 	{
 		oppositeVertex = v1;
 		return true;
 	}
-	else if ( edge() == e )
+	else if ( edge(v3, v1) == e )
 	{
 		oppositeVertex = v2;
 		return true;

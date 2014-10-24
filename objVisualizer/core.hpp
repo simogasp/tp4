@@ -59,10 +59,15 @@ typedef GLuint idxtype;
  */
 typedef std::pair<idxtype, idxtype> edge;
 
-inline bool operator==(const edge& a, const edge& b)
+inline std::ostream& operator<<( std::ostream& os, const edge& p )
 {
-    return ( ( (a.first == b.first) && ( a.second == b.second) ) ||
-                ( (a.first == b.second) && ( a.first == b.second) ));
+	return os << "[" << p.first << "," << p.second << "]";
+}
+
+inline bool operator==( const edge& a, const edge& b )
+{
+	return ( ( ( a.first == b.first ) && ( a.second == b.second ) ) ||
+			( ( a.first == b.second ) && ( a.second == b.first ) ) );
 }
 
 /**
@@ -70,9 +75,9 @@ inline bool operator==(const edge& a, const edge& b)
  * @param e the edge
  * @return the sum of the indices
  */
-inline idxtype sum(const edge &e) 
+inline idxtype sum(const edge &e)
 {
-    return (e.first + e.second);
+	return (e.first + e.second );
 }
 
 /**
@@ -80,62 +85,69 @@ inline idxtype sum(const edge &e)
  * @param e the edge
  * @return the min index
  */
-inline idxtype min(const edge &e) {
-    return ((e.first > e.second) ? (e.second) : (e.first));
+inline idxtype min(const edge &e)
+{
+	return (( e.first > e.second ) ? ( e.second ) : ( e.first ) );
 }
 
 #if HAVE_NO_UNORDERED_MAP
+
 /**
  * Structure used to compare two edges
  */
-struct edgeCompare 
+struct edgeCompare
 {
 
-    bool operator() (const edge &a, const edge &b) const {
-        //      return !( ( (a.first == b.first) && (a.second == b.second) ) ||
-        //               ( (a.first == b.second) && (a.second == b.first) ) );
+	bool operator( ) ( const edge &a, const edge &b ) const
+	{
+		//      return !( ( (a.first == b.first) && (a.second == b.second) ) ||
+		//               ( (a.first == b.second) && (a.second == b.first) ) );
 
-        // two edges are equal if their sum is equal and their min is the same
-        // our ordering policy is that first is the sum to be compared and then if the sum is
-        // equal we use the ordering on the min. This guarantees that when edgeCompare is used
-        // in map to detect equal keys it really detects the same edge independently of the index
-        // order. edgeCompare is indeed used with reflexively: 2 edges are equivalent if !comp(a,b) && !comp(b,a)
-        return ( (sum(a) < sum(b)) ||
-                ((sum(a) == sum(b)) && (min(a) < min(b))));
-    }
+		// two edges are equal if their sum is equal and their min is the same
+		// our ordering policy is that first is the sum to be compared and then if the sum is
+		// equal we use the ordering on the min. This guarantees that when edgeCompare is used
+		// in map to detect equal keys it really detects the same edge independently of the index
+		// order. edgeCompare is indeed used with reflexively: 2 edges are equivalent if !comp(a,b) && !comp(b,a)
+		return ( ( sum(a) < sum(b) ) ||
+				( ( sum(a) == sum(b) ) && ( min(a) < min(b) ) ) );
+	}
 };
 #else
+
 /**
  * Structure used to compare two edges
  */
-struct edgeEquivalent 
+struct edgeEquivalent
 {
 
-    bool operator() (const edge &a, const edge &b) const {
-        //      return !( ( (a.first == b.first) && (a.second == b.second) ) ||
-        //               ( (a.first == b.second) && (a.second == b.first) ) );
+	bool operator( ) ( const edge &a, const edge &b ) const
+	{
+		//      return !( ( (a.first == b.first) && (a.second == b.second) ) ||
+		//               ( (a.first == b.second) && (a.second == b.first) ) );
 
-        // two edges are equal either their corresponding elements are equal or
+		// two edges are equal either their corresponding elements are equal or
 		// they are inverted
-        return ( ( (a.first == b.first) && ( a.second == b.second) ) ||
-                ( (a.first == b.second) && ( a.first == b.second) ));
-    }
+		return ( ( ( a.first == b.first ) && ( a.second == b.second ) ) ||
+				( ( a.first == b.second ) && ( a.second == b.first ) ) );
+	}
 };
 
 
 
 // to be used with unordered
+
 struct edgeHash
 {
-	size_t operator() (const edge &a ) const
+
+	size_t operator( ) ( const edge &a ) const
 	{
-	#if HAVE_STD_HASH_IN_TR1_NAMESPACE
-		  std::hash<std::tr1::string> fun;
-	#else
-		  std::hash<std::string> fun;
-	#endif
-	  return (fun( (a.first > a.second) ? ("v"+std::to_string(a.second)+"-"+std::to_string(a.first) ) :
-											("v"+std::to_string(a.first)+"-"+std::to_string(a.second)) ));
+#if HAVE_STD_HASH_IN_TR1_NAMESPACE
+		std::hash<std::tr1::string> fun;
+#else
+		std::hash<std::string> fun;
+#endif
+		return (fun(( a.first > a.second ) ? ( "v" + std::to_string(a.second) + "-" + std::to_string(a.first) ) :
+				( "v" + std::to_string(a.first) + "-" + std::to_string(a.second) )) );
 	}
 };
 #endif
@@ -154,353 +166,352 @@ typedef std::map< edge, idxtype, edgeCompare > _edgeList;
 #endif
 
 
-
-inline std::ostream& operator<<(std::ostream& os, const edge& p) {
-    return os << "[" << p.first << "," << p.second << "]";
+inline std::ostream& operator<<( std::ostream& os, const _edgeList& l )
+{
+	os << std::endl;
+	for ( _edgeList::const_iterator it = l.begin(); it != l.end(); ++it )
+		os << "\t" << it->first << "\t" << it->second << std::endl;
+	return os;
 }
 
-inline std::ostream& operator<<(std::ostream& os, const _edgeList& l) {
-    os << std::endl;
-    for (_edgeList::const_iterator it = l.begin(); it != l.end(); ++it)
-        os << "\t" << it->first << "\t" << it->second << std::endl;
-    return os;
-}
-
-class EdgeList {
+class EdgeList
+{
 public:
 
-    EdgeList() {
-    }
+	EdgeList() { }
 
-    /**
-     * Add the edge and the index of the new vertex generated on it
-     * @param e the edge
-     * @param idx the index of the new vertex generated on the edge
-     */
-    void add(const edge &e, const idxtype &idx) {
-        list[e] = idx;
-    }
+	/**
+	 * Add the edge and the index of the new vertex generated on it
+	 * @param e the edge
+	 * @param idx the index of the new vertex generated on the edge
+	 */
+	void add(const edge &e, const idxtype &idx)
+	{
+		list[e] = idx;
+	}
 
-    /**
-     * Return true if the edge is in the map
-     * @param e the edge to search for
-     * @return 
-     */
-    bool contains(const edge &e) const {
-        return (list.find(e) != list.end());
-    }
+	/**
+	 * Return true if the edge is in the map
+	 * @param e the edge to search for
+	 * @return 
+	 */
+	bool contains(const edge &e) const
+	{
+		return (list.find(e) != list.end() );
+	}
 
-    /**
-     * Get the vertex index associated to the edge
-     * @param e the edge
-     * @return the index
-     */
-    idxtype getIndex(edge e) {
-        return (list[e]);
-    }
+	/**
+	 * Get the vertex index associated to the edge
+	 * @param e the edge
+	 * @return the index
+	 */
+	idxtype getIndex(edge e)
+	{
+		return (list[e] );
+	}
 
-    friend std::ostream& operator<<(std::ostream& os, const EdgeList& l);
+	friend std::ostream& operator<<( std::ostream& os, const EdgeList& l );
 
 
 private:
-    _edgeList list;
+	_edgeList list;
 
 };
 
-inline std::ostream& operator<<(std::ostream& os, const EdgeList& l) {
-    return (os << l.list);
+inline std::ostream& operator<<( std::ostream& os, const EdgeList& l )
+{
+	return (os << l.list );
 }
 
 /**
  * A generic vector of three elements
  */
-struct v3f {
-    float x;
-    float y;
-    float z;
+struct v3f
+{
+	float x;
+	float y;
+	float z;
 
-    /**
-     * Generic constructor
-     * @param x the first element
-     * @param y the second element
-     * @param z the third element
-     */
-    v3f(float x, float y, float z) : x(x), y(y), z(z) {
-    }
+	/**
+	 * Generic constructor
+	 * @param x the first element
+	 * @param y the second element
+	 * @param z the third element
+	 */
+	v3f(float x, float y, float z) : x(x), y(y), z(z) { }
 
-    /**
-     * Default constructor, everything is initialized to 0
-     */
-    v3f() : x(0), y(0), z(0) {
-    }
+	/**
+	 * Default constructor, everything is initialized to 0
+	 */
+	v3f() : x(0), y(0), z(0) { }
 
-    /**
-     * Constructor from an array of three elements
-     * @param a the array from which to copy the elements
-     */
-    v3f(float a[3]) : x(a[0]), y(a[1]), z(a[2]) {
-    }
+	/**
+	 * Constructor from an array of three elements
+	 * @param a the array from which to copy the elements
+	 */
+	v3f(float a[3]) : x(a[0]), y(a[1]), z(a[2]) { }
 
-    /**
-     * Normalize the vector (ie divide by the norm)
-     */
-    void normalize();
+	/**
+	 * Normalize the vector (ie divide by the norm)
+	 */
+	void normalize();
 
-    /**
-     * return the dot product 
-     * @param v the other vector
-     * @return the dot product
-     */
-    float dot(const v3f &v) const;
+	/**
+	 * return the dot product 
+	 * @param v the other vector
+	 * @return the dot product
+	 */
+	float dot(const v3f &v) const;
 
-    /**
-     * Return the norm of the vector
-     * @return the norm
-     */
-    float norm() const;
+	/**
+	 * Return the norm of the vector
+	 * @return the norm
+	 */
+	float norm() const;
 
-    /**
-     * Translate the vector
-     * @param x the delta x of the translation
-     * @param y the delta y of the translation
-     * @param z the delta z of the translation
-     */
-    void translate(float x, float y, float z);
+	/**
+	 * Translate the vector
+	 * @param x the delta x of the translation
+	 * @param y the delta y of the translation
+	 * @param z the delta z of the translation
+	 */
+	void translate(float x, float y, float z);
 
-    /**
-     * Translate the vector
-     * @param t the translation
-     */
-    void translate(v3f t);
+	/**
+	 * Translate the vector
+	 * @param t the translation
+	 */
+	void translate(v3f t);
 
-    /**
-     * Scale each element of the vector by the corresponding value
-     * @param t a vector containing a factor scale to apply to each element
-     */
-    void scale(v3f t);
+	/**
+	 * Scale each element of the vector by the corresponding value
+	 * @param t a vector containing a factor scale to apply to each element
+	 */
+	void scale(v3f t);
 
-    /**
-     * Scale each element of the vector by the corresponding value
-     * @param x the scale value on x
-     * @param y the scale value on y
-     * @param z the scale value on z
-     */
-    void scale(float x, float y, float z);
+	/**
+	 * Scale each element of the vector by the corresponding value
+	 * @param x the scale value on x
+	 * @param y the scale value on y
+	 * @param z the scale value on z
+	 */
+	void scale(float x, float y, float z);
 
-    /**
-     * Scale each element of the vector by the same value
-     * @param a The scalar value to apply to each element
-     */
-    void scale(float a);
+	/**
+	 * Scale each element of the vector by the same value
+	 * @param a The scalar value to apply to each element
+	 */
+	void scale(float a);
 
-    /**
-     * Set each element of the current vector to the minimum value wrt another vector
-     * @param a the other vector
-     */
-    void min(const v3f& a);
-    
-    /**
-     * Return the minimum value among the 3 elements
-     * @return the minimum value
-     */
-    float min() const;
+	/**
+	 * Set each element of the current vector to the minimum value wrt another vector
+	 * @param a the other vector
+	 */
+	void min(const v3f& a);
 
-    /**
-     * Set each element of the current vector to the maximum value wrt another vector
-     * @param a the other vector
-     */
-    void max(const v3f& a);
-    
-    /**
-     * Return the maximum value among the 3 elements
-     * @return the maximum value
-     */
-    float max() const;
+	/**
+	 * Return the minimum value among the 3 elements
+	 * @return the minimum value
+	 */
+	float min() const;
 
-    /**
-     * Return the cross product of two vectors
-     * @param v the other vector
-     * @return the cross product
-     */
-    v3f cross(const v3f& v);
+	/**
+	 * Set each element of the current vector to the maximum value wrt another vector
+	 * @param a the other vector
+	 */
+	void max(const v3f& a);
 
-    /**
-     * Return the cross product of two vectors
-     * @param v the other array
-     * @return the cross product
-     */
-    v3f cross(const float v[3]);
+	/**
+	 * Return the maximum value among the 3 elements
+	 * @return the maximum value
+	 */
+	float max() const;
 
-    // element-wise addition
+	/**
+	 * Return the cross product of two vectors
+	 * @param v the other vector
+	 * @return the cross product
+	 */
+	v3f cross(const v3f& v);
 
-    v3f operator +(const v3f& a) const;
-    v3f& operator +=(const v3f& a);
+	/**
+	 * Return the cross product of two vectors
+	 * @param v the other array
+	 * @return the cross product
+	 */
+	v3f cross(const float v[3]);
 
-    v3f operator +(const float a[3]) const;
-    v3f& operator +=(const float a[3]);
+	// element-wise addition
 
-    v3f operator +(const float a) const;
-    v3f& operator +=(const float a);
+	v3f operator +( const v3f& a ) const;
+	v3f& operator +=( const v3f& a );
 
-    // element-wise subtraction
+	v3f operator +( const float a[3] ) const;
+	v3f& operator +=( const float a[3] );
 
-    v3f operator -(const v3f& a) const;
-    v3f& operator -=(const v3f& a);
+	v3f operator +( const float a ) const;
+	v3f& operator +=( const float a );
 
-    v3f operator -(const float a[3]) const;
-    v3f& operator -=(const float a[3]);
+	// element-wise subtraction
 
-    v3f operator -(const float a) const;
-    v3f& operator -=(const float a);
+	v3f operator -( const v3f& a ) const;
+	v3f& operator -=( const v3f& a );
 
-    // element-wise product
+	v3f operator -( const float a[3] ) const;
+	v3f& operator -=( const float a[3] );
 
-    v3f operator *(const v3f& a) const;
-    v3f& operator *=(const v3f& a);
+	v3f operator -( const float a ) const;
+	v3f& operator -=( const float a );
 
-    v3f operator *(const float a[3]) const;
-    v3f& operator *=(const float a[3]);
+	// element-wise product
 
-    v3f operator *(const float a) const;
-    v3f& operator *=(const float a);
-    
-    // element-wise ratio
+	v3f operator *( const v3f& a ) const;
+	v3f& operator *=( const v3f& a );
 
-    v3f operator /(const v3f& a) const;
-    v3f& operator /=(const v3f& a);
+	v3f operator *( const float a[3] ) const;
+	v3f& operator *=( const float a[3] );
 
-    v3f operator /(const float a[3]) const;
-    v3f& operator /=(const float a[3]);
+	v3f operator *( const float a ) const;
+	v3f& operator *=( const float a );
 
-    v3f operator /(const float a) const;
-    v3f& operator /=(const float a);
+	// element-wise ratio
+
+	v3f operator /( const v3f& a ) const;
+	v3f& operator /=( const v3f& a );
+
+	v3f operator /( const float a[3] ) const;
+	v3f& operator /=( const float a[3] );
+
+	v3f operator /( const float a ) const;
+	v3f& operator /=( const float a );
 
 };
 
-inline std::ostream& operator<<(std::ostream& os, const v3f& p) 
+inline std::ostream& operator<<( std::ostream& os, const v3f& p )
 {
-    return os << "[" << p.x << "," << p.y << "," << p.z << "]";
+	return os << "[" << p.x << "," << p.y << "," << p.z << "]";
 }
 
-inline std::ostream& operator<<(std::ostream& os, const std::vector<v3f>& p) 
+inline std::ostream& operator<<( std::ostream& os, const std::vector<v3f>& p )
 {
-    os << std::endl;
-    for (int i = 0; i < p.size(); ++i)
-        os << "\t" << p[i] << std::endl;
-    return os;
+	os << std::endl;
+	for ( int i = 0; i < p.size(); ++i )
+		os << "\t" << p[i] << std::endl;
+	return os;
 }
 
 
 
 // REFLEXIVE OPERATORS FOR V3F
-inline v3f operator +(const float a, const v3f& p) 
+
+inline v3f operator +( const float a, const v3f& p )
 {
-    return (p+a);
+	return (p + a );
 }
 
-inline v3f operator +(const float a[3], const v3f& p) 
+inline v3f operator +( const float a[3], const v3f& p )
 {
-    return (p+a[3]);
+	return (p + a[3] );
 }
 
-inline v3f operator -(const float a, const v3f& p) 
+inline v3f operator -( const float a, const v3f& p )
 {
-    return (p-a);
+	return (p - a );
 }
 
-inline v3f operator -(const float a[3], const v3f& p) 
+inline v3f operator -( const float a[3], const v3f& p )
 {
-    return (p-a[3]);
+	return (p - a[3] );
 }
 
-inline v3f operator *(const float a[3], const v3f& p) 
+inline v3f operator *( const float a[3], const v3f& p )
 {
-    return (p*a[3]);
+	return (p * a[3] );
 }
 
-inline v3f operator *(const float a, const v3f& p) 
+inline v3f operator *( const float a, const v3f& p )
 {
-    return (p*a);
+	return (p * a );
 }
 
-inline v3f operator /(const float a[3], const v3f& p) 
+inline v3f operator /( const float a[3], const v3f& p )
 {
-    return (p/a[3]);
+	return (p / a[3] );
 }
 
-inline v3f operator /(const float a, const v3f& p) 
+inline v3f operator /( const float a, const v3f& p )
 {
-    return (p/a);
+	return (p / a );
 }
 
 /**
  * A triplet of indices
  */
-struct tindex 
+struct tindex
 {
-    idxtype v1; //!< the first index
-    idxtype v2; //!< the second index
-    idxtype v3; //!< the third index
+	idxtype v1; //!< the first index
+	idxtype v2; //!< the second index
+	idxtype v3; //!< the third index
 
-    /**
-     * Default constructor, everything set to 0
-     */
-    tindex() : v1(0), v2(0), v3(0) { }
+	/**
+	 * Default constructor, everything set to 0
+	 */
+	tindex() : v1(0), v2(0), v3(0) { }
 
-    /**
-     * Constructor from indices
-     * @param v1 the first index
-     * @param v2 the second index
-     * @param v3 the third index
-     */
-    tindex(idxtype v1, idxtype v2, idxtype v3) : v1(v1), v2(v2), v3(v3) { }
-    
-    /**
-     * Return true if the edge e is contained in the triplet of indices. If it is
-     * contained it also return the opposite vertex (ie the index of the vertex not
-     * belonging to the edge)
-     * @param e the edge to check
-     * @param oppositeVertex If the triplet contain the edge, this will be the (index of the) opposite
-     * vertex wrt the edge in the triangle
-     * @return true if the edge is contained (the order of the indices does not matter)
-     */
-    bool containsEdge(const edge e, idxtype &oppositeVertex) const;
-    
-    tindex operator +(const tindex& a) const;
-    tindex& operator +=(const tindex& a);
+	/**
+	 * Constructor from indices
+	 * @param v1 the first index
+	 * @param v2 the second index
+	 * @param v3 the third index
+	 */
+	tindex(idxtype v1, idxtype v2, idxtype v3) : v1(v1), v2(v2), v3(v3) { }
 
-    tindex operator +(const idxtype a) const;
-    tindex& operator +=(const idxtype a);
+	/**
+	 * Return true if the edge e is contained in the triplet of indices. If it is
+	 * contained it also return the opposite vertex (ie the index of the vertex not
+	 * belonging to the edge)
+	 * @param e the edge to check
+	 * @param oppositeVertex If the triplet contain the edge, this will be the (index of the) opposite
+	 * vertex wrt the edge in the triangle
+	 * @return true if the edge is contained (the order of the indices does not matter)
+	 */
+	bool containsEdge(const edge e, idxtype &oppositeVertex) const;
 
-    tindex operator -(const tindex& a) const;
-    tindex& operator -=(const tindex& a);
+	tindex operator +( const tindex& a ) const;
+	tindex& operator +=( const tindex& a );
 
-    tindex operator -(const idxtype a) const;
-    tindex& operator -=(const idxtype a);
+	tindex operator +( const idxtype a ) const;
+	tindex& operator +=( const idxtype a );
 
-    tindex operator *(const tindex& a) const;
-    tindex& operator *=(const tindex& a);
+	tindex operator -( const tindex& a ) const;
+	tindex& operator -=( const tindex& a );
 
-    tindex operator *(const idxtype a) const;
-    tindex& operator *=(const idxtype a);
+	tindex operator -( const idxtype a ) const;
+	tindex& operator -=( const idxtype a );
 
-    /**
-     * Two index triplets are equal if their corresponding elements are equal
-     */
-    bool operator==(const tindex& rhs) const;
+	tindex operator *( const tindex& a ) const;
+	tindex& operator *=( const tindex& a );
+
+	tindex operator *( const idxtype a ) const;
+	tindex& operator *=( const idxtype a );
+
+	/**
+	 * Two index triplets are equal if their corresponding elements are equal
+	 */
+	bool operator==( const tindex& rhs ) const;
 };
 
-inline std::ostream& operator<<(std::ostream& os, const tindex& p) 
+inline std::ostream& operator<<( std::ostream& os, const tindex& p )
 {
-    return os << "[" << p.v1 << "," << p.v2 << "," << p.v3 << "]";
+	return os << "[" << p.v1 << "," << p.v2 << "," << p.v3 << "]";
 }
 
-inline std::ostream& operator<<(std::ostream& os, const std::vector<tindex>& p) 
+inline std::ostream& operator<<( std::ostream& os, const std::vector<tindex>& p )
 {
-    os << std::endl;
-    for (int i = 0; i < p.size(); ++i)
-        os << "\t" << p[i] << std::endl;
-    return os;
+	os << std::endl;
+	for ( int i = 0; i < p.size(); ++i )
+		os << "\t" << p[i] << std::endl;
+	return os;
 }
 
 #endif //_CORE_HPP_

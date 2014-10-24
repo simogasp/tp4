@@ -130,46 +130,46 @@ private:
          */
         float angleAtVertex( const point3d& v1, const point3d& v2, const point3d& v3 ) const;
 
-		/**
-		 *  Loads the model from file
-		 * @param filename the OBJ file
-		 * @return 
-		 */
-		int load(char *filename);	
-		
-                /**
-                 * Render the model according to the provided parameters
-                 * @param params The rendering parameters
-                 */
-		void render( const RenderingParameters &params = RenderingParameters()); 
-                
-                /**
-		 * Release the model
-		 */
-		void release();				 
-	
-		/**
-		 * It scales the model to unitary size by translating it to the origin and
-		 * scaling it to fit in a unit cube around the origin.
-		 * 
-		 * @return the scale factor used to transform the model
-		 */
-		float unitizeModel();
-		
-		
+        /**
+         *  Loads the model from file
+         * @param filename the OBJ file
+         * @return 
+         */
+        int load(char *filename);	
+
+        /**
+         * Render the model according to the provided parameters
+         * @param params The rendering parameters
+         */
+        void render( const RenderingParameters &params = RenderingParameters()); 
+
+        /**
+         * Release the model
+         */
+        void release();				 
+
+        /**
+         * It scales the model to unitary size by translating it to the origin and
+         * scaling it to fit in a unit cube around the origin.
+         * 
+         * @return the scale factor used to transform the model
+         */
+        float unitizeModel();
+
+
 private:
-		void draw( const std::vector<point3d> &vertices, const std::vector<triangleIndex> &indices, std::vector<vec3d> &vertexNormals, const RenderingParameters &params ) const;
-		void drawSolid( const std::vector<point3d> &vertices, const std::vector<triangleIndex> &indices, std::vector<vec3d> &vertexNormals, const RenderingParameters &params ) const; 
-		void drawWireframe( const std::vector<point3d> &vertices, const std::vector<triangleIndex> &indices, const RenderingParameters &params ) const; 
-		void indexDraw( const std::vector<point3d> &vertices, const std::vector<triangleIndex> &indices, std::vector<vec3d> &vertexNormals, const RenderingParameters &params ) const;
-		void flatDraw( const std::vector<point3d> &vertices, const std::vector<triangleIndex> &indices, const RenderingParameters &params ) const;
+        void draw( const std::vector<point3d> &vertices, const std::vector<triangleIndex> &indices, std::vector<vec3d> &vertexNormals, const RenderingParameters &params ) const;
+        void drawSolid( const std::vector<point3d> &vertices, const std::vector<triangleIndex> &indices, std::vector<vec3d> &vertexNormals, const RenderingParameters &params ) const; 
+        void drawWireframe( const std::vector<point3d> &vertices, const std::vector<triangleIndex> &indices, const RenderingParameters &params ) const; 
+        void indexDraw( const std::vector<point3d> &vertices, const std::vector<triangleIndex> &indices, std::vector<vec3d> &vertexNormals, const RenderingParameters &params ) const;
+        void flatDraw( const std::vector<point3d> &vertices, const std::vector<triangleIndex> &indices, const RenderingParameters &params ) const;
         void drawNormals( const std::vector<point3d> &vertices, std::vector<vec3d> &vertexNormals ) const;        
-		/////////////////////////////
-		// DEPRECATED METHODS
-		DEPRECATED(void drawSubdivision());
-                DEPRECATED(void indexDraw() const ); 
-                DEPRECATED(void flatDraw() const);
-		DEPRECATED(void drawWireframe() const);
+        /////////////////////////////
+        // DEPRECATED METHODS
+        DEPRECATED(void drawSubdivision());
+        DEPRECATED(void indexDraw() const ); 
+        DEPRECATED(void flatDraw() const);
+        DEPRECATED(void drawWireframe() const);
 
 
 
@@ -191,7 +191,7 @@ private:
 		 * @return the index of the new vertex
 		 * @see EdgeList
 		 */
-		idxtype getNewVertex( const edge &e, std::vector<point3d> &vertList, std::vector<vec3d> &normList, EdgeList &newVertList ) const;
+                 idxtype getNewVertex( const edge &e, std::vector<point3d> &vertList, std::vector<vec3d> &normList, EdgeList &newVertList ) const;
 		
 		/**
 		 * @brief ObjModel::parseFaceString

@@ -159,12 +159,12 @@ int ObjModel::load(char* filename)
 //				PRINTVAR(angleAtVertex(_v[ t.v1], _v[t.v2], _v[t.v3] ));
 //				PRINTVAR(angleAtVertex(_v[ t.v2], _v[t.v1], _v[t.v3] ));
 //				PRINTVAR(angleAtVertex(_v[ t.v3], _v[t.v1], _v[t.v2] ));
-//				_nv[t.v1] += (vec3d(norm) * angleAtVertex(_v[ t.v1], _v[t.v2], _v[t.v3]));
-//				_nv[t.v2] += (vec3d(norm) * angleAtVertex(_v[ t.v2], _v[t.v1], _v[t.v3]));
-//				_nv[t.v3] += (vec3d(norm) * angleAtVertex(_v[ t.v3], _v[t.v1], _v[t.v2]));
-				_nv[t.v1] += ( vec3d(norm) );
-				_nv[t.v2] += ( vec3d(norm) );
-				_nv[t.v3] += ( vec3d(norm) );
+				_nv[t.v1] += (vec3d(norm) * angleAtVertex(_v[ t.v1], _v[t.v2], _v[t.v3]));
+				_nv[t.v2] += (vec3d(norm) * angleAtVertex(_v[ t.v2], _v[t.v1], _v[t.v3]));
+				_nv[t.v3] += (vec3d(norm) * angleAtVertex(_v[ t.v3], _v[t.v1], _v[t.v2]));
+//				_nv[t.v1] += ( vec3d(norm) );
+//				_nv[t.v2] += ( vec3d(norm) );
+//				_nv[t.v3] += ( vec3d(norm) );
 				
 			}
 		}
@@ -233,7 +233,7 @@ void ObjModel::loopSubdivision()
 {
 	// copy the data in new arrays
 	_subVert = _v;
-	_subIdx = _indices;
+	_subIdx;
 	_subNorm = _nv;
 	
 //	PRINTVAR(_subVert);
@@ -273,45 +273,45 @@ void ObjModel::loopSubdivision()
 		_subIdx.push_back( triangleIndex( c, b, v3 ) );
 	}
 	
-//	// if initialize at 0 need to update the count before applying loop
-//	vector<size_t> valence(_subVert.size(), 0 ); 
-//	
-//	vector<point3d> tmp ( _subVert.size() ) ; // a copy
-//	
-//	for(int i = 0; i < _subIdx.size(); ++i )
-//	{
-//		applyLoop(_subIdx[i], _subVert, valence, tmp );
-//	}
-//	
-//	for(int i = 0; i < _subVert.size(); ++i )
-//	{
-//		assert(valence[i]!=0);
-//		_subVert[i] = tmp[i]/valence[i];
-//	}
-//
-//	//@todo redo the normals.
-//	_subNorm.clear();
-//	_subNorm = vector<vec3d>( _subVert.size() ) ;
-//	
-//	//for each face
-//	for(int i = 0; i < _subIdx.size(); ++i )
-//	{
-//		//*********************************************************************
-//		//  Calculate the normal of the triangles, it will be the same for each vertex
-//		//*********************************************************************
-//		vec3d norm;
-//
-//		//*********************************************************************
-//		//  compute the normal for the 3 vertices we just added
-//		//*********************************************************************
-//		computeNormal( _subVert[ _subIdx[i].v1], _subVert[_subIdx[i].v2], _subVert[_subIdx[i].v3], norm );
-//		
-//		_subNorm[_subIdx[i].v1] += ( vec3d(norm) );
-//		_subNorm[_subIdx[i].v2] += ( vec3d(norm) );
-//		_subNorm[_subIdx[i].v3] += ( vec3d(norm) );
-//		
-//	}
-//	for(int i=0; i<_subNorm.size(); _subNorm[i++].normalize());
+	// if initialize at 0 need to update the count before applying loop
+	vector<size_t> valence(_subVert.size(), 0 ); 
+	
+	vector<point3d> tmp ( _subVert.size() ) ; // a copy
+	
+	for(int i = 0; i < _subIdx.size(); ++i )
+	{
+		applyLoop(_subIdx[i], _subVert, valence, tmp );
+	}
+	
+	for(int i = 0; i < _subVert.size(); ++i )
+	{
+		assert(valence[i]!=0);
+		_subVert[i] = tmp[i]/valence[i];
+	}
+
+	//@todo redo the normals.
+	_subNorm.clear();
+	_subNorm = vector<vec3d>( _subVert.size() ) ;
+	
+	//for each face
+	for(int i = 0; i < _subIdx.size(); ++i )
+	{
+		//*********************************************************************
+		//  Calculate the normal of the triangles, it will be the same for each vertex
+		//*********************************************************************
+		vec3d norm;
+
+		//*********************************************************************
+		//  compute the normal for the 3 vertices we just added
+		//*********************************************************************
+		computeNormal( _subVert[ _subIdx[i].v1], _subVert[_subIdx[i].v2], _subVert[_subIdx[i].v3], norm );
+		
+		_subNorm[_subIdx[i].v1] += ( vec3d(norm) );
+		_subNorm[_subIdx[i].v2] += ( vec3d(norm) );
+		_subNorm[_subIdx[i].v3] += ( vec3d(norm) );
+		
+	}
+	for(int i=0; i<_subNorm.size(); _subNorm[i++].normalize());
 	//PRINTVAR(newVertices);
 }
 
@@ -320,7 +320,7 @@ void ObjModel::applyLoop( const triangleIndex &t, const std::vector<point3d> &or
 {
 	valence[t.v1]++;
 	dest[t.v1] += ( 0.25f*orig[t.v1] + 0.375f*orig[t.v2] + 0.375f*orig[t.v3] ) ;
-	PRINTVAR(valence[t.v1]);
+//	PRINTVAR(valence[t.v1]);
 	
 	valence[t.v2]++;
 	dest[t.v2] += ( 0.25f*orig[t.v2] + 0.375f*orig[t.v1] + 0.375f*orig[t.v3] )  ;

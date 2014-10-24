@@ -27,9 +27,22 @@
 #endif //__attribute__ ((deprecated))
 
 #include <vector>
-#include <map>
 #include <iostream>
+
+#if HAVE_STD_UNORDERED_MAP || HAVE_STD_UNORDERED_MAP_IN_TR1_NAMESPACE
+#include <unordered_map>
+#elif HAVE_TR1_UNORDERED_MAP
+#include <tr1/unordered_map>
+#elif HAVE_NO_UNORDERED_MAP
+#include <map>
+#endif
+
+#if HAVE_STD_FUNCTIONAL || HAVE_STD_HASH_IN_TR1_NAMESPACE
 #include <functional>
+#elif HAVE_TR1_FUNCTIONAL
+#include <tr1/functional>
+#endif
+
 
 #define DEBUGGING 1
 
@@ -51,7 +64,8 @@ typedef std::pair<idxtype, idxtype> edge;
  * @param e the edge
  * @return the sum of the indices
  */
-inline idxtype sum(const edge &e) {
+inline idxtype sum(const edge &e) 
+{
     return (e.first + e.second);
 }
 
@@ -64,6 +78,7 @@ inline idxtype min(const edge &e) {
     return ((e.first > e.second) ? (e.second) : (e.first));
 }
 
+#if HAVE_NO_UNORDERED_MAP
 /**
  * Structure used to compare two edges
  */
@@ -82,22 +97,56 @@ struct edgeCompare {
                 ((sum(a) == sum(b)) && (min(a) < min(b))));
     }
 };
+#else
+/**
+ * Structure used to compare two edges
+ */
+struct edgeEquivalent 
+{
+
+    bool operator() (const edge &a, const edge &b) const {
+        //      return !( ( (a.first == b.first) && (a.second == b.second) ) ||
+        //               ( (a.first == b.second) && (a.second == b.first) ) );
+
+        // two edges are equal either their corresponding elements are equal or
+		// they are inverted
+        return ( ( (a.first == b.first) && ( a.second == b.second) ) ||
+                ( (a.first == b.second) && ( a.first == b.second) ));
+    }
+};
+
+
 
 // to be used with unordered
 struct edgeHash
 {
-  size_t operator() (const edge &a ) const
-  {
-      std::hash<std::string> fun;
-      return (fun( (a.first > a.second) ? (std::to_string(a.second)+std::to_string(a.first) ) :
-                                          (std::to_string(a.first)+std::to_string(a.second)) ));
-  }
+	size_t operator() (const edge &a ) const
+	{
+	#if HAVE_STD_HASH_IN_TR1_NAMESPACE
+		  std::hash<std::tr1::string> fun;
+	#else
+		  std::hash<std::string> fun;
+	#endif
+	  return (fun( (a.first > a.second) ? ("v"+std::to_string(a.second)+"-"+std::to_string(a.first) ) :
+											("v"+std::to_string(a.first)+"-"+std::to_string(a.second)) ));
+	}
 };
+#endif
 
 /**
  * An edge list is a map of edges (the keys) and a index of the vertex
  */
+
+
+#if HAVE_TR1_UNORDERED_MAP || HAVE_STD_UNORDERED_MAP_IN_TR1_NAMESPACE
+typedef std::tr1::unordered_map< edge, idxtype, edgeCompare > _edgeList;
+#elif HAVE_STD_UNORDERED_MAP
+typedef std::unordered_map< edge, idxtype, edgeHash, edgeEquivalent > _edgeList;
+#else
 typedef std::map< edge, idxtype, edgeCompare > _edgeList;
+#endif
+
+
 
 inline std::ostream& operator<<(std::ostream& os, const edge& p) {
     return os << "[" << p.first << "," << p.second << "]";
@@ -158,8 +207,7 @@ inline std::ostream& operator<<(std::ostream& os, const EdgeList& l) {
 /**
  * A generic vector of three elements
  */
-struct v3f 
-{
+struct v3f {
     float x;
     float y;
     float z;
@@ -170,18 +218,21 @@ struct v3f
      * @param y the second element
      * @param z the third element
      */
-    v3f(float x, float y, float z) : x(x), y(y), z(z) { }
+    v3f(float x, float y, float z) : x(x), y(y), z(z) {
+    }
 
     /**
      * Default constructor, everything is initialized to 0
      */
-    v3f() : x(0), y(0), z(0) { }
+    v3f() : x(0), y(0), z(0) {
+    }
 
     /**
      * Constructor from an array of three elements
      * @param a the array from which to copy the elements
      */
-    v3f(float a[3]) : x(a[0]), y(a[1]), z(a[2]) { }
+    v3f(float a[3]) : x(a[0]), y(a[1]), z(a[2]) {
+    }
 
     /**
      * Normalize the vector (ie divide by the norm)

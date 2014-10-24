@@ -69,4 +69,8 @@ int main(int argc, char **argv)
 	
 	PRINTVAR(v3f(1,2,4)*10.f);
 	PRINTVAR(10.f*v3f(1,2,4));
+	
+	PRINTVAR((edge(3,5)==edge(3,5)));
+	PRINTVAR((edge(3,5)==edge(5,3)));
+	PRINTVAR((edge(1,2)==edge(3,5)));
 }

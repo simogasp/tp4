@@ -275,6 +275,39 @@ v3f& v3f::operator /=(const float a)
 
 //**************************** tindex ***********************//
 
+
+/**
+ * Return true if the edge e is contained in the triplet of indices. If it is
+ * contained it also return the opposite vertex (ie the index of the vertex not
+ * belonging to the edge)
+ * @param e the edge to check
+ * @param oppositeVertex If the triplet contain the edge, this will be the (index of the) opposite
+ * vertex wrt the edge in the triangle
+ * @return true if the edge is contained (the order of the indices does not matter)
+ */
+bool tindex::containsEdge(const edge e, idxtype &oppositeVertex) const
+{
+	if( edge(v1, v2) == e )
+	{
+		oppositeVertex = v3;
+		return true;
+	} 
+	else if ( edge(v3, v1) == e )
+	{
+		oppositeVertex = v1;
+		return true;
+	}
+	else if ( edge() == e )
+	{
+		oppositeVertex = v2;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 // ********** SUM
 tindex tindex::operator +(const tindex& a) const
 {

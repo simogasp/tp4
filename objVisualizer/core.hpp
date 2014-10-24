@@ -59,6 +59,12 @@ typedef GLuint idxtype;
  */
 typedef std::pair<idxtype, idxtype> edge;
 
+inline bool operator==(const edge& a, const edge& b)
+{
+    return ( ( (a.first == b.first) && ( a.second == b.second) ) ||
+                ( (a.first == b.second) && ( a.first == b.second) ));
+}
+
 /**
  * Return the sum of vertex indices of an edge
  * @param e the edge
@@ -82,7 +88,8 @@ inline idxtype min(const edge &e) {
 /**
  * Structure used to compare two edges
  */
-struct edgeCompare {
+struct edgeCompare 
+{
 
     bool operator() (const edge &a, const edge &b) const {
         //      return !( ( (a.first == b.first) && (a.second == b.second) ) ||
@@ -447,7 +454,18 @@ struct tindex
      * @param v3 the third index
      */
     tindex(idxtype v1, idxtype v2, idxtype v3) : v1(v1), v2(v2), v3(v3) { }
-
+    
+    /**
+     * Return true if the edge e is contained in the triplet of indices. If it is
+     * contained it also return the opposite vertex (ie the index of the vertex not
+     * belonging to the edge)
+     * @param e the edge to check
+     * @param oppositeVertex If the triplet contain the edge, this will be the (index of the) opposite
+     * vertex wrt the edge in the triangle
+     * @return true if the edge is contained (the order of the indices does not matter)
+     */
+    bool containsEdge(const edge e, idxtype &oppositeVertex) const;
+    
     tindex operator +(const tindex& a) const;
     tindex& operator +=(const tindex& a);
 

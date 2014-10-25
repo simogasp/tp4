@@ -180,3 +180,5 @@ endif()
 add_subdirectory(objVisualizer)
 
 
+enable_testing()
+add_test( testEdgeList bin/testEdgeList 1000 )

@@ -279,12 +279,12 @@ void ObjModel::loopSubdivision()
 	vector<point3d> tmp ( _subVert.size() ) ; // a copy
 	
 	//@todo, here consider only the "old" vertices, hence the for loop has to be limited to _v.size()
-	for(int i = 0; i < _subIdx.size(); ++i )
+	for(int i = 0; i < _indices.size(); ++i )
 	{
-		applyLoop(_subIdx[i], _subVert, valence, tmp );
+		applyLoop(_indices[i], _v, valence, tmp );
 	}
 	
-	for(int i = 0; i < _subVert.size(); ++i )
+	for(int i = 0; i < _v.size(); ++i )
 	{
 		assert(valence[i]!=0);
 		_subVert[i] = tmp[i]/valence[i];
@@ -374,7 +374,8 @@ idxtype ObjModel::getNewVertex(const edge &e,
 			//the edge V1 and V2 and the two opposite vertices oppV1 and oppV2
 			// Using the loop coefficient the new vertex is
 			// nvert = 3/8 (V1+V2) + 1/8(oppV1 + oppV2)
-			nvert = 0.375f*(vertList[e.first] + vertList[e.second]) + 0.125f*( oppV1 + oppV2 );
+			nvert = 0.375f*(vertList[e.first] + vertList[e.second]) + 0.125f*( vertList[oppV1] + vertList[oppV2] );
+			PRINTVAR(nvert);
 		}
 		else
 		{

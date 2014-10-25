@@ -251,9 +251,9 @@ void ObjModel::loopSubdivision()
 
 		// for each edge get the index of the vertex of the midpoint
 		// if it does not exist it will be generated.
-		idxtype a = getNewVertex( edge(v1,v2), _subVert, _subNorm, newVertices );
-		idxtype b = getNewVertex( edge(v2,v3), _subVert, _subNorm, newVertices );
-		idxtype c = getNewVertex( edge(v3,v1), _subVert, _subNorm ,newVertices );
+		idxtype a = getNewVertex(edge(v1,v2), _subVert, _indices, _subNorm, newVertices );
+		idxtype b = getNewVertex(edge(v2,v3), _subVert, _indices, _subNorm, newVertices );
+		idxtype c = getNewVertex(edge(v3,v1), _subVert, _indices, _subNorm , newVertices );
 
 		// create the four new triangle
 		// BE CAREFULL WITH THE VERTEX ORDER!!
@@ -330,18 +330,24 @@ void ObjModel::applyLoop( const triangleIndex &t, const std::vector<point3d> &or
 }
 
 /**
- * For a given edge it returns the index of the new vertex created on its middle point. If such vertex already exists it just returns the
- * its index; if it does not exist it creates it in vertList along it's normal and return the index
- * @brief ObjModel::getNewVertex
- * @param e the edge
- * @param vertList the list of vertices
- * @param normList the list of normals associated to the vertices
- * @param newVertList The list of the new vertices added so far
- * @return the index of the new vertex
- * @see EdgeList
- */
-idxtype ObjModel::getNewVertex( const edge &e, vector<point3d> &vertList, vector<vec3d> &normList, EdgeList &newVertList ) const
-{
+* For a given edge it returns the index of the new vertex created on its middle point. If such vertex already exists it just returns the
+* its index; if it does not exist it creates it in vertList along it's normal and return the index
+* @brief ObjModel::getNewVertex
+* @param e the edge
+* @param currFace the current triangle containing the edge e
+* @param vertList the list of vertices
+* @param indices the list of triangles
+* @param normList the list of normals associated to the vertices
+* @param newVertList The list of the new vertices added so far
+* @return the index of the new vertex
+* @see EdgeList
+*/
+idxtype ObjModel::getNewVertex(const edge &e, 
+								   std::vector<point3d> &vertList, 
+								   const std::vector<triangleIndex> &indices, 
+								   std::vector<vec3d> &normList, 
+								   EdgeList &newVertList ) const
+				 {
 //	PRINTVAR(e);
 //	PRINTVAR(newVertList);
     // if the egde is not contained in the new vertex list
@@ -355,7 +361,26 @@ idxtype ObjModel::getNewVertex( const edge &e, vector<point3d> &vertList, vector
 		newVertList.add( e, idxnew );
 //		PRINTVAR(newVertList);
         // generate new vertex
-        point3d nvert = (vertList[e.first] + vertList[e.second])*0.5;
+		point3d nvert;
+		idxtype oppV1;
+		idxtype oppV2;
+		// check if it is a boundary edge, ie check if there is another triangle 
+		// sharing this edge and if so get the index of its "opposite" vertex
+		// if it is not a boundary
+		if( !isBoundaryEdge( e, indices, oppV1, oppV2) )
+		{
+			// the new vertex is the linear combination of the two extrema of 
+			//the edge V1 and V2 and the two opposite vertices oppV1 and oppV2
+			// Using the loop coefficient the new vertex is
+			// nvert = 3/8 (V1+V2) + 1/8(oppV1 + oppV2)
+			nvert = 0.375f*(vertList[e.first] + vertList[e.second]) + 0.125f*( oppV1 + oppV2 );
+		}
+		else
+		{
+			// otherwise it is a boundary edge then the vertex is the linear combination of the 
+			// two extrema
+			nvert = (vertList[e.first] + vertList[e.second])*0.5;
+		}
 		// append it to the list of vertices
 //	cout << "new vertex created " << endl;
 //	PRINTVAR(nvert);

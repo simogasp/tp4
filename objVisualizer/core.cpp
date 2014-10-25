@@ -5,6 +5,7 @@
 #include "core.hpp"
 
 #include <cmath>
+#include <cassert>
 #include <algorithm>
 #include <limits>
 
@@ -387,4 +388,40 @@ tindex& tindex::operator *=(const idxtype a)
 bool tindex::operator==( const tindex& r) const
 {
 	return ( (v1 == r.v1) && (v2 == r.v2) && (v3 == r.v3));
+}
+/**
+ * Two index triplets are different if... they are not equal
+ */
+bool tindex::operator!=( const tindex& r ) const
+{
+	return ( !(*this == r));
+}
+
+/**
+ * It checks if the edge e is a boundary edge in the list of triangle. It also 
+ * return the indices of the two opposite vertices of the edge or only one of 
+ * them if it is a boundary edge
+ * @param e the edge to check
+ * @param triangleList the list of triangles
+ * @param oppVert1 the index of the first opposite vertices (the only one if the edge is a boundary edge)
+ * @param oppVert2 the index of the second opposite vertices (only if the edge is not a boundary edge)
+ * @return true if the edge is not a boundary edge
+ */
+bool isBoundaryEdge(const edge &e, const std::vector<tindex> &triangleList, idxtype &oppVert1, idxtype &oppVert2 )
+{
+	bool foundFirst = false;
+	bool foundSecond = false;
+	for(size_t i = 0; (i < triangleList.size()) && ( !(foundFirst && foundSecond)); ++i )
+	{
+		if(!foundFirst)
+		{
+			foundFirst = triangleList[i].containsEdge(e, oppVert1);
+		}
+		else
+		{
+			foundSecond = triangleList[i].containsEdge(e, oppVert2);
+		}
+	}
+	// the edge should be in the list, so at least one should be found
+	assert(foundFirst);
 }

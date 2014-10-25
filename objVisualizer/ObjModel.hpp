@@ -185,13 +185,15 @@ private:
 		 * its index; if it does not exist it creates it in vertList along it's normal and return the index
 		 * @brief ObjModel::getNewVertex
 		 * @param e the edge
+		 * @param currFace the current triangle containing the edge e
 		 * @param vertList the list of vertices
+		 * @param indices the list of triangles
 		 * @param normList the list of normals associated to the vertices
 		 * @param newVertList The list of the new vertices added so far
 		 * @return the index of the new vertex
 		 * @see EdgeList
 		 */
-                 idxtype getNewVertex( const edge &e, std::vector<point3d> &vertList, std::vector<vec3d> &normList, EdgeList &newVertList ) const;
+                 idxtype getNewVertex(const edge &e, std::vector<point3d> &vertList, const std::vector<triangleIndex> &indices, std::vector<vec3d> &normList, EdgeList &newVertList ) const;
 		
 		/**
 		 * @brief ObjModel::parseFaceString

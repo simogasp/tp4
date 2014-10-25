@@ -499,6 +499,10 @@ struct tindex
 	 * Two index triplets are equal if their corresponding elements are equal
 	 */
 	bool operator==( const tindex& rhs ) const;
+	/**
+	 * Two index triplets are different if... they are not equal
+	 */
+	bool operator!=( const tindex& rhs ) const;
 };
 
 inline std::ostream& operator<<( std::ostream& os, const tindex& p )
@@ -513,5 +517,17 @@ inline std::ostream& operator<<( std::ostream& os, const std::vector<tindex>& p 
 		os << "\t" << p[i] << std::endl;
 	return os;
 }
+
+/**
+ * It checks if the edge e is a boundary edge in the list of triangle. It also 
+ * return the indices of the two opposite vertices of the edge or only one of 
+ * them if it is a boundary edge
+ * @param e the edge to check
+ * @param triangleList the list of triangles
+ * @param oppVert1 the index of the first opposite vertices (the only one if the edge is a boundary edge)
+ * @param oppVert2 the index of the second opposite vertices (only if the edge is not a boundary edge)
+ * @return true if the edge is not a boundary edge
+ */
+bool isBoundaryEdge(const edge &e, const std::vector<tindex> &triangleList, idxtype &oppVert1, idxtype &oppVert2 );
 
 #endif //_CORE_HPP_

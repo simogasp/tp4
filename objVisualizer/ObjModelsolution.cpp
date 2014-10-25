@@ -319,6 +319,9 @@ void ObjModel::loopSubdivision()
 // using running "average"
 void ObjModel::applyLoop( const triangleIndex &t, const std::vector<point3d> &orig, std::vector<size_t> &valence,  std::vector<point3d> &dest ) const
 {
+	// 5/8 V + 3/8 sum(V_i))
+	// in this case since we are summing each face the other vertices are counted
+	// twice, so we use 3/16 instead of 3/8
 	valence[t.v1]++;
 	dest[t.v1] += ( 0.625f*orig[t.v1] + 0.1875f*orig[t.v2] + 0.1875f*orig[t.v3] ) ;
 //	PRINTVAR(valence[t.v1]);

@@ -283,13 +283,13 @@ void ObjModel::loopSubdivision()
 	{
 		applyLoop(_indices[i], _v, valence, tmp );
 	}
-	
+//	PRINTVAR(tmp);
 	for(int i = 0; i < _v.size(); ++i )
 	{
 		assert(valence[i]!=0);
 		_subVert[i] = tmp[i]/valence[i];
 	}
-
+//PRINTVAR(_subVert);
 	//@todo redo the normals.
 	_subNorm.clear();
 	_subNorm = vector<vec3d>( _subVert.size() ) ;
@@ -320,14 +320,14 @@ void ObjModel::loopSubdivision()
 void ObjModel::applyLoop( const triangleIndex &t, const std::vector<point3d> &orig, std::vector<size_t> &valence,  std::vector<point3d> &dest ) const
 {
 	valence[t.v1]++;
-	dest[t.v1] += ( 0.25f*orig[t.v1] + 0.375f*orig[t.v2] + 0.375f*orig[t.v3] ) ;
+	dest[t.v1] += ( 0.625f*orig[t.v1] + 0.1875f*orig[t.v2] + 0.1875f*orig[t.v3] ) ;
 //	PRINTVAR(valence[t.v1]);
 	
 	valence[t.v2]++;
-	dest[t.v2] += ( 0.25f*orig[t.v2] + 0.375f*orig[t.v1] + 0.375f*orig[t.v3] )  ;
+	dest[t.v2] += ( 0.625f*orig[t.v2] + 0.1875f*orig[t.v1] + 0.1875f*orig[t.v3] )  ;
 	
 	valence[t.v3]++;
-	dest[t.v3] += ( 0.25f*orig[t.v3] + 0.375f*orig[t.v2] + 0.375f*orig[t.v1] )  ;
+	dest[t.v3] += ( 0.625f*orig[t.v3] + 0.1875f*orig[t.v2] + 0.1875f*orig[t.v1] )  ;
 }
 
 /**

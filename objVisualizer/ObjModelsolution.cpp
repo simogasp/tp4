@@ -278,6 +278,7 @@ void ObjModel::loopSubdivision()
 	
 	vector<point3d> tmp ( _subVert.size() ) ; // a copy
 	
+	//@todo, here consider only the "old" vertices, hence the for loop has to be limited to _v.size()
 	for(int i = 0; i < _subIdx.size(); ++i )
 	{
 		applyLoop(_subIdx[i], _subVert, valence, tmp );

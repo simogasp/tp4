@@ -108,35 +108,11 @@ int ObjModel::load( char* filename )
 				triangleIndex t;
 				assert( parseFaceString( line, t ) );
 
-				//				// Set first character to ' '. This will allow us to use sscanf
-				//				line[0] = ' ';
-
-				//				// this contains temporary the indices of the vertices
-				//				triangleIndex t;
-
-				//				//**************************************************
-				//				// Read 3 integers from the line:  idx1 idx2 idx3 and store them in the corresponding place in vertexIdx
-				//				// In order to read the 3 integers in one shot from string you can use sscanf
-				//				//**************************************************
-				//				sscanf(line.c_str(),"%hu %hu %hu",								// Read integers from the line:  f 1 2 3
-				//					&t.v1,										// First point of our triangle. This is an
-				//					&t.v2,										// pointer to our vertexBuffer list
-				//					&t.v3 );										// each point represents an X,Y,Z.
-
-
-				//				PRINTVAR(t2);
-				//				PRINTVAR(t);
-
-				//				assert(t2==t);
-
-				//				t=t2;
-
 				//**************************************************
 				// correct the indices: OBJ starts counting from 1, in C the arrays starts at 0...
 				//**************************************************
 				t -= 1;
 
-				//cout << vertexNumber[0] << " " << vertexNumber[1] << " " << vertexNumber[2] << " "  << endl;
 				_indices.push_back( t );
 
 
@@ -150,9 +126,6 @@ int ObjModel::load( char* filename )
 				//*********************************************************************
 				computeNormal( _v[ t.v1], _v[t.v2], _v[t.v3], norm );
 
-				//				PRINTVAR(angleAtVertex(_v[ t.v1], _v[t.v2], _v[t.v3] ));
-				//				PRINTVAR(angleAtVertex(_v[ t.v2], _v[t.v1], _v[t.v3] ));
-				//				PRINTVAR(angleAtVertex(_v[ t.v3], _v[t.v1], _v[t.v2] ));
 				_nv[t.v1] += (vec3d( norm ) * angleAtVertex( _v[ t.v1], _v[t.v2], _v[t.v3] ));
 				_nv[t.v2] += (vec3d( norm ) * angleAtVertex( _v[ t.v2], _v[t.v1], _v[t.v3] ));
 				_nv[t.v3] += (vec3d( norm ) * angleAtVertex( _v[ t.v3], _v[t.v1], _v[t.v2] ));
@@ -201,13 +174,6 @@ float ObjModel::angleAtVertex( const point3d& baseV, const point3d& v1, const po
 {
 	vec3d e1 = baseV - v1;
 	vec3d e2 = baseV - v2;
-	//	PRINTVAR(e1);
-	//	PRINTVAR(e2);
-	//	PRINTVAR(e1.norm());
-	//	PRINTVAR(e2.norm());
-	//	PRINTVAR((e1.norm()*e1.norm()));
-	//	PRINTVAR((e1).dot(e2) / (e1.norm()*e2.norm()));
-	//	PRINTVAR( acos( (e1).dot(e2) / (e1.norm()*e2.norm()) ));
 	//safe acos...
 	if ( fabs( (e1).dot( e2 ) / (e1.norm( ) * e2.norm( )) ) >= 1.0f )
 	{
@@ -241,7 +207,7 @@ void ObjModel::loopSubdivision( const std::vector<point3d> &origVert,			//!< the
 
 	//	PRINTVAR(destVert);
 	//	PRINTVAR(origVert);
-	// create a list of the new vertices creates witht the reference to the edge
+	// create a list of the new vertices creates with the reference to the edge
 	EdgeList newVertices;
 
 	// for each triangle
@@ -304,7 +270,6 @@ void ObjModel::loopSubdivision( const std::vector<point3d> &origVert,			//!< the
 		destVert[i] = tmp[i] / valence[i];
 	}
 	//PRINTVAR(destVert);
-	//@todo redo the normals.
 	destNorm.clear( );
 	destNorm = vector<vec3d>(destVert.size( ));
 
@@ -357,11 +322,8 @@ idxtype ObjModel::getNewVertex( const edge &e,
 	{
 		// generate new index (vertex.size)
 		idxtype idxnew = vertList.size( );
-		//		PRINTVAR(vertList);
-		//		PRINTVAR(idxnew);
 		// add the edge and index to the map
 		newVertList.add( e, idxnew );
-		//		PRINTVAR(newVertList);
 		// generate new vertex
 		point3d nvert;
 		idxtype oppV1;
@@ -384,9 +346,6 @@ idxtype ObjModel::getNewVertex( const edge &e,
 			nvert = (vertList[e.first] + vertList[e.second])*0.5;
 		}
 		// append it to the list of vertices
-		//	cout << "new vertex created " << endl;
-		//	PRINTVAR(nvert);
-		//	PRINTVAR(e);
 		vertList.push_back( nvert );
 		return idxnew;
 

@@ -36,33 +36,33 @@ float v3f::norm() const
  * @param y the delta y of the translation
  * @param z the delta z of the translation
  */
-void v3f::translate( float x, float y, float z )
+void v3f::translate( const float x, const float y, const float z )
 {
     this->x += x;
     this->y += y;
     this->z += z;
 }
 
-void v3f::translate( v3f t )
+void v3f::translate( const v3f t )
 {
     x += t.x;
     y += t.y;
     z += t.z;
 }
 
-void v3f::scale( v3f t )
+void v3f::scale( const v3f t )
 {
     x *= t.x;
     y *= t.y;
     z *= t.z;
 }
 
-void v3f::scale( float x, float y, float z )
+void v3f::scale( const float x, const float y, const float z )
 {
     scale(v3f(x,y,z));
 }
 
-void v3f::scale( float a )
+void v3f::scale( const float a )
 {
     scale(v3f(a,a,a));
 }
@@ -281,8 +281,9 @@ v3f& v3f::operator /=(const float a)
  * Return true if the edge e is contained in the triplet of indices. If it is
  * contained it also return the opposite vertex (ie the index of the vertex not
  * belonging to the edge)
- * @param e the edge to check
- * @param oppositeVertex If the triplet contain the edge, this will be the (index of the) opposite
+ * 
+ * @param[in] e the edge to check
+ * @param[out] oppositeVertex If the triplet contain the edge, this will be the (index of the) opposite
  * vertex wrt the edge in the triangle
  * @return true if the edge is contained (the order of the indices does not matter)
  */
@@ -401,10 +402,11 @@ bool tindex::operator!=( const tindex& r ) const
  * It checks if the edge e is a boundary edge in the list of triangle. It also 
  * return the indices of the two opposite vertices of the edge or only one of 
  * them if it is a boundary edge
- * @param e the edge to check
- * @param triangleList the list of triangles
- * @param oppVert1 the index of the first opposite vertices (the only one if the edge is a boundary edge)
- * @param oppVert2 the index of the second opposite vertices (only if the edge is not a boundary edge)
+ * 
+ * @param[in] e the edge to check
+ * @param[in] triangleList the list of triangles
+ * @param[out] oppVert1 the index of the first opposite vertices (the only one if the edge is a boundary edge)
+ * @param[out] oppVert2 the index of the second opposite vertices (only if the edge is not a boundary edge)
  * @return true if the edge is not a boundary edge
  */
 bool isBoundaryEdge(const edge &e, const std::vector<tindex> &triangleList, idxtype &oppVert1, idxtype &oppVert2 )

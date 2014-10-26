@@ -66,15 +66,12 @@ int ObjModel::load( char* filename )
 			if ( (line.c_str( )[0] == 'v') && (line.c_str( )[1] == ' ') ) // to drop all the vn and vn lines
 			{
 				PRINTVAR( line );
-				// Set first character to ' '. This will allow us to use sscanf
-				line[0] = ' ';
-
 				//**************************************************
 				// Read 3 floats from the line:  X Y Z and store them in the corresponding place in _vertices
 				// In order to read the floats in one shot from string you can use sscanf
 				//**************************************************
 				point3d p;
-				sscanf( line.c_str( ), "%f %f %f ",
+				sscanf( line.c_str( ), "v %f %f %f ",
 					 &p.x,
 					 &p.y,
 					 &p.z );

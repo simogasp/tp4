@@ -218,3 +218,20 @@ void ObjModel::drawSubdivision( )
 	drawWireframe( _subVert, _subIdx, RenderingParameters( ) );
 
 }
+
+// to be removed
+void ObjModel::applyLoop( const triangleIndex &t, const std::vector<point3d> &origVert, std::vector<size_t> &valence, std::vector<point3d> &destVert ) const
+{
+	// 5/8 V + 3/8 sum(V_i))
+	// in this case since we are summing each face the other vertices are counted
+	// twice, so we use 3/16 instead of 3/8
+	valence[t.v1]++;
+	destVert[t.v1] += (0.625f * origVert[t.v1] + 0.1875f * origVert[t.v2] + 0.1875f * origVert[t.v3]);
+	//	PRINTVAR(valence[t.v1]);
+
+	valence[t.v2]++;
+	destVert[t.v2] += (0.625f * origVert[t.v2] + 0.1875f * origVert[t.v1] + 0.1875f * origVert[t.v3]);
+
+	valence[t.v3]++;
+	destVert[t.v3] += (0.625f * origVert[t.v3] + 0.1875f * origVert[t.v2] + 0.1875f * origVert[t.v1]);
+}

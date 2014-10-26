@@ -1,6 +1,9 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 /* 
  * File:   testEdgeList.cpp
- * Author: simone
+ * Author: Simone Gasparini
  *
  * Created on October 25, 2014, 1:26 PM
  */

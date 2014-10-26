@@ -333,22 +333,7 @@ void ObjModel::loopSubdivision( const std::vector<point3d> &origVert,			//!< the
 	//PRINTVAR(newVertices);
 }
 
-// to be removed
-void ObjModel::applyLoop( const triangleIndex &t, const std::vector<point3d> &origVert, std::vector<size_t> &valence, std::vector<point3d> &destVert ) const
-{
-	// 5/8 V + 3/8 sum(V_i))
-	// in this case since we are summing each face the other vertices are counted
-	// twice, so we use 3/16 instead of 3/8
-	valence[t.v1]++;
-	destVert[t.v1] += (0.625f * origVert[t.v1] + 0.1875f * origVert[t.v2] + 0.1875f * origVert[t.v3]);
-	//	PRINTVAR(valence[t.v1]);
 
-	valence[t.v2]++;
-	destVert[t.v2] += (0.625f * origVert[t.v2] + 0.1875f * origVert[t.v1] + 0.1875f * origVert[t.v3]);
-
-	valence[t.v3]++;
-	destVert[t.v3] += (0.625f * origVert[t.v3] + 0.1875f * origVert[t.v2] + 0.1875f * origVert[t.v1]);
-}
 
 /**
  * For a given edge it returns the index of the new vertex created on its middle point. If such vertex already exists it just returns the
@@ -394,7 +379,6 @@ idxtype ObjModel::getNewVertex( const edge &e,
 			// Using the loop coefficient the new vertex is
 			// nvert = 3/8 (V1+V2) + 1/8(oppV1 + oppV2)
 			nvert = 0.375f * (vertList[e.first] + vertList[e.second]) + 0.125f * (vertList[oppV1] + vertList[oppV2]);
-			PRINTVAR( nvert );
 		}
 		else
 		{
@@ -555,23 +539,60 @@ void ObjModel::indexDraw( const vector<point3d> &vertices, const vector<triangle
 */
 void ObjModel::render( const RenderingParameters &params )
 {
-
+	// if we need to draw the original model
 	if ( !params.subdivision )
 	{
+		// draw it
 		draw( _v, _indices, _nv, params );
-		if ( !params.normals )
+		// draw the normals
+		if ( params.normals )
 		{
 			drawNormals( _v, _nv );
 		}
 	}
 	else
 	{
-		if ( _subIdx.empty( ) || _subNorm.empty( ) || _subVert.empty( ) )
+		PRINTVAR(params.subdivLevel);
+		PRINTVAR(_currentSubdivLevel);
+		// before drawing check the current level of subdivision and the required one
+		if ( ( _currentSubdivLevel == 0 ) || ( _currentSubdivLevel != params.subdivLevel ) )
 		{
-			loopSubdivision( _v, _indices, _subVert, _subIdx, _subNorm );
+			// if they are different apply the missing steps: either restart from the beginning
+			// if the required level is less than the current one or apply the missing
+			// steps starting from the current one
+			vector<point3d> tmpVert;		//!< a temporary list of vertices used in the iterations
+			vector<triangleIndex> tmpMesh;	//!< a temporary mesh used in the iterations
+			
+			if(( _currentSubdivLevel == 0 ) || ( _currentSubdivLevel > params.subdivLevel ) )
+			{
+				// start from the beginning
+				_currentSubdivLevel = 0;
+				tmpVert = _v;
+				tmpMesh = _indices;
+			}
+			else
+			{
+				// start from the current level
+				tmpVert = _subVert;
+				tmpMesh = _subIdx;
+			}
+			
+			// apply the proper subdivision iterations
+			for( ; _currentSubdivLevel < params.subdivLevel; ++_currentSubdivLevel)
+			{
+				cerr << "[Loop subdivision] iteration " << _currentSubdivLevel << endl;
+				loopSubdivision( tmpVert, tmpMesh, _subVert, _subIdx, _subNorm );
+				// swap unless it's the last iteration
+				if( _currentSubdivLevel < ( params.subdivLevel - 1) )
+				{
+					tmpVert = _subVert;
+					tmpMesh = _subIdx;
+				}
+			}
 		}
+		
 		draw( _subVert, _subIdx, _subNorm, params );
-		if ( !params.normals )
+		if ( params.normals )
 		{
 			drawNormals( _subVert, _subNorm );
 		}

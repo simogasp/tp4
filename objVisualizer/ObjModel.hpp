@@ -66,12 +66,13 @@ typedef struct BoundingBox
 
 typedef struct RenderingParameters
 {
-	bool wireframe; //!< wireframe on/off
-	bool solid; //!< draw the mesh on/off
-	bool useIndexRendering; //!< use opengl drawElements on/off
-	bool subdivision; //!< subdivision on/off
-	bool smooth; //!< GL_SMOOTH on/off
-	bool normals; //!< show normals on/off
+	bool wireframe;					//!< wireframe on/off
+	bool solid;						//!< draw the mesh on/off
+	bool useIndexRendering;			//!< use opengl drawElements on/off
+	bool subdivision;				//!< subdivision on/off
+	bool smooth;					//!< GL_SMOOTH on/off
+	bool normals;					//!< show normals on/off
+	ushort subdivLevel;				//!< number of subdivision level
 
 	RenderingParameters() :
 	wireframe(true),
@@ -79,7 +80,8 @@ typedef struct RenderingParameters
 	useIndexRendering(false),
 	smooth(false),
 	subdivision(false),
-	normals(true) { }
+	normals(false),
+	subdivLevel(1) { }
 
 } RenderingParameters;
 
@@ -91,15 +93,17 @@ class ObjModel
 private:
 
 	std::vector<triangleIndex> _indices; //!< Stores the vertex indices for the triangles
-	std::vector<point3d> _v; //!< Stores the vertices
-	std::vector<vec3d> _nv; //!< Stores the normals for the triangles
+	std::vector<point3d> _v;			//!< Stores the vertices
+	std::vector<vec3d> _nv;				//!< Stores the normals for the triangles
 
 	// Subdivision
 	std::vector<triangleIndex> _subIdx; //!< Stores the vertex indices for the triangles
-	std::vector<point3d> _subVert; //!< Stores the vertices
-	std::vector<vec3d> _subNorm; //!< Stores the normals for the triangles
+	std::vector<point3d> _subVert;		//!< Stores the vertices
+	std::vector<vec3d> _subNorm;		//!< Stores the normals for the triangles
 
-	BoundingBox _bb; //!< the current bounding box of the model
+	BoundingBox _bb;					//!< the current bounding box of the model
+	
+	ushort _currentSubdivLevel;					//!< the current subdivision level
 
 public:
 	ObjModel();

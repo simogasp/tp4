@@ -173,6 +173,18 @@ inline std::ostream& operator<<( std::ostream& os, const _edgeList& l )
 	return os;
 }
 
+/**
+ * A helper class containing the indices of the new vertices added with the subdivision
+ * coupled with the edge that has generated them. More specifically, it is a list in which
+ * each entry has a key (ie an identifier) and a value: the key is the edge that
+ * generate the vertex, the value is the index of the new vertex.
+ * The key (ie the edge) is unique, ie an edge cannot generate more than one vertex. The
+ * edge is a pair of vertex indices, two edges are the same if they contain the 
+ * same pair of vertices, no matter their order, ie
+ * edge(v1, v2) == edge(v2, v1)
+ * 
+ * @see edge
+ */
 class EdgeList
 {
 public:
@@ -181,8 +193,8 @@ public:
 
 	/**
 	 * Add the edge and the index of the new vertex generated on it
-	 * @param e the edge
-	 * @param idx the index of the new vertex generated on the edge
+	 * @param[in] e the edge
+	 * @param[in] idx the index of the new vertex generated on the edge
 	 */
 	void add( const edge &e, const idxtype &idx )
 	{
@@ -191,8 +203,8 @@ public:
 
 	/**
 	 * Return true if the edge is in the map
-	 * @param e the edge to search for
-	 * @return 
+	 * @param[in] e the edge to search for
+	 * @return true if the edge is in the map
 	 */
 	bool contains( const edge &e ) const
 	{
@@ -204,7 +216,7 @@ public:
 	 * @param e the edge
 	 * @return the index
 	 */
-	idxtype getIndex( edge e )
+	idxtype getIndex( const edge &e )
 	{
 		return (list[e] );
 	}
@@ -274,19 +286,19 @@ struct v3f
 	 * @param[in] y the delta y of the translation
 	 * @param[in] z the delta z of the translation
 	 */
-	void translate( const float x, const float y, const float z );
+	void translate( const float &x, const float &y, const float &z );
 
 	/**
 	 * Translate the vector
 	 * @param[in] t the translation
 	 */
-	void translate( const v3f t );
+	void translate( const v3f &t );
 
 	/**
 	 * Scale each element of the vector by the corresponding value
 	 * @param[in] t a vector containing a factor scale to apply to each element
 	 */
-	void scale( const v3f t );
+	void scale( const v3f &t );
 
 	/**
 	 * Scale each element of the vector by the corresponding value
@@ -294,13 +306,13 @@ struct v3f
 	 * @param y the scale value on y
 	 * @param z the scale value on z
 	 */
-	void scale( const float x, const float y, const float z );
+	void scale( const float &x, const float& y, const float &z );
 
 	/**
 	 * Scale each element of the vector by the same value
 	 * @param a The scalar value to apply to each element
 	 */
-	void scale( const float a );
+	void scale( const float &a );
 
 	/**
 	 * Set each element of the current vector to the minimum value wrt another vector
@@ -348,8 +360,8 @@ struct v3f
 	v3f operator +( const float a[3] ) const;
 	v3f& operator +=( const float a[3] );
 
-	v3f operator +( const float a ) const;
-	v3f& operator +=( const float a );
+	v3f operator +( const float &a ) const;
+	v3f& operator +=( const float &a );
 
 	// element-wise subtraction
 
@@ -359,8 +371,8 @@ struct v3f
 	v3f operator -( const float a[3] ) const;
 	v3f& operator -=( const float a[3] );
 
-	v3f operator -( const float a ) const;
-	v3f& operator -=( const float a );
+	v3f operator -( const float &a ) const;
+	v3f& operator -=( const float &a );
 
 	// element-wise product
 
@@ -370,8 +382,8 @@ struct v3f
 	v3f operator *( const float a[3] ) const;
 	v3f& operator *=( const float a[3] );
 
-	v3f operator *( const float a ) const;
-	v3f& operator *=( const float a );
+	v3f operator *( const float &a ) const;
+	v3f& operator *=( const float &a );
 
 	// element-wise ratio
 
@@ -381,8 +393,8 @@ struct v3f
 	v3f operator /( const float a[3] ) const;
 	v3f& operator /=( const float a[3] );
 
-	v3f operator /( const float a ) const;
-	v3f& operator /=( const float a );
+	v3f operator /( const float &a ) const;
+	v3f& operator /=( const float &a );
 
 };
 
@@ -410,7 +422,7 @@ inline std::ostream& operator<<( std::ostream& os, const std::vector<v3f>& p )
 
 // REFLEXIVE OPERATORS FOR V3F
 
-inline v3f operator +( const float a, const v3f& p )
+inline v3f operator +( const float &a, const v3f& p )
 {
 	return (p + a );
 }
@@ -420,7 +432,7 @@ inline v3f operator +( const float a[3], const v3f& p )
 	return (p + a[3] );
 }
 
-inline v3f operator -( const float a, const v3f& p )
+inline v3f operator -( const float &a, const v3f& p )
 {
 	return (p - a );
 }
@@ -435,7 +447,7 @@ inline v3f operator *( const float a[3], const v3f& p )
 	return (p * a[3] );
 }
 
-inline v3f operator *( const float a, const v3f& p )
+inline v3f operator *( const float &a, const v3f& p )
 {
 	return (p * a );
 }
@@ -445,7 +457,7 @@ inline v3f operator /( const float a[3], const v3f& p )
 	return (p / a[3] );
 }
 
-inline v3f operator /( const float a, const v3f& p )
+inline v3f operator /( const float &a, const v3f& p )
 {
 	return (p / a );
 }
@@ -482,25 +494,25 @@ struct tindex
 	 * vertex wrt the edge in the triangle
 	 * @return true if the edge is contained (the order of the indices does not matter)
 	 */
-	bool containsEdge( const edge e, idxtype &oppositeVertex ) const;
+	bool containsEdge( const edge &e, idxtype &oppositeVertex ) const;
 
 	tindex operator +( const tindex& a ) const;
 	tindex& operator +=( const tindex& a );
 
-	tindex operator +( const idxtype a ) const;
-	tindex& operator +=( const idxtype a );
+	tindex operator +( const idxtype &a ) const;
+	tindex& operator +=( const idxtype &a );
 
 	tindex operator -( const tindex& a ) const;
 	tindex& operator -=( const tindex& a );
 
-	tindex operator -( const idxtype a ) const;
-	tindex& operator -=( const idxtype a );
+	tindex operator -( const idxtype &a ) const;
+	tindex& operator -=( const idxtype &a );
 
 	tindex operator *( const tindex& a ) const;
 	tindex& operator *=( const tindex& a );
 
-	tindex operator *( const idxtype a ) const;
-	tindex& operator *=( const idxtype a );
+	tindex operator *( const idxtype &a ) const;
+	tindex& operator *=( const idxtype &a );
 
 	/**
 	 * Two index triplets are equal if their corresponding elements are equal

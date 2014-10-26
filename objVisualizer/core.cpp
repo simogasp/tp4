@@ -36,33 +36,33 @@ float v3f::norm() const
  * @param y the delta y of the translation
  * @param z the delta z of the translation
  */
-void v3f::translate( const float x, const float y, const float z )
+void v3f::translate( const float &x, const float &y, const float &z )
 {
     this->x += x;
     this->y += y;
     this->z += z;
 }
 
-void v3f::translate( const v3f t )
+void v3f::translate( const v3f &t )
 {
     x += t.x;
     y += t.y;
     z += t.z;
 }
 
-void v3f::scale( const v3f t )
+void v3f::scale( const v3f &t )
 {
     x *= t.x;
     y *= t.y;
     z *= t.z;
 }
 
-void v3f::scale( const float x, const float y, const float z )
+void v3f::scale( const float &x, const float &y, const float &z )
 {
     scale(v3f(x,y,z));
 }
 
-void v3f::scale( const float a )
+void v3f::scale( const float &a )
 {
     scale(v3f(a,a,a));
 }
@@ -141,12 +141,12 @@ v3f& v3f::operator +=(const float a[3])
     return *this;
 }
 
-v3f v3f::operator +(const float a) const
+v3f v3f::operator +(const float &a) const
 {
     return v3f(x + a, y + a, z + a);
 }
 
-v3f& v3f::operator +=(const float a)
+v3f& v3f::operator +=(const float &a)
 {
     x += a;
     y += a;
@@ -182,12 +182,12 @@ v3f& v3f::operator -=(const float a[3])
     return *this;
 }
 
-v3f v3f::operator -(const float a) const
+v3f v3f::operator -(const float &a) const
 {
     return v3f(x - a, y - a, z - a);
 }
 
-v3f& v3f::operator -=(const float a)
+v3f& v3f::operator -=(const float& a)
 {
     x -= a;
     y -= a;
@@ -223,12 +223,12 @@ v3f& v3f::operator *=(const float a[3])
     return *this;
 }
 
-v3f v3f::operator *(const float a) const
+v3f v3f::operator *(const float &a) const
 {
     return v3f(x * a, y * a, z * a);
 }
 
-v3f& v3f::operator *=(const float a)
+v3f& v3f::operator *=(const float &a)
 {
     x *= a;
     y *= a;
@@ -262,11 +262,11 @@ v3f& v3f::operator /=(const float a[3])
     return *this;
 }
 
-v3f v3f::operator /(const float a) const
+v3f v3f::operator /(const float &a) const
 {
 	return v3f(x / a, y / a, z / a);
 }
-v3f& v3f::operator /=(const float a)
+v3f& v3f::operator /=(const float &a)
 {
 	x /= a;
     y /= a;
@@ -287,7 +287,7 @@ v3f& v3f::operator /=(const float a)
  * vertex wrt the edge in the triangle
  * @return true if the edge is contained (the order of the indices does not matter)
  */
-bool tindex::containsEdge(const edge e, idxtype &oppositeVertex) const
+bool tindex::containsEdge(const edge &e, idxtype &oppositeVertex) const
 {
 	if( edge(v1, v2) == e )
 	{
@@ -324,11 +324,11 @@ tindex& tindex::operator +=(const tindex& a)
 	return *this;
 }
 
-tindex tindex::operator +(const idxtype a) const
+tindex tindex::operator +(const idxtype &a) const
 {
 	return tindex(v1 + a, v2 + a, v3 + a);
 }
-tindex& tindex::operator +=(const idxtype a)
+tindex& tindex::operator +=(const idxtype &a)
 {
 	v1 += a;
 	v2 += a;
@@ -349,11 +349,11 @@ tindex& tindex::operator -=(const tindex& a)
 	return *this;
 }
 
-tindex tindex::operator -(const idxtype a) const
+tindex tindex::operator -(const idxtype &a) const
 {
 	return tindex(v1 - a, v2 - a, v3 - a);
 }
-tindex& tindex::operator -=(const idxtype a)
+tindex& tindex::operator -=(const idxtype &a)
 {
 	v1 -= a;
 	v2 -= a;
@@ -374,11 +374,11 @@ tindex& tindex::operator *=(const tindex& a)
 	return *this;
 }
 
-tindex tindex::operator *(const idxtype a) const
+tindex tindex::operator *(const idxtype &a) const
 {
 	return tindex(v1 * a, v2 * a, v3 * a);
 }
-tindex& tindex::operator *=(const idxtype a)
+tindex& tindex::operator *=(const idxtype &a)
 {
 	v1 *= a;
 	v2 *= a;

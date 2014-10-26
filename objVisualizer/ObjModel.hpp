@@ -25,11 +25,12 @@
 
 
 /**
+ * A structure that model the bounding box
  */
 typedef struct BoundingBox
 {
-	point3d pmax;
-	point3d pmin;
+	point3d pmax;	//!<the maximum point of the bounding box
+	point3d pmin;	//!<the minimum point of the bounding box
 
 	BoundingBox() :
 	pmax(point3d()),
@@ -62,10 +63,6 @@ typedef struct BoundingBox
 
 } BoundingBox;
 
-enum obj2render
-{
-	ORIGINAL, SUBDIVISION
-};
 
 typedef struct RenderingParameters
 {
@@ -120,6 +117,7 @@ public:
 	/**
 	 * Computes the angle at vertex baseV formed by the edges connecting it with the
 	 * vertices v1 and v2 respectively, ie the baseV-v1 and baseV-v2 edges
+	 * 
 	 * @brief Computes the angle at vertex
 	 * @param baseV the vertex at which to compute the angle
 	 * @param v1 the other vertex of the first edge baseV-v1
@@ -129,7 +127,7 @@ public:
 	float angleAtVertex(const point3d& v1, const point3d& v2, const point3d& v3) const;
 
 	/**
-	 *  Loads the model from file
+	 *  Loads the model from an OBJ file
 	 * @param filename the OBJ file
 	 * @return 
 	 */

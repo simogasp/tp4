@@ -203,10 +203,12 @@ private:
 	idxtype getNewVertex(const edge &e, std::vector<point3d> &vertList, const std::vector<triangleIndex> &indices, EdgeList &newVertList) const;
 
 	/**
-	 * @brief ObjModel::parseFaceString
-	 * @param toParse
-	 * @param out
-	 * @return
+	 * It parses a line of the OBJ file containing a face and it return the result. 
+	 * NB: it only recover the indices, it discard normal and texture indices
+	 * 
+	 * @param toParse the string to parse in the OBJ format for a face (f v/vt/vn v/vt/vn v/vt/vn) and its variants
+	 * @param out the 3 indices for the face
+	 * @return true if the parse was successful
 	 */
 	bool parseFaceString(const std::string &toParse, triangleIndex &out) const;
 

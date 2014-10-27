@@ -45,7 +45,7 @@ typedef struct
 {
 	int width;
 	int height;
-	char* title;
+	string title;
 
 	float field_of_view_angle;
 	float z_near;
@@ -264,7 +264,7 @@ int main( int argc, char **argv )
 	// set window values
 	win.width = 1024;
 	win.height = 760;
-	win.title = "OpenGL/GLUT OBJ Loader.";
+	win.title = string("OpenGL/GLUT OBJ Loader.");
 	win.field_of_view_angle = 45;
 	win.z_near = 0.25f;
 	win.z_far = 500.0f;
@@ -273,7 +273,7 @@ int main( int argc, char **argv )
 	glutInit( &argc, argv );
 	glutInitDisplayMode( GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH );
 	glutInitWindowSize( win.width, win.height );
-	glutCreateWindow( win.title );
+	glutCreateWindow( win.title.c_str() );
 	glutDisplayFunc( display );
 	glutReshapeFunc( reshape );
 	//	glutIdleFunc( display );									// register Idle Function

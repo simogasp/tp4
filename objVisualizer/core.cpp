@@ -426,4 +426,5 @@ bool isBoundaryEdge(const edge &e, const std::vector<tindex> &triangleList, idxt
 	}
 	// the edge should be in the list, so at least one should be found
 	assert(foundFirst);
+	return(foundFirst && (!foundSecond));
 }

@@ -22,20 +22,7 @@ using namespace std;
 
 ObjModel::ObjModel( ) { }
 
-/**
- * Calculate the normal of a triangular face defined by three points
- *
- * @param[in] v1 the first vertex
- * @param[in] v2 the second vertex
- * @param[in] cv3 the third vertex
- * @param[out] norm the normal
- */
-void ObjModel::computeNormal( const point3d& v1, const point3d& v2, const point3d& v3, vec3d &norm ) const
-{
-	norm = (v1 - v2).cross( v1 - v3 );
 
-	norm.normalize( );
-}
 
 /**
  * @brief 
@@ -54,54 +41,38 @@ int ObjModel::load( char* filename )
 		// Start reading file data
 		while( !objFile.eof( ) )
 		{
-			//**************************************************
 			// Get a line from file
-			//**************************************************
 			getline( objFile, line );
 
-			//**************************************************
-			// If the first character is a 'v'...
-			//**************************************************
-			PRINTVAR( line );
+			// If the first character is a simple 'v'...
+//			PRINTVAR( line );
 			if ( (line.c_str( )[0] == 'v') && (line.c_str( )[1] == ' ') ) // to drop all the vn and vn lines
 			{
-				PRINTVAR( line );
-				//**************************************************
+//				PRINTVAR( line );
 				// Read 3 floats from the line:  X Y Z and store them in the corresponding place in _vertices
-				// In order to read the floats in one shot from string you can use sscanf
-				//**************************************************
 				point3d p;
-				sscanf( line.c_str( ), "v %f %f %f ",
-					 &p.x,
-					 &p.y,
-					 &p.z );
-
-				_v.push_back( p );
-				_nv.push_back( vec3d( ) );
+				sscanf( line.c_str( ), "v %f %f %f ",  &p.x,  &p.y,  &p.z );
 
 				//**************************************************
-				// This is for the 2nd part of the exercise: update the bounding box
-				// For the very first vertex read, initialize the bb accordingly
+				// add the new point to the list of the vertices
 				//**************************************************
-				if ( _v.size( ) == 1 )
+				_vertices.push_back( p );
+				_normals.push_back( vec3d( ) );
+
+				// update the bounding box, if it is the first vertex simply 
+				// set the bb to it
+				if ( _vertices.size( ) == 1 )
 				{
-					//**************************************************
-					// Case of the very first vertex read
-					//**************************************************
 					_bb.set( p );
 				}
 				else
 				{
-					//**************************************************
-					// otherwise check the vertex against the bounding box and in case update it
-					//**************************************************
+					// otherwise add the point
 					_bb.add( p );
 				}
 
 			}
-			//**************************************************
 			// If the first character is a 'f'...
-			//**************************************************
 			if ( line.c_str( )[0] == 'f' )
 			{
 
@@ -113,22 +84,24 @@ int ObjModel::load( char* filename )
 				//**************************************************
 				t -= 1;
 
-				_indices.push_back( t );
-
+				//**************************************************
+				// add it to the mesh
+				//**************************************************
+				_mesh.push_back( t );
 
 				//*********************************************************************
-				//  Calculate the normal of the triangles, it will be the same for each vertex
+				//  Compute the normal of the face
 				//*********************************************************************
 				vec3d norm;
-
+				computeNormal( _vertices[ t.v1], _vertices[t.v2], _vertices[t.v3], norm );
+				
 				//*********************************************************************
-				//  compute the normal for the 3 vertices we just added
+				// Sum the normal of the face to each vertex normal
 				//*********************************************************************
-				computeNormal( _v[ t.v1], _v[t.v2], _v[t.v3], norm );
 
-				_nv[t.v1] += (vec3d( norm ) * angleAtVertex( _v[ t.v1], _v[t.v2], _v[t.v3] ));
-				_nv[t.v2] += (vec3d( norm ) * angleAtVertex( _v[ t.v2], _v[t.v1], _v[t.v3] ));
-				_nv[t.v3] += (vec3d( norm ) * angleAtVertex( _v[ t.v3], _v[t.v1], _v[t.v2] ));
+				_normals[t.v1] += (vec3d( norm ) * angleAtVertex( _vertices[ t.v1], _vertices[t.v2], _vertices[t.v3] ));
+				_normals[t.v2] += (vec3d( norm ) * angleAtVertex( _vertices[ t.v2], _vertices[t.v1], _vertices[t.v3] ));
+				_normals[t.v3] += (vec3d( norm ) * angleAtVertex( _vertices[ t.v3], _vertices[t.v1], _vertices[t.v2] ));
 				//				_nv[t.v1] += ( vec3d(norm) );
 				//				_nv[t.v2] += ( vec3d(norm) );
 				//				_nv[t.v3] += ( vec3d(norm) );
@@ -136,14 +109,16 @@ int ObjModel::load( char* filename )
 			}
 		}
 
-		cerr << "Found :\n\tNumber of triangles (_indices) " << _indices.size( ) << "\n\tNumber of Vertices: " << _v.size( ) << "\n\tNumber of Normals: " << _nv.size( ) << endl;
-		PRINTVAR( _indices );
-		PRINTVAR( _v );
-		PRINTVAR( _nv );
+		cerr << "Found :\n\tNumber of triangles (_indices) " << _mesh.size( ) << "\n\tNumber of Vertices: " << _vertices.size( ) << "\n\tNumber of Normals: " << _normals.size( ) << endl;
+		PRINTVAR( _mesh );
+		PRINTVAR( _vertices );
+		PRINTVAR( _normals );
 
-		// normalize the sum of normals
-		for ( int i = 0; i < _nv.size( ); _nv[i++].normalize( ) );
-		PRINTVAR( _nv );
+		//*********************************************************************
+		// normalize the normals of each vertex
+		//*********************************************************************
+		for ( size_t i = 0; i < _normals.size( ); _normals[i++].normalize( ) );
+		PRINTVAR( _normals );
 
 		// Close OBJ file
 		objFile.close( );
@@ -155,9 +130,128 @@ int ObjModel::load( char* filename )
 	}
 
 
-	cout << "Object loaded with " << _v.size( ) << " vertices and " << _indices.size( ) << " faces" << endl;
+	cout << "Object loaded with " << _vertices.size( ) << " vertices and " << _mesh.size( ) << " faces" << endl;
 	cout << "Bounding box : pmax=" << _bb.pmax << "  pmin=" << _bb.pmin << endl;
 	return 0;
+}
+
+/**
+ * Draw the wireframe of the model
+ * 
+ * @param vertices The list of vertices
+ * @param mesh The mesh as a list of faces, each face is a tripleIndex of vertex indices 
+ * @param params The rendering parameters
+ */
+void ObjModel::drawWireframe( const std::vector<point3d> &vertices, const std::vector<triangleIndex> &mesh, const RenderingParameters &params ) const
+{
+	//**************************************************
+	// we first need to disable the lighting in order to 
+	// draw colored segments
+	//**************************************************
+	glDisable( GL_LIGHTING );
+	
+	// if we are displaying the object with colored faces
+	if ( params.solid )
+	{
+		// use black ticker lines
+		glColor3f( 0, 0, 0 );
+		glLineWidth( 2 );
+	}
+	else
+	{
+		// otherwise use white thinner lines for wireframe only
+		glColor3f( .8, .8, .8 );
+		glLineWidth( .21 );
+	}
+
+	//**************************************************
+	// for each face of the mesh...
+	//**************************************************
+	for ( size_t i = 0; i < mesh.size( ); i++ )
+	{
+		//**************************************************
+		// draw the contour of the face as a  GL_LINE_LOOP
+		//**************************************************
+		glBegin( GL_LINE_LOOP );
+			glVertex3fv( (float*) &vertices[mesh[i].v1] );
+
+			glVertex3fv( (float*) &vertices[mesh[i].v2] );
+
+			glVertex3fv( (float*) &vertices[mesh[i].v3] );
+		glEnd( );
+	}
+	
+	//**************************************************
+	// re-enable the lighting
+	//**************************************************
+	glEnable( GL_LIGHTING );
+}
+
+
+/**
+ * Calculate the normal of a triangular face defined by three points
+ *
+ * @param[in] v1 the first vertex
+ * @param[in] v2 the second vertex
+ * @param[in] v3 the third vertex
+ * @param[out] norm the normal
+ */
+void ObjModel::computeNormal( const point3d& v1, const point3d& v2, const point3d& v3, vec3d &norm ) const
+{
+	//**************************************************
+	// compute the cross product between two edges of the triangular face
+	//**************************************************
+	norm = (v1 - v2).cross( v1 - v3 );
+
+	//**************************************************
+	// remember to normalize the result
+	//**************************************************
+	norm.normalize( );
+}
+
+
+/**
+ * Draw the faces using the computed normal of each face
+ * 
+ * @param vertices The list of vertices
+ * @param mesh The list of face, each face containing the indices of the vertices
+ * @param params The rendering parameters
+ */
+void ObjModel::drawFlatFaces( const std::vector<point3d> &vertices, const std::vector<triangleIndex> &mesh, const RenderingParameters &params ) const
+{
+	// shading model to use
+	if ( params.smooth )
+	{
+		glShadeModel( GL_SMOOTH );
+	}
+	else
+	{
+		glShadeModel( GL_FLAT );
+	}
+
+	//**************************************************
+	// for each face
+	//**************************************************
+	for ( int i = 0; i < mesh.size( ); i++ )
+	{
+		//**************************************************
+		// Compute the normal to the face and then draw the 
+		// faces as GL_TRIANGLES assigning the proper normal
+		//**************************************************
+		glBegin( GL_TRIANGLES );
+			
+			vec3d n; //the normal of the face
+			computeNormal( vertices[mesh[i].v1], vertices[mesh[i].v2], vertices[mesh[i].v3], n );
+			glNormal3fv( (float*) &n );
+
+			glVertex3fv( (float*) &vertices[mesh[i].v1] );
+
+			glVertex3fv( (float*) &vertices[mesh[i].v2] );
+
+			glVertex3fv( (float*) &vertices[mesh[i].v3] );
+
+		glEnd( );
+	}
 }
 
 /**
@@ -187,6 +281,64 @@ float ObjModel::angleAtVertex( const point3d& baseV, const point3d& v1, const po
 }
 
 /**
+ * Draw the model using the vertex indices
+ * 
+ * @param vertices The vertices 
+ * @param indices The list of the faces, each face containing the 3 indices of the vertices
+ * @param vertexNormals The list of normals associated to each vertex
+ * @param params The rendering parameters
+ */
+void ObjModel::drawSmoothFaces( const std::vector<point3d> &vertices, 
+							const std::vector<triangleIndex> &mesh, 
+							std::vector<vec3d> &vertexNormals, 
+							const RenderingParameters &params ) const
+{
+	if ( params.smooth )
+	{
+		glShadeModel( GL_SMOOTH );
+	}
+	else
+	{
+		glShadeModel( GL_FLAT );
+	}
+	//****************************************
+	// Enable vertex arrays
+	//****************************************
+	glEnableClientState( GL_VERTEX_ARRAY );
+
+	//****************************************
+	// Enable normal arrays
+	//****************************************
+	glEnableClientState( GL_NORMAL_ARRAY );
+
+	//****************************************
+	// Normal pointer to normal array
+	//****************************************
+	glNormalPointer( GL_FLOAT, 0, (float*) &vertexNormals[0] );
+
+	//****************************************
+	// Index pointer to normal array
+	//****************************************
+	glVertexPointer( COORD_PER_VERTEX, GL_FLOAT, 0, (float*) &vertices[0] );
+
+	//****************************************
+	// Draw the triangles
+	//****************************************
+	glDrawElements( GL_TRIANGLES, mesh.size( ) * VERTICES_PER_TRIANGLE, GL_UNSIGNED_INT, (idxtype*) & mesh[0] );
+
+	//****************************************
+	// Disable vertex arrays
+	//****************************************
+	glDisableClientState( GL_VERTEX_ARRAY ); 
+
+	//****************************************
+	// Disable normal arrays
+	//****************************************
+	glDisableClientState( GL_NORMAL_ARRAY );
+
+}
+
+/**
  * Compute the subdivision of the input mesh by applying one step of the Loop algorithm
  * 
  * @param[in] origVert The list of the input vertices
@@ -201,29 +353,38 @@ void ObjModel::loopSubdivision( const std::vector<point3d> &origVert,			//!< the
 								std::vector<triangleIndex> &destMesh,			//!< the new mesh
 								std::vector<vec3d> &destNorm ) const			//!< the new normals
 {
-	// copy the data in new arrays
+	// copy the original vertices in destVert
 	destVert = origVert;
+	
+	// start fresh with the new mesh
 	destMesh.clear( );
 
 	//	PRINTVAR(destVert);
 	//	PRINTVAR(origVert);
+	
 	// create a list of the new vertices creates with the reference to the edge
 	EdgeList newVertices;
 
-	// for each triangle
-	for ( int i = 0; i < origMesh.size( ); ++i )
+	//*********************************************************************
+	// for each face
+	//*********************************************************************
+	for ( size_t i = 0; i < origMesh.size( ); ++i )
 	{
+		//*********************************************************************
 		// get the indices of the triangle vertices
+		//*********************************************************************
 		idxtype v1 = origMesh[i].v1;
 		idxtype v2 = origMesh[i].v2;
 		idxtype v3 = origMesh[i].v3;
 
-		// for each edge get the index of the vertex of the midpoint
-		// if it does not exist it will be generated.
+		//*********************************************************************
+		// for each edge get the index of the vertex of the midpoint using getNewVertex
+		//*********************************************************************
 		idxtype a = getNewVertex( edge( v1, v2 ), destVert, origMesh, newVertices );
 		idxtype b = getNewVertex( edge( v2, v3 ), destVert, origMesh, newVertices );
 		idxtype c = getNewVertex( edge( v3, v1 ), destVert, origMesh, newVertices );
 
+		//*********************************************************************
 		// create the four new triangle
 		// BE CAREFULL WITH THE VERTEX ORDER!!
 		//		       v2
@@ -238,6 +399,7 @@ void ObjModel::loopSubdivision( const std::vector<point3d> &origVert,			//!< the
 		//
 		// the original triangle was v1-v2-v3, use the same clock-wise order for the other
 		// hence v1-a-c, a-b-c and so on
+		//*********************************************************************
 
 		destMesh.push_back( triangleIndex( v1, a, c ) );
 		destMesh.push_back( triangleIndex( a, b, c ) );
@@ -245,14 +407,36 @@ void ObjModel::loopSubdivision( const std::vector<point3d> &origVert,			//!< the
 		destMesh.push_back( triangleIndex( c, b, v3 ) );
 	}
 
-	// if initialize at 0 need to update the count before applying loop
+	//*********************************************************************
+	// Update each "old" vertex using the Loop coefficients. A smart way to do
+	// so is to think in terms of faces than the single vertex: for each face
+	// we update each of the 3 vertices using the Loop formula wrt the other 2 and 
+	// sum it to a temporary copy tmp of the vertices (which is initialized to 
+	// [0 0 0] at the beginning). We also keep a record of the valence of each vertex.
+	// At then end, to get the final vertices we just need to divide each vertex 
+	// in tmp by its valence
+	//*********************************************************************
+	
+	// A list containing the valence of each vertex
 	vector<size_t> valence( destVert.size( ), 0 );
 
-	vector<point3d> tmp( destVert.size( ) ); // a copy
+	// A list of the same size as destVert with all the elements initialized to [0 0 0]
+	vector<point3d> tmp( destVert.size( ) );
 
-	for ( int i = 0; i < origMesh.size( ); ++i )
+	//*********************************************************************
+	// for each face
+	//*********************************************************************
+	for ( size_t i = 0; i < origMesh.size( ); ++i )
 	{
 		triangleIndex t = origMesh[i];
+		
+		//*********************************************************************
+		// consider each of the 3 vertices:
+		// 1) increment its valence
+		// 2) apply Loop update wrt the other 2 vertices of the face
+		// BE CAREFULL WITH THE COEFFICIENT OF THE OTHER 2 VERTICES!... consider 
+		// how many times each vertex is summed...
+		//*********************************************************************
 		
 		valence[t.v1]++;
 		tmp[t.v1] += (0.625f * origVert[t.v1] + 0.1875f * origVert[t.v2] + 0.1875f * origVert[t.v3]);
@@ -264,38 +448,46 @@ void ObjModel::loopSubdivision( const std::vector<point3d> &origVert,			//!< the
 		tmp[t.v3] += (0.625f * origVert[t.v3] + 0.1875f * origVert[t.v2] + 0.1875f * origVert[t.v1]);
 	}
 
-	for ( int i = 0; i < origVert.size( ); ++i )
+	//*********************************************************************
+	//  To obtain the new vertices, divide each vertex by its valence
+	//*********************************************************************
+	for ( size_t i = 0; i < origVert.size( ); ++i )
 	{
 		assert( valence[i] != 0 );
 		destVert[i] = tmp[i] / valence[i];
 	}
 	//PRINTVAR(destVert);
+	
+	// redo the normals, reset and create a list of normals of the same size as
+	// the vertices, each normal set to [0 0 0]
 	destNorm.clear( );
 	destNorm = vector<vec3d>(destVert.size( ));
 
-	//for each face
-	for ( int i = 0; i < destMesh.size( ); ++i )
+	//*********************************************************************
+	//  Recompute the normals for each face
+	//*********************************************************************
+	for ( size_t i = 0; i < destMesh.size( ); ++i )
 	{
 		//*********************************************************************
 		//  Calculate the normal of the triangles, it will be the same for each vertex
 		//*********************************************************************
 		vec3d norm;
-
-		//*********************************************************************
-		//  compute the normal for the 3 vertices we just added
-		//*********************************************************************
 		computeNormal( destVert[ destMesh[i].v1], destVert[destMesh[i].v2], destVert[destMesh[i].v3], norm );
-
-		destNorm[destMesh[i].v1] += (vec3d( norm ));
-		destNorm[destMesh[i].v2] += (vec3d( norm ));
-		destNorm[destMesh[i].v3] += (vec3d( norm ));
+		
+		//*********************************************************************
+		// Sum the normal of the face to each vertex normal
+		//*********************************************************************
+		destNorm[destMesh[i].v1] += (vec3d( norm ) * angleAtVertex( destVert[ destMesh[i].v1], destVert[destMesh[i].v2], destVert[destMesh[i].v3] ));
+		destNorm[destMesh[i].v2] += (vec3d( norm ) * angleAtVertex( destVert[ destMesh[i].v2], destVert[destMesh[i].v3], destVert[destMesh[i].v1] ));
+		destNorm[destMesh[i].v3] += (vec3d( norm ) * angleAtVertex( destVert[ destMesh[i].v3], destVert[destMesh[i].v1], destVert[destMesh[i].v2] ));
 
 	}
-	for ( int i = 0; i < destNorm.size( ); destNorm[i++].normalize( ) );
+	//*********************************************************************
+	// normalize the normals of each vertex
+	//*********************************************************************
+	for ( size_t i = 0; i < destNorm.size( ); destNorm[i++].normalize( ) );
 	//PRINTVAR(newVertices);
 }
-
-
 
 /**
  * For a given edge it returns the index of the new vertex created on its middle point. If such vertex already exists it just returns the
@@ -317,13 +509,22 @@ idxtype ObjModel::getNewVertex( const edge &e,
 {
 	//	PRINTVAR(e);
 	//	PRINTVAR(newVertList);
-	// if the egde is not contained in the new vertex list
+	
+	//*********************************************************************
+	// if the egde is not contained in the new vertex list (see EdgeList.contains() method)
+	//*********************************************************************
 	if ( !newVertList.contains( e ) )
 	{
+		//*********************************************************************
 		// generate new index (vertex.size)
+		//*********************************************************************
 		idxtype idxnew = vertList.size( );
-		// add the edge and index to the map
+		
+		//*********************************************************************
+		// add the edge and index to the newVertList
 		newVertList.add( e, idxnew );
+		//*********************************************************************
+		
 		// generate new vertex
 		point3d nvert;
 		idxtype oppV1;
@@ -333,88 +534,41 @@ idxtype ObjModel::getNewVertex( const edge &e,
 		// if it is not a boundary
 		if ( !isBoundaryEdge( e, indices, oppV1, oppV2 ) )
 		{
+			//*********************************************************************
 			// the new vertex is the linear combination of the two extrema of 
-			//the edge V1 and V2 and the two opposite vertices oppV1 and oppV2
+			// the edge V1 and V2 and the two opposite vertices oppV1 and oppV2
 			// Using the loop coefficient the new vertex is
 			// nvert = 3/8 (V1+V2) + 1/8(oppV1 + oppV2)
-			nvert = 0.375f * (vertList[e.first] + vertList[e.second]) + 0.125f * (vertList[oppV1] + vertList[oppV2]);
+			//
+			// REMEMBER THAT IN THE CODE OPPV1 AND OPPV2 ARE INDICES, NOT VERTICES!!!
+			//*********************************************************************
+			
+			nvert = 0.375f * ( vertList[e.first] + vertList[e.second] ) + 0.125f * (vertList[oppV1] + vertList[oppV2]);
 		}
 		else
 		{
 			// otherwise it is a boundary edge then the vertex is the linear combination of the 
 			// two extrema
-			nvert = (vertList[e.first] + vertList[e.second])*0.5;
+			nvert = 0.5 * (vertList[e.first] + vertList[e.second]);
 		}
+		//*********************************************************************
 		// append it to the list of vertices
+		//*********************************************************************
 		vertList.push_back( nvert );
+		
 		return idxnew;
 
 	}
 	// else
 	{
-		// get the index of the vertex
+		//*********************************************************************
+		// get and return the index of the vertex
+		//*********************************************************************
 		return ( newVertList.getIndex( e ));
 	}
 }
 
 
-
-void ObjModel::drawWireframe( const vector<point3d> &vertices, const vector<triangleIndex> &indices, const RenderingParameters &params ) const
-{
-	glDisable( GL_LIGHTING );
-	if ( params.solid )
-	{
-		glColor3f( 0, 0, 0 );
-		glLineWidth( 2 );
-	}
-	else
-	{
-		glColor3f( .8, .8, .8 );
-		glLineWidth( .21 );
-	}
-
-	for ( int i = 0; i < indices.size( ); i++ )
-	{
-		glBegin( GL_LINE_LOOP );
-		glVertex3fv( (float*) &vertices[indices[i].v1] );
-
-		glVertex3fv( (float*) &vertices[indices[i].v2] );
-
-		glVertex3fv( (float*) &vertices[indices[i].v3] );
-		glEnd( );
-	}
-	glEnable( GL_LIGHTING );
-}
-
-void ObjModel::flatDraw( const vector<point3d> &vertices, const vector<triangleIndex> &indices, const RenderingParameters &params ) const
-{
-	if ( params.smooth )
-	{
-		glShadeModel( GL_SMOOTH );
-	}
-	else
-	{
-		glShadeModel( GL_FLAT );
-	}
-
-	// for each triangle draw the vertices and the normals
-	for ( int i = 0; i < indices.size( ); i++ )
-	{
-		glBegin( GL_TRIANGLES );
-		//compute the normal of the triangle
-		vec3d n;
-		computeNormal( vertices[indices[i].v1], vertices[indices[i].v2], vertices[indices[i].v3], n );
-		glNormal3fv( (float*) &n );
-
-		glVertex3fv( (float*) &vertices[indices[i].v1] );
-
-		glVertex3fv( (float*) &vertices[indices[i].v2] );
-
-		glVertex3fv( (float*) &vertices[indices[i].v3] );
-
-		glEnd( );
-	}
-}
 
 void ObjModel::drawNormals( const std::vector<point3d> &vertices, std::vector<vec3d> &vertexNormals ) const
 {
@@ -437,57 +591,7 @@ void ObjModel::drawNormals( const std::vector<point3d> &vertices, std::vector<ve
 	glEnable( GL_LIGHTING );
 }
 
-void ObjModel::indexDraw( const vector<point3d> &vertices, const vector<triangleIndex> &indices, vector<vec3d> &vertexNormals, const RenderingParameters &params ) const
-{
-	if ( params.smooth )
-	{
-		glShadeModel( GL_SMOOTH );
-	}
-	else
-	{
-		glShadeModel( GL_FLAT );
-	}
-	//****************************************
-	// Enable vertex arrays
-	//****************************************
-	glEnableClientState( GL_VERTEX_ARRAY );
 
-	//****************************************
-	// Enable normal arrays
-	//****************************************
-	glEnableClientState( GL_NORMAL_ARRAY );
-
-	//****************************************
-	// Vertex Pointer to triangle array
-	//****************************************
-	glEnableClientState( GL_VERTEX_ARRAY );
-
-	//****************************************
-	// Normal pointer to normal array
-	//****************************************
-	glNormalPointer( GL_FLOAT, 0, (float*) &vertexNormals[0] );
-
-	//****************************************
-	// Index pointer to normal array
-	//****************************************
-	glVertexPointer( COORD_PER_VERTEX, GL_FLOAT, 0, (float*) &vertices[0] );
-
-	//****************************************
-	// Draw the triangles
-	//****************************************
-	glDrawElements( GL_TRIANGLES, indices.size( ) * VERTICES_PER_TRIANGLE, GL_UNSIGNED_INT, (idxtype*) & indices[0] );
-
-	//****************************************
-	// Disable vertex arrays
-	//****************************************
-	glDisableClientState( GL_VERTEX_ARRAY ); // disable vertex arrays
-
-	//****************************************
-	// Disable normal arrays
-	//****************************************
-	glDisableClientState( GL_NORMAL_ARRAY );
-
-}
 
 /**
 * Render the model according to the provided parameters
@@ -499,11 +603,11 @@ void ObjModel::render( const RenderingParameters &params )
 	if ( !params.subdivision )
 	{
 		// draw it
-		draw( _v, _indices, _nv, params );
+		draw( _vertices, _mesh, _normals, params );
 		// draw the normals
 		if ( params.normals )
 		{
-			drawNormals( _v, _nv );
+			drawNormals( _vertices, _normals );
 		}
 	}
 	else
@@ -523,31 +627,31 @@ void ObjModel::render( const RenderingParameters &params )
 			{
 				// start from the beginning
 				_currentSubdivLevel = 0;
-				tmpVert = _v;
-				tmpMesh = _indices;
+				tmpVert = _vertices;
+				tmpMesh = _mesh;
 			}
 			else
 			{
 				// start from the current level
 				tmpVert = _subVert;
-				tmpMesh = _subIdx;
+				tmpMesh = _subMesh;
 			}
 			
 			// apply the proper subdivision iterations
 			for( ; _currentSubdivLevel < params.subdivLevel; ++_currentSubdivLevel)
 			{
 				cerr << "[Loop subdivision] iteration " << _currentSubdivLevel << endl;
-				loopSubdivision( tmpVert, tmpMesh, _subVert, _subIdx, _subNorm );
+				loopSubdivision( tmpVert, tmpMesh, _subVert, _subMesh, _subNorm );
 				// swap unless it's the last iteration
 				if( _currentSubdivLevel < ( params.subdivLevel - 1) )
 				{
 					tmpVert = _subVert;
-					tmpMesh = _subIdx;
+					tmpMesh = _subMesh;
 				}
 			}
 		}
 		
-		draw( _subVert, _subIdx, _subNorm, params );
+		draw( _subVert, _subMesh, _subNorm, params );
 		if ( params.normals )
 		{
 			drawNormals( _subVert, _subNorm );
@@ -572,11 +676,11 @@ void ObjModel::drawSolid( const vector<point3d> &vertices, const vector<triangle
 {
 	if ( params.useIndexRendering )
 	{
-		indexDraw( vertices, indices, vertexNormals, params );
+		drawSmoothFaces( vertices, indices, vertexNormals, params );
 	}
 	else
 	{
-		flatDraw( vertices, indices, params );
+		drawFlatFaces( vertices, indices, params );
 	}
 }
 

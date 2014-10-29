@@ -6,7 +6,7 @@
  */
 float ObjModel::unitizeModel( )
 {
-	if ( !_v.empty( ) && !_indices.empty( ) )
+	if ( !_vertices.empty( ) && !_mesh.empty( ) )
 	{
 		//****************************************
 		// calculate model width, height, and 
@@ -32,17 +32,17 @@ float ObjModel::unitizeModel( )
 		cout << "scale: " << scale << " cx " << c.x << " cy " << c.y << " cz " << c.z << endl;
 
 		// translate each vertex wrt to the center and then apply the scaling to the coordinate
-		for ( int i = 0; i < _v.size( ); i++ )
+		for ( int i = 0; i < _vertices.size( ); i++ )
 		{
 			//****************************************
 			// translate the vertex
 			//****************************************
-			_v[i].translate( -c.x, -c.y, -c.z );
+			_vertices[i].translate( -c.x, -c.y, -c.z );
 
 			//****************************************
 			// apply the scaling
 			//****************************************
-			_v[i].scale( scale );
+			_vertices[i].scale( scale );
 
 		}
 
@@ -120,19 +120,19 @@ void ObjModel::flatDraw( ) const
 	glShadeModel( GL_SMOOTH );
 
 	// for each triangle draw the vertices and the normals
-	for ( int i = 0; i < _indices.size( ); i++ )
+	for ( int i = 0; i < _mesh.size( ); i++ )
 	{
 		glBegin( GL_TRIANGLES );
 		//compute the normal of the triangle
 		vec3d n;
-		computeNormal( _v[_indices[i].v1], _v[(int) _indices[i].v2], _v[(int) _indices[i].v3], n );
+		computeNormal( _vertices[_mesh[i].v1], _vertices[(int) _mesh[i].v2], _vertices[(int) _mesh[i].v3], n );
 		glNormal3fv( (float*) &n );
 
-		glVertex3fv( (float*) &_v[_indices[i].v1] );
+		glVertex3fv( (float*) &_vertices[_mesh[i].v1] );
 
-		glVertex3fv( (float*) &_v[_indices[i].v2] );
+		glVertex3fv( (float*) &_vertices[_mesh[i].v2] );
 
-		glVertex3fv( (float*) &_v[_indices[i].v3] );
+		glVertex3fv( (float*) &_vertices[_mesh[i].v3] );
 
 		glEnd( );
 	}
@@ -144,7 +144,7 @@ void ObjModel::flatDraw( ) const
 void ObjModel::drawWireframe( ) const
 {
 
-	drawWireframe( _v, _indices, RenderingParameters( ) );
+	drawWireframe( _vertices, _mesh, RenderingParameters( ) );
 
 }
 
@@ -171,17 +171,17 @@ void ObjModel::indexDraw( ) const
 	//****************************************
 	// Normal pointer to normal array
 	//****************************************
-	glNormalPointer( GL_FLOAT, 0, (float*) &_nv[0] );
+	glNormalPointer( GL_FLOAT, 0, (float*) &_normals[0] );
 
 	//****************************************
 	// Index pointer to normal array
 	//****************************************
-	glVertexPointer( COORD_PER_VERTEX, GL_FLOAT, 0, (float*) &_v[0] );
+	glVertexPointer( COORD_PER_VERTEX, GL_FLOAT, 0, (float*) &_vertices[0] );
 
 	//****************************************
 	// Draw the triangles
 	//****************************************
-	glDrawElements( GL_TRIANGLES, _indices.size( ) * VERTICES_PER_TRIANGLE, GL_UNSIGNED_INT, (idxtype*) & _indices[0] );
+	glDrawElements( GL_TRIANGLES, _mesh.size( ) * VERTICES_PER_TRIANGLE, GL_UNSIGNED_INT, (idxtype*) & _mesh[0] );
 
 	//****************************************
 	// Disable vertex arrays
@@ -198,9 +198,9 @@ void ObjModel::indexDraw( ) const
 
 void ObjModel::drawSubdivision( )
 {
-	if ( _subIdx.empty( ) || _subNorm.empty( ) || _subVert.empty( ) )
+	if ( _subMesh.empty( ) || _subNorm.empty( ) || _subVert.empty( ) )
 	{
-		loopSubdivision( _v, _indices, _subVert, _subIdx, _subNorm );
+		loopSubdivision( _vertices, _mesh, _subVert, _subMesh, _subNorm );
 	}
 
 	glShadeModel( GL_SMOOTH );
@@ -211,13 +211,13 @@ void ObjModel::drawSubdivision( )
 	glNormalPointer( GL_FLOAT, 0, (float*) &_subNorm[0] );
 	glVertexPointer( COORD_PER_VERTEX, GL_FLOAT, 0, (float*) &_subVert[0] );
 
-	glDrawElements( GL_TRIANGLES, _subIdx.size( ) * VERTICES_PER_TRIANGLE, GL_UNSIGNED_SHORT, (idxtype*) & _subIdx[0] );
+	glDrawElements( GL_TRIANGLES, _subMesh.size( ) * VERTICES_PER_TRIANGLE, GL_UNSIGNED_SHORT, (idxtype*) & _subMesh[0] );
 
 
 	glDisableClientState( GL_VERTEX_ARRAY ); // disable vertex arrays
 	glDisableClientState( GL_NORMAL_ARRAY );
 
-	drawWireframe( _subVert, _subIdx, RenderingParameters( ) );
+	drawWireframe( _subVert, _subMesh, RenderingParameters( ) );
 
 }
 

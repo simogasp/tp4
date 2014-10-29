@@ -465,7 +465,7 @@ inline v3f operator /( const float &a, const v3f& p )
 /**
  * A triplet of indices
  */
-struct tindex
+struct face
 {
 	idxtype v1; //!< the first index
 	idxtype v2; //!< the second index
@@ -474,7 +474,7 @@ struct tindex
 	/**
 	 * Default constructor, everything set to 0
 	 */
-	tindex( ) : v1( 0 ), v2( 0 ), v3( 0 ) { }
+	face( ) : v1( 0 ), v2( 0 ), v3( 0 ) { }
 
 	/**
 	 * Constructor from indices
@@ -482,7 +482,7 @@ struct tindex
 	 * @param v2 the second index
 	 * @param v3 the third index
 	 */
-	tindex( idxtype v1, idxtype v2, idxtype v3 ) : v1( v1 ), v2( v2 ), v3( v3 ) { }
+	face( idxtype v1, idxtype v2, idxtype v3 ) : v1( v1 ), v2( v2 ), v3( v3 ) { }
 
 	/**
 	 * Return true if the edge e is contained in the triplet of indices. If it is
@@ -496,42 +496,41 @@ struct tindex
 	 */
 	bool containsEdge( const edge &e, idxtype &oppositeVertex ) const;
 
-	tindex operator +( const tindex& a ) const;
-	tindex& operator +=( const tindex& a );
+	face operator +( const face& a ) const;
+	face& operator +=( const face& a );
 
-	tindex operator +( const idxtype &a ) const;
-	tindex& operator +=( const idxtype &a );
+	face operator +( const idxtype &a ) const;
+	face& operator +=( const idxtype &a );
 
-	tindex operator -( const tindex& a ) const;
-	tindex& operator -=( const tindex& a );
+	face operator -( const face& a ) const;
+	face& operator -=( const face& a );
 
-	tindex operator -( const idxtype &a ) const;
-	tindex& operator -=( const idxtype &a );
+	face operator -( const idxtype &a ) const;
+	face& operator -=( const idxtype &a );
 
-	tindex operator *( const tindex& a ) const;
-	tindex& operator *=( const tindex& a );
+	face operator *( const face& a ) const;
+	face& operator *=( const face& a );
 
-	tindex operator *( const idxtype &a ) const;
-	tindex& operator *=( const idxtype &a );
+	face operator *( const idxtype &a ) const;
+	face& operator *=( const idxtype &a );
 
 	/**
 	 * Two index triplets are equal if their corresponding elements are equal
 	 */
-	bool operator==( const tindex& rhs ) const;
+	bool operator==( const face& rhs ) const;
 	/**
 	 * Two index triplets are different if... they are not equal
 	 */
-	bool operator!=( const tindex& rhs ) const;
+	bool operator!=( const face& rhs ) const;
 };
 
-typedef struct tindex triangleIndex;
 
-inline std::ostream& operator<<( std::ostream& os, const tindex& p )
+inline std::ostream& operator<<( std::ostream& os, const face& p )
 {
 	return os << "[" << p.v1 << "," << p.v2 << "," << p.v3 << "]";
 }
 
-inline std::ostream& operator<<( std::ostream& os, const std::vector<tindex>& p )
+inline std::ostream& operator<<( std::ostream& os, const std::vector<face>& p )
 {
 	os << std::endl;
 	for ( int i = 0; i < p.size( ); ++i )
@@ -550,6 +549,6 @@ inline std::ostream& operator<<( std::ostream& os, const std::vector<tindex>& p 
  * @param[out] oppVert2 the index of the second opposite vertices (only if the edge is not a boundary edge)
  * @return true if the edge is not a boundary edge
  */
-bool isBoundaryEdge( const edge &e, const std::vector<tindex> &triangleList, idxtype &oppVert1, idxtype &oppVert2 );
+bool isBoundaryEdge( const edge &e, const std::vector<face> &triangleList, idxtype &oppVert1, idxtype &oppVert2 );
 
 #endif //_CORE_HPP_

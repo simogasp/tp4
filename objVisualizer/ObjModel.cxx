@@ -73,7 +73,7 @@ void ObjModel::release( ) { }
  * @param out the 3 indices for the face
  * @return true if the parse was successful
  */
-bool ObjModel::parseFaceString( const string &toParse, triangleIndex &out ) const
+bool ObjModel::parseFaceString( const string &toParse, face &out ) const
 {
 	if ( toParse.c_str( )[0] == 'f' )
 	{
@@ -222,7 +222,7 @@ void ObjModel::drawSubdivision( )
 }
 
 // to be removed
-void ObjModel::applyLoop( const triangleIndex &t, const std::vector<point3d> &origVert, std::vector<size_t> &valence, std::vector<point3d> &destVert ) const
+void ObjModel::applyLoop( const face &t, const std::vector<point3d> &origVert, std::vector<size_t> &valence, std::vector<point3d> &destVert ) const
 {
 	// 5/8 V + 3/8 sum(V_i))
 	// in this case since we are summing each face the other vertices are counted

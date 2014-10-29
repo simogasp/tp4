@@ -76,7 +76,7 @@ int ObjModel::load( char* filename )
 			if ( line.c_str( )[0] == 'f' )
 			{
 
-				triangleIndex t;
+				face t;
 				assert( parseFaceString( line, t ) );
 
 				//**************************************************
@@ -142,7 +142,7 @@ int ObjModel::load( char* filename )
  * @param mesh The mesh as a list of faces, each face is a tripleIndex of vertex indices 
  * @param params The rendering parameters
  */
-void ObjModel::drawWireframe( const std::vector<point3d> &vertices, const std::vector<triangleIndex> &mesh, const RenderingParameters &params ) const
+void ObjModel::drawWireframe( const std::vector<point3d> &vertices, const std::vector<face> &mesh, const RenderingParameters &params ) const
 {
 	//**************************************************
 	// we first need to disable the lighting in order to 
@@ -217,7 +217,7 @@ void ObjModel::computeNormal( const point3d& v1, const point3d& v2, const point3
  * @param mesh The list of face, each face containing the indices of the vertices
  * @param params The rendering parameters
  */
-void ObjModel::drawFlatFaces( const std::vector<point3d> &vertices, const std::vector<triangleIndex> &mesh, const RenderingParameters &params ) const
+void ObjModel::drawFlatFaces( const std::vector<point3d> &vertices, const std::vector<face> &mesh, const RenderingParameters &params ) const
 {
 	// shading model to use
 	if ( params.smooth )
@@ -289,7 +289,7 @@ float ObjModel::angleAtVertex( const point3d& baseV, const point3d& v1, const po
  * @param params The rendering parameters
  */
 void ObjModel::drawSmoothFaces( const std::vector<point3d> &vertices, 
-							const std::vector<triangleIndex> &mesh, 
+							const std::vector<face> &mesh, 
 							std::vector<vec3d> &vertexNormals, 
 							const RenderingParameters &params ) const
 {
@@ -348,9 +348,9 @@ void ObjModel::drawSmoothFaces( const std::vector<point3d> &vertices,
  * @param[out] destNorm The new list of normals for each new vertex of the subdivided mesh
  */
 void ObjModel::loopSubdivision( const std::vector<point3d> &origVert,			//!< the original vertices
-								const std::vector<triangleIndex> &origMesh,		//!< the original mesh
+								const std::vector<face> &origMesh,		//!< the original mesh
 								std::vector<point3d> &destVert,					//!< the new vertices
-								std::vector<triangleIndex> &destMesh,			//!< the new mesh
+								std::vector<face> &destMesh,			//!< the new mesh
 								std::vector<vec3d> &destNorm ) const			//!< the new normals
 {
 	// copy the original vertices in destVert
@@ -401,10 +401,10 @@ void ObjModel::loopSubdivision( const std::vector<point3d> &origVert,			//!< the
 		// hence v1-a-c, a-b-c and so on
 		//*********************************************************************
 
-		destMesh.push_back( triangleIndex( v1, a, c ) );
-		destMesh.push_back( triangleIndex( a, b, c ) );
-		destMesh.push_back( triangleIndex( a, v2, b ) );
-		destMesh.push_back( triangleIndex( c, b, v3 ) );
+		destMesh.push_back( face( v1, a, c ) );
+		destMesh.push_back( face( a, b, c ) );
+		destMesh.push_back( face( a, v2, b ) );
+		destMesh.push_back( face( c, b, v3 ) );
 	}
 
 	//*********************************************************************
@@ -428,7 +428,7 @@ void ObjModel::loopSubdivision( const std::vector<point3d> &origVert,			//!< the
 	//*********************************************************************
 	for ( size_t i = 0; i < origMesh.size( ); ++i )
 	{
-		triangleIndex t = origMesh[i];
+		face t = origMesh[i];
 		
 		//*********************************************************************
 		// consider each of the 3 vertices:
@@ -490,28 +490,27 @@ void ObjModel::loopSubdivision( const std::vector<point3d> &origVert,			//!< the
 }
 
 /**
- * For a given edge it returns the index of the new vertex created on its middle point. If such vertex already exists it just returns the
- * its index; if it does not exist it creates it in vertList along it's normal and return the index
+ * For a given edge it returns the index of the new vertex created on its middle point. 
+ * If such vertex already exists it just returns the its index; if it does not exist 
+ * it creates it in vertList along it's normal and return the index
  * 
- * @param e the edge
- * @param currFace the current triangle containing the edge e
- * @param vertList the list of vertices
- * @param indices the list of triangles
- * @param normList the list of normals associated to the vertices
- * @param newVertList The list of the new vertices added so far
- * @return the index of the new vertex
+ * @param[in] e the edge
+ * @param[in,out] vertList the list of vertices
+ * @param[in] mesh the list of triangles
+ * @param[in,out] newVertList The list of the new vertices added so far
+ * @return the index of the new vertex or the one that has been already created for that edge
  * @see EdgeList
  */
 idxtype ObjModel::getNewVertex( const edge &e,
 								std::vector<point3d> &vertList,
-								const std::vector<triangleIndex> &indices,
+								const std::vector<face> &mesh,
 								EdgeList &newVertList ) const
 {
 	//	PRINTVAR(e);
 	//	PRINTVAR(newVertList);
 	
 	//*********************************************************************
-	// if the egde is not contained in the new vertex list (see EdgeList.contains() method)
+	// if the egde is NOT contained in the new vertex list (see EdgeList.contains() method)
 	//*********************************************************************
 	if ( !newVertList.contains( e ) )
 	{
@@ -526,14 +525,18 @@ idxtype ObjModel::getNewVertex( const edge &e,
 		//*********************************************************************
 		
 		// generate new vertex
-		point3d nvert;
-		idxtype oppV1;
-		idxtype oppV2;
+		point3d nvert;		//!< this will contain the new vertex
+		idxtype oppV1;		//!< the index of the first "opposite" vertex
+		idxtype oppV2;		//!< the index of the second "opposite" vertex (if it exists)
+		
+		//*********************************************************************
 		// check if it is a boundary edge, ie check if there is another triangle 
 		// sharing this edge and if so get the index of its "opposite" vertex
-		// if it is not a boundary
-		if ( !isBoundaryEdge( e, indices, oppV1, oppV2 ) )
+		//*********************************************************************
+		if ( !isBoundaryEdge( e, mesh, oppV1, oppV2 ) )
 		{
+			// if it is not a boundary edge create the new vertex
+			
 			//*********************************************************************
 			// the new vertex is the linear combination of the two extrema of 
 			// the edge V1 and V2 and the two opposite vertices oppV1 and oppV2
@@ -547,19 +550,25 @@ idxtype ObjModel::getNewVertex( const edge &e,
 		}
 		else
 		{
+			//*********************************************************************
 			// otherwise it is a boundary edge then the vertex is the linear combination of the 
 			// two extrema
+			//*********************************************************************
 			nvert = 0.5 * (vertList[e.first] + vertList[e.second]);
 		}
 		//*********************************************************************
-		// append it to the list of vertices
+		// append the new vertex to the list of vertices
 		//*********************************************************************
 		vertList.push_back( nvert );
 		
+		//*********************************************************************
+		// return the index of the new vertex
+		//*********************************************************************
 		return idxnew;
 
 	}
-	// else
+	// else we don't need to do anything, just return the associated index of the 
+	// already existing vertex
 	{
 		//*********************************************************************
 		// get and return the index of the vertex
@@ -621,7 +630,7 @@ void ObjModel::render( const RenderingParameters &params )
 			// if the required level is less than the current one or apply the missing
 			// steps starting from the current one
 			vector<point3d> tmpVert;		//!< a temporary list of vertices used in the iterations
-			vector<triangleIndex> tmpMesh;	//!< a temporary mesh used in the iterations
+			vector<face> tmpMesh;	//!< a temporary mesh used in the iterations
 			
 			if(( _currentSubdivLevel == 0 ) || ( _currentSubdivLevel > params.subdivLevel ) )
 			{
@@ -659,7 +668,7 @@ void ObjModel::render( const RenderingParameters &params )
 	}
 }
 
-void ObjModel::draw( const vector<point3d> &vertices, const vector<triangleIndex> &indices, vector<vec3d> &vertexNormals, const RenderingParameters &params ) const
+void ObjModel::draw( const vector<point3d> &vertices, const vector<face> &indices, vector<vec3d> &vertexNormals, const RenderingParameters &params ) const
 {
 	if ( params.solid )
 	{
@@ -672,7 +681,7 @@ void ObjModel::draw( const vector<point3d> &vertices, const vector<triangleIndex
 
 }
 
-void ObjModel::drawSolid( const vector<point3d> &vertices, const vector<triangleIndex> &indices, vector<vec3d> &vertexNormals, const RenderingParameters &params ) const
+void ObjModel::drawSolid( const vector<point3d> &vertices, const vector<face> &indices, vector<vec3d> &vertexNormals, const RenderingParameters &params ) const
 {
 	if ( params.useIndexRendering )
 	{

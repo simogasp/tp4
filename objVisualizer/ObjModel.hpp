@@ -92,12 +92,12 @@ class ObjModel
 {
 private:
 
-	std::vector<triangleIndex> _mesh; //!< Stores the vertex indices for the triangles
+	std::vector<face> _mesh; //!< Stores the vertex indices for the triangles
 	std::vector<point3d> _vertices;			//!< Stores the vertices
 	std::vector<vec3d> _normals;				//!< Stores the normals for the triangles
 
 	// Subdivision
-	std::vector<triangleIndex> _subMesh; //!< Stores the vertex indices for the triangles
+	std::vector<face> _subMesh; //!< Stores the vertex indices for the triangles
 	std::vector<point3d> _subVert;		//!< Stores the vertices
 	std::vector<vec3d> _subNorm;		//!< Stores the normals for the triangles
 
@@ -158,8 +158,8 @@ public:
 
 
 private:
-	void draw(const std::vector<point3d> &vertices, const std::vector<triangleIndex> &indices, std::vector<vec3d> &vertexNormals, const RenderingParameters &params) const;
-	void drawSolid(const std::vector<point3d> &vertices, const std::vector<triangleIndex> &indices, std::vector<vec3d> &vertexNormals, const RenderingParameters &params) const;
+	void draw(const std::vector<point3d> &vertices, const std::vector<face> &indices, std::vector<vec3d> &vertexNormals, const RenderingParameters &params) const;
+	void drawSolid(const std::vector<point3d> &vertices, const std::vector<face> &indices, std::vector<vec3d> &vertexNormals, const RenderingParameters &params) const;
 	
 	/**
 	* Draw the wireframe of the model
@@ -168,7 +168,7 @@ private:
 	* @param mesh The mesh as a list of faces, each face is a tripleIndex of vertex indices 
 	* @param params The rendering parameters
 	*/
-	void drawWireframe(const std::vector<point3d> &vertices, const std::vector<triangleIndex> &indices, const RenderingParameters &params) const;
+	void drawWireframe(const std::vector<point3d> &vertices, const std::vector<face> &indices, const RenderingParameters &params) const;
 	
 	/**
 	 * Draw the model using the vertex indices and using a single normal for each vertex 
@@ -178,7 +178,7 @@ private:
 	 * @param vertexNormals The list of normals associated to each vertex
 	 * @param params The rendering parameters
 	 */
-	void drawSmoothFaces(const std::vector<point3d> &vertices, const std::vector<triangleIndex> &indices, std::vector<vec3d> &vertexNormals, const RenderingParameters &params) const;
+	void drawSmoothFaces(const std::vector<point3d> &vertices, const std::vector<face> &indices, std::vector<vec3d> &vertexNormals, const RenderingParameters &params) const;
 	
 	/**
 	* Draw the faces using the computed normal of each face
@@ -187,7 +187,7 @@ private:
 	* @param mesh The list of face, each face containing the indices of the vertices
 	* @param params The rendering parameters
 	*/
-	void drawFlatFaces(const std::vector<point3d> &vertices, const std::vector<triangleIndex> &indices, const RenderingParameters &params) const;
+	void drawFlatFaces(const std::vector<point3d> &vertices, const std::vector<face> &indices, const RenderingParameters &params) const;
 	void drawNormals(const std::vector<point3d> &vertices, std::vector<vec3d> &vertexNormals) const;
 	
 	
@@ -211,7 +211,7 @@ private:
 	 * @param[out] destMesh The new subdivided mesh (the vertex indices for each face/triangle)
 	 * @param[out] destNorm The new list of normals for each new vertex of the subdivided mesh
 	 */
-	void loopSubdivision(const std::vector<point3d> &origVert, const std::vector<triangleIndex> &origMesh, std::vector<point3d> &destVert, std::vector<triangleIndex> &destMesh, std::vector<vec3d> &destNorm) const;
+	void loopSubdivision(const std::vector<point3d> &origVert, const std::vector<face> &origMesh, std::vector<point3d> &destVert, std::vector<face> &destMesh, std::vector<vec3d> &destNorm) const;
 
 
 	/**
@@ -227,7 +227,7 @@ private:
 	 * @return the index of the new vertex
 	 * @see EdgeList
 	 */
-	idxtype getNewVertex(const edge &e, std::vector<point3d> &vertList, const std::vector<triangleIndex> &indices, EdgeList &newVertList) const;
+	idxtype getNewVertex(const edge &e, std::vector<point3d> &vertList, const std::vector<face> &mesh, EdgeList &newVertList) const;
 
 	/**
 	 * It parses a line of the OBJ file containing a face and it return the result. 
@@ -237,9 +237,9 @@ private:
 	 * @param out the 3 indices for the face
 	 * @return true if the parse was successful
 	 */
-	bool parseFaceString(const std::string &toParse, triangleIndex &out) const;
+	bool parseFaceString(const std::string &toParse, face &out) const;
 
-	DEPRECATED(void applyLoop(const triangleIndex &t, const std::vector<point3d> &orig, std::vector<size_t> &valence, std::vector<point3d> &dest) const);
+	DEPRECATED(void applyLoop(const face &t, const std::vector<point3d> &orig, std::vector<size_t> &valence, std::vector<point3d> &dest) const);
 
 };
 

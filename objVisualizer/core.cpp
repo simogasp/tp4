@@ -287,7 +287,7 @@ v3f& v3f::operator /=(const float &a)
  * vertex wrt the edge in the triangle
  * @return true if the edge is contained (the order of the indices does not matter)
  */
-bool tindex::containsEdge(const edge &e, idxtype &oppositeVertex) const
+bool face::containsEdge(const edge &e, idxtype &oppositeVertex) const
 {
 	if( edge(v1, v2) == e )
 	{
@@ -311,12 +311,12 @@ bool tindex::containsEdge(const edge &e, idxtype &oppositeVertex) const
 }
 
 // ********** SUM
-tindex tindex::operator +(const tindex& a) const
+face face::operator +(const face& a) const
 {
-	return tindex(v1 + a.v1, v2 + a.v2, v3 + a.v3);
+	return face(v1 + a.v1, v2 + a.v2, v3 + a.v3);
 
 }
-tindex& tindex::operator +=(const tindex& a)
+face& face::operator +=(const face& a)
 {
 	v1 += a.v1;
 	v2 += a.v2;
@@ -324,11 +324,11 @@ tindex& tindex::operator +=(const tindex& a)
 	return *this;
 }
 
-tindex tindex::operator +(const idxtype &a) const
+face face::operator +(const idxtype &a) const
 {
-	return tindex(v1 + a, v2 + a, v3 + a);
+	return face(v1 + a, v2 + a, v3 + a);
 }
-tindex& tindex::operator +=(const idxtype &a)
+face& face::operator +=(const idxtype &a)
 {
 	v1 += a;
 	v2 += a;
@@ -337,11 +337,11 @@ tindex& tindex::operator +=(const idxtype &a)
 }
 
 // ********** DIFFERENCE
-tindex tindex::operator -(const tindex& a) const
+face face::operator -(const face& a) const
 {
-	return tindex(v1 - a.v1, v2 - a.v2, v3 - a.v3);
+	return face(v1 - a.v1, v2 - a.v2, v3 - a.v3);
 }
-tindex& tindex::operator -=(const tindex& a)
+face& face::operator -=(const face& a)
 {
 	v1 -= a.v1;
 	v2 -= a.v2;
@@ -349,11 +349,11 @@ tindex& tindex::operator -=(const tindex& a)
 	return *this;
 }
 
-tindex tindex::operator -(const idxtype &a) const
+face face::operator -(const idxtype &a) const
 {
-	return tindex(v1 - a, v2 - a, v3 - a);
+	return face(v1 - a, v2 - a, v3 - a);
 }
-tindex& tindex::operator -=(const idxtype &a)
+face& face::operator -=(const idxtype &a)
 {
 	v1 -= a;
 	v2 -= a;
@@ -362,11 +362,11 @@ tindex& tindex::operator -=(const idxtype &a)
 }
 
 // ********** MULTIPLICATION
-tindex tindex::operator *(const tindex& a) const
+face face::operator *(const face& a) const
 {
-	return tindex(v1 * a.v1, v2 * a.v2, v3 * a.v3);
+	return face(v1 * a.v1, v2 * a.v2, v3 * a.v3);
 }
-tindex& tindex::operator *=(const tindex& a)
+face& face::operator *=(const face& a)
 {
 	v1 *= a.v1;
 	v2 *= a.v2;
@@ -374,11 +374,11 @@ tindex& tindex::operator *=(const tindex& a)
 	return *this;
 }
 
-tindex tindex::operator *(const idxtype &a) const
+face face::operator *(const idxtype &a) const
 {
-	return tindex(v1 * a, v2 * a, v3 * a);
+	return face(v1 * a, v2 * a, v3 * a);
 }
-tindex& tindex::operator *=(const idxtype &a)
+face& face::operator *=(const idxtype &a)
 {
 	v1 *= a;
 	v2 *= a;
@@ -386,14 +386,14 @@ tindex& tindex::operator *=(const idxtype &a)
 	return *this;
 }
 
-bool tindex::operator==( const tindex& r) const
+bool face::operator==( const face& r) const
 {
 	return ( (v1 == r.v1) && (v2 == r.v2) && (v3 == r.v3));
 }
 /**
  * Two index triplets are different if... they are not equal
  */
-bool tindex::operator!=( const tindex& r ) const
+bool face::operator!=( const face& r ) const
 {
 	return ( !(*this == r));
 }
@@ -404,24 +404,24 @@ bool tindex::operator!=( const tindex& r ) const
  * them if it is a boundary edge
  * 
  * @param[in] e the edge to check
- * @param[in] triangleList the list of triangles
+ * @param[in] mesh the list of triangles
  * @param[out] oppVert1 the index of the first opposite vertices (the only one if the edge is a boundary edge)
  * @param[out] oppVert2 the index of the second opposite vertices (only if the edge is not a boundary edge)
- * @return true if the edge is not a boundary edge
+ * @return true if the edge is a boundary edge
  */
-bool isBoundaryEdge(const edge &e, const std::vector<tindex> &triangleList, idxtype &oppVert1, idxtype &oppVert2 )
+bool isBoundaryEdge(const edge &e, const std::vector<face> &mesh, idxtype &oppVert1, idxtype &oppVert2 )
 {
 	bool foundFirst = false;
 	bool foundSecond = false;
-	for(size_t i = 0; (i < triangleList.size()) && ( !(foundFirst && foundSecond)); ++i )
+	for(size_t i = 0; (i < mesh.size()) && ( !(foundFirst && foundSecond)); ++i )
 	{
 		if(!foundFirst)
 		{
-			foundFirst = triangleList[i].containsEdge(e, oppVert1);
+			foundFirst = mesh[i].containsEdge(e, oppVert1);
 		}
 		else
 		{
-			foundSecond = triangleList[i].containsEdge(e, oppVert2);
+			foundSecond = mesh[i].containsEdge(e, oppVert2);
 		}
 	}
 	// the edge should be in the list, so at least one should be found

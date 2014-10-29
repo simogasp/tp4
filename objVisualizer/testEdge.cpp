@@ -59,7 +59,7 @@ int main(int argc, char **argv)
 
 	std::string line("f 34//23 11//65 123//98");
 	idxtype a;
-	tindex out;
+	face out;
 	std::string b;
 //	std::stringstream parser (line);
 //	parser >> b
@@ -81,14 +81,14 @@ int main(int argc, char **argv)
 	
 	idxtype idx;
 	
-	PRINTVAR((triangleIndex(1,2,3).containsEdge( edge(3,5), idx )));
+	PRINTVAR((face(1,2,3).containsEdge( edge(3,5), idx )));
 	PRINTVAR( idx );
-	PRINTVAR((triangleIndex(1,2,3).containsEdge( edge(2,3), idx )));
+	PRINTVAR((face(1,2,3).containsEdge( edge(2,3), idx )));
 	PRINTVAR( idx );
-	PRINTVAR((triangleIndex(1,2,3).containsEdge( edge(3,2), idx )));
+	PRINTVAR((face(1,2,3).containsEdge( edge(3,2), idx )));
 	PRINTVAR( idx );
-	PRINTVAR((triangleIndex(1,2,3).containsEdge( edge(0,2), idx )));
+	PRINTVAR((face(1,2,3).containsEdge( edge(0,2), idx )));
 	PRINTVAR( idx );
-	PRINTVAR((triangleIndex(1,2,3).containsEdge( edge(3,1), idx )));
+	PRINTVAR((face(1,2,3).containsEdge( edge(3,1), idx )));
 	PRINTVAR( idx );
 }

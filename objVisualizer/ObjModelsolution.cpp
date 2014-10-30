@@ -232,7 +232,7 @@ void ObjModel::drawFlatFaces( const std::vector<point3d> &vertices, const std::v
 	//**************************************************
 	// for each face
 	//**************************************************
-	for ( int i = 0; i < mesh.size( ); i++ )
+	for ( size_t i = 0; i < mesh.size( ); i++ )
 	{
 		//**************************************************
 		// Compute the normal to the face and then draw the 
@@ -586,7 +586,7 @@ void ObjModel::drawNormals( const std::vector<point3d> &vertices, std::vector<ve
 	glColor3f( 0.8, 0, 0 );
 	glLineWidth( 2 );
 
-	for ( int i = 0; i < vertices.size( ); i++ )
+	for ( size_t i = 0; i < vertices.size( ); i++ )
 	{
 		glBegin( GL_LINES );
 

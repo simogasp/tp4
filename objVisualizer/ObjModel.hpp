@@ -78,8 +78,8 @@ typedef struct RenderingParameters
 	wireframe(true),
 	solid(true),
 	useIndexRendering(false),
-	smooth(false),
 	subdivision(false),
+	smooth(false),
 	normals(false),
 	subdivLevel(1) { }
 

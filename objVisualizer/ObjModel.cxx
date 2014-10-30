@@ -32,7 +32,7 @@ float ObjModel::unitizeModel( )
 		cout << "scale: " << scale << " cx " << c.x << " cy " << c.y << " cz " << c.z << endl;
 
 		// translate each vertex wrt to the center and then apply the scaling to the coordinate
-		for ( int i = 0; i < _vertices.size( ); i++ )
+		for ( size_t i = 0; i < _vertices.size( ); i++ )
 		{
 			//****************************************
 			// translate the vertex
@@ -120,7 +120,7 @@ void ObjModel::flatDraw( ) const
 	glShadeModel( GL_SMOOTH );
 
 	// for each triangle draw the vertices and the normals
-	for ( int i = 0; i < _mesh.size( ); i++ )
+	for ( size_t i = 0; i < _mesh.size( ); i++ )
 	{
 		glBegin( GL_TRIANGLES );
 		//compute the normal of the triangle

@@ -413,7 +413,7 @@ inline std::ostream& operator<<( std::ostream& os, const v3f& p )
 inline std::ostream& operator<<( std::ostream& os, const std::vector<v3f>& p )
 {
 	os << std::endl;
-	for ( int i = 0; i < p.size( ); ++i )
+	for ( size_t i = 0; i < p.size( ); ++i )
 		os << "\t" << p[i] << std::endl;
 	return os;
 }

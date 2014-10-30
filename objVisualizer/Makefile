@@ -8,11 +8,11 @@ LIBS = -lGL -lglut -lm -lGLU
 endif
 
 
-all: main 
+all: visualizer 
 
 # solutions
-main: main.o ObjModel.o core.o
-	$(CC)  $(CXXFLAGS) -o $@ $^ $(LIBS)
+visualizer: main.o ObjModel.o core.o
+	$(CC) $(CXXFLAGS) -o $@ $^ $(LIBS)
 
 solution: main.o ObjModelsolution.o core.o
 	$(CC) $(CXXFLAGS) -o $@ $^ $(LIBS)

@@ -1,4 +1,4 @@
-add_executable( visualizer glutobjsolution.cpp ObjModelsolution.cpp core.cpp)
+add_executable( visualizer main.cpp ObjModelsolution.cpp core.cpp)
 target_link_libraries( visualizer ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES} )
 
 add_executable( testEdge testEdge.cpp core.cpp)

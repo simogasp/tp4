@@ -8,13 +8,13 @@ LIBS = -lGL -lglut -lm -lGLU
 endif
 
 
-all: glutobj 
+all: main 
 
 # solutions
-glutobj: glutobj.o ObjModel.o core.o
+main: main.o ObjModel.o core.o
 	$(CC)  $(CXXFLAGS) -o $@ $^ $(LIBS)
 
-glutobjsolution: glutobjsolution.o ObjModelsolution.o core.o
+solution: main.o ObjModelsolution.o core.o
 	$(CC) $(CXXFLAGS) -o $@ $^ $(LIBS)
 
 clean:

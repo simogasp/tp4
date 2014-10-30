@@ -161,26 +161,6 @@ void display( )
 	//***********************************************
 	// draw the model
 	//***********************************************
-	//		if(subdivision)
-	//		{
-	//			obj.drawSubdivision();
-	//		}
-	//		else
-	//		{
-	//			if(flat)
-	//			{
-	//	//            cout << "flat";
-	////				obj.draw();
-	//				obj.flatDraw();
-	//			}
-	//			else
-	//			{
-	//	//            cout << "noflat";
-	//				obj.indexDraw();
-	//			}
-	//			if(wireframe)
-	//				obj.drawWireframe();
-	//		}
 	obj.render( params );
 
 	glPopMatrix( );

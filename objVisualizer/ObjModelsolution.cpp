@@ -322,7 +322,7 @@ void ObjModel::drawSmoothFaces( const std::vector<point3d> &vertices,
 	glVertexPointer( COORD_PER_VERTEX, GL_FLOAT, 0, (float*) &vertices[0] );
 
 	//****************************************
-	// Draw the triangles
+	// Draw the faces
 	//****************************************
 	glDrawElements( GL_TRIANGLES, mesh.size( ) * VERTICES_PER_TRIANGLE, GL_UNSIGNED_INT, (idxtype*) & mesh[0] );
 

@@ -18,4 +18,4 @@ solution: main.o ObjModelsolution.o core.o
 	$(CC) $(CXXFLAGS) -o $@ $^ $(LIBS)
 
 clean:
-	rm -f *.o glutobj glutobjsolution
+	rm -f *.o main solution

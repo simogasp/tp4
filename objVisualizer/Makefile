@@ -1,6 +1,5 @@
 CC = g++
-CCOPTS = -Wall -O3
-
+CCOPTS = -Wall -O3 -DHAVE_STD_UNORDERED_MAP -DHAVE_STD_FUNCTIONAL -std=c++0x
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Darwin)
 LIBS := -framework OpenGL -lglut -lm
@@ -12,10 +11,10 @@ endif
 all: glutobj 
 
 # solutions
-glutobj: glutobj.o ObjModel.o
+glutobj: glutobj.o ObjModel.o core.o
 	$(CC) $(CCOPTS) -o $@ $^ $(LIBS)
 
-glutobjsolution: glutobjsolution.o ObjModelsolution.o
+glutobjsolution: glutobjsolution.o ObjModelsolution.o core.o
 	$(CC) $(CCOPTS) -o $@ $^ $(LIBS)
 	
 clean:

@@ -412,13 +412,13 @@ void ObjModel::loopSubdivision( const std::vector<point3d> &origVert,			//!< the
 	// so is to think in terms of faces than the single vertex: for each face
 	// we update each of the 3 vertices using the Loop formula wrt the other 2 and 
 	// sum it to a temporary copy tmp of the vertices (which is initialized to 
-	// [0 0 0] at the beginning). We also keep a record of the valence of each vertex.
+	// [0 0 0] at the beginning). We also keep a record of the occurrence of each vertex.
 	// At then end, to get the final vertices we just need to divide each vertex 
-	// in tmp by its valence
+	// in tmp by its occurrence
 	//*********************************************************************
 	
-	// A list containing the valence of each vertex
-	vector<size_t> valence( destVert.size( ), 0 );
+	// A list containing the occurrence of each vertex
+	vector<size_t> occurrences( destVert.size( ), 0 );
 
 	// A list of the same size as destVert with all the elements initialized to [0 0 0]
 	vector<point3d> tmp( destVert.size( ) );
@@ -432,29 +432,29 @@ void ObjModel::loopSubdivision( const std::vector<point3d> &origVert,			//!< the
 		
 		//*********************************************************************
 		// consider each of the 3 vertices:
-		// 1) increment its valence
+		// 1) increment its occurrence
 		// 2) apply Loop update wrt the other 2 vertices of the face
 		// BE CAREFULL WITH THE COEFFICIENT OF THE OTHER 2 VERTICES!... consider 
 		// how many times each vertex is summed...
 		//*********************************************************************
 		
-		valence[t.v1]++;
+		occurrences[t.v1]++;
 		tmp[t.v1] += (0.625f * origVert[t.v1] + 0.1875f * origVert[t.v2] + 0.1875f * origVert[t.v3]);
 
-		valence[t.v2]++;
+		occurrences[t.v2]++;
 		tmp[t.v2] += (0.625f * origVert[t.v2] + 0.1875f * origVert[t.v1] + 0.1875f * origVert[t.v3]);
 
-		valence[t.v3]++;
+		occurrences[t.v3]++;
 		tmp[t.v3] += (0.625f * origVert[t.v3] + 0.1875f * origVert[t.v2] + 0.1875f * origVert[t.v1]);
 	}
 
 	//*********************************************************************
-	//  To obtain the new vertices, divide each vertex by its valence
+	//  To obtain the new vertices, divide each vertex by its occurrence value
 	//*********************************************************************
 	for ( size_t i = 0; i < origVert.size( ); ++i )
 	{
-		assert( valence[i] != 0 );
-		destVert[i] = tmp[i] / valence[i];
+		assert( occurrences[i] != 0 );
+		destVert[i] = tmp[i] / occurrences[i];
 	}
 	//PRINTVAR(destVert);
 	

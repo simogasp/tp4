@@ -1,6 +1,19 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
+/**
+ * @file core.hpp
+ * @author  Simone Gasparini <simone.gasparini@enseeiht.fr>
+ * @version 1.0
+ *
+ * @section LICENSE
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+ * @section DESCRIPTION
+ * 
+ * The core module providing some helper classes for manipulating mesh data
+ *
+ */
 
 #ifndef _CORE_HPP_
 #define	_CORE_HPP_
@@ -52,6 +65,9 @@
 #define PRINTVAR( a )
 #endif
 
+/**
+ * Renaming, the type of an index is a unsigned int
+ */
 typedef GLuint idxtype;
 
 /**
@@ -59,11 +75,26 @@ typedef GLuint idxtype;
  */
 typedef std::pair<idxtype, idxtype> edge;
 
-inline std::ostream& operator<<( std::ostream& os, const edge& p )
+/**
+ * Function to print the values of an edge
+ * 
+ * @param os the string to fill
+ * @param p the edge to print
+ * @return the string with the printed value of the edge
+ */
+inline std::ostream& operator<<( std::ostream& os, const edge& e )
 {
-	return os << "[" << p.first << "," << p.second << "]";
+	return os << "[" << e.first << "," << e.second << "]";
 }
 
+/**
+ * It checks whether two edges are equals: two edges are equal if their indices
+ * are the same, no matter the order
+ * 
+ * @param a The first edge
+ * @param b The second edge
+ * @return true if the edges are equal
+ */
 inline bool operator==( const edge& a, const edge& b )
 {
 	return ( ( ( a.first == b.first ) && ( a.second == b.second ) ) ||
@@ -233,6 +264,11 @@ inline std::ostream& operator<<( std::ostream& os, const EdgeList& l )
 {
 	return (os << l.list );
 }
+
+/**************************************************************************/
+
+
+/**************************************************************************/
 
 /**
  * A generic vector of three elements
@@ -404,12 +440,23 @@ struct v3f
 typedef struct v3f point3d;
 typedef struct v3f vec3d;
 
-
+/**
+ * Print the elements of a vector
+ * @param os the string to fill with the vector values
+ * @param p the vector
+ * @return the string with the values
+ */
 inline std::ostream& operator<<( std::ostream& os, const v3f& p )
 {
 	return os << "[" << p.x << "," << p.y << "," << p.z << "]";
 }
 
+/**
+ * Print the elements of a vector of v3f elements
+ * @param os the string to fill with the vector elements
+ * @param p the vector
+ * @return the string with the vector elements
+ */
 inline std::ostream& operator<<( std::ostream& os, const std::vector<v3f>& p )
 {
 	os << std::endl;
@@ -524,12 +571,23 @@ struct face
 	bool operator!=( const face& rhs ) const;
 };
 
-
+/**
+ * Print the face values on a string
+ * @param os the string to fill with the values
+ * @param p the face to print
+ * @return the string filled with the values
+ */
 inline std::ostream& operator<<( std::ostream& os, const face& p )
 {
 	return os << "[" << p.v1 << "," << p.v2 << "," << p.v3 << "]";
 }
 
+/**
+ * Print a vector of faces on a string
+ * @param os the string to fill with the faces
+ * @param p the vector of faces to print
+ * @return the string filled with the faces
+ */
 inline std::ostream& operator<<( std::ostream& os, const std::vector<face>& p )
 {
 	os << std::endl;

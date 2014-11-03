@@ -1,4 +1,175 @@
 /**
+ * @file ObjModel.cxx
+ * @author  Simone Gasparini <simone.gasparini@enseeiht.fr>
+ * @version 1.0
+ *
+ * @section LICENSE
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+ * @section DESCRIPTION
+ * 
+ * Simple Class to load and draw 3D objects from OBJ files
+ * Using triangles and normals as static object. No texture mapping. 
+ * OBJ files must be triangulated!!!
+ *
+ */
+
+/**
+ * Computes the angle at vertex baseV formed by the edges connecting it with the
+ * vertices v1 and v2 respectively, ie the baseV-v1 and baseV-v2 edges
+ * 
+ * @brief Computes the angle at vertex
+ * @param baseV the vertex at which to compute the angle
+ * @param v1 the other vertex of the first edge baseV-v1
+ * @param v2 the other vertex of the second edge baseV-v2
+ * @return the angle in radiants
+ */
+float ObjModel::angleAtVertex( const point3d& baseV, const point3d& v1, const point3d& v2 ) const
+{
+	vec3d e1 = baseV - v1;
+	vec3d e2 = baseV - v2;
+	//safe acos...
+	if ( fabs( (e1).dot( e2 ) / (e1.norm( ) * e2.norm( )) ) >= 1.0f )
+	{
+		cerr << "warning: using safe acos" << endl;
+		return (acos( 1.0f ));
+	}
+	else
+	{
+		return ( acos( (e1).dot( e2 ) / (e1.norm( ) * e2.norm( )) ));
+	}
+}
+
+
+/**
+* Render the model according to the provided parameters
+* @param params The rendering parameters
+*/
+void ObjModel::render( const RenderingParameters &params )
+{
+	// if we need to draw the original model
+	if ( !params.subdivision )
+	{
+		// draw it
+		draw( _vertices, _mesh, _normals, params );
+		// draw the normals
+		if ( params.normals )
+		{
+			drawNormals( _vertices, _normals );
+		}
+	}
+	else
+	{
+		PRINTVAR(params.subdivLevel);
+		PRINTVAR(_currentSubdivLevel);
+		// before drawing check the current level of subdivision and the required one
+		if ( ( _currentSubdivLevel == 0 ) || ( _currentSubdivLevel != params.subdivLevel ) )
+		{
+			// if they are different apply the missing steps: either restart from the beginning
+			// if the required level is less than the current one or apply the missing
+			// steps starting from the current one
+			vector<point3d> tmpVert;		//!< a temporary list of vertices used in the iterations
+			vector<face> tmpMesh;	//!< a temporary mesh used in the iterations
+			
+			if(( _currentSubdivLevel == 0 ) || ( _currentSubdivLevel > params.subdivLevel ) )
+			{
+				// start from the beginning
+				_currentSubdivLevel = 0;
+				tmpVert = _vertices;
+				tmpMesh = _mesh;
+			}
+			else
+			{
+				// start from the current level
+				tmpVert = _subVert;
+				tmpMesh = _subMesh;
+			}
+			
+			// apply the proper subdivision iterations
+			for( ; _currentSubdivLevel < params.subdivLevel; ++_currentSubdivLevel)
+			{
+				cerr << "[Loop subdivision] iteration " << _currentSubdivLevel << endl;
+				loopSubdivision( tmpVert, tmpMesh, _subVert, _subMesh, _subNorm );
+				// swap unless it's the last iteration
+				if( _currentSubdivLevel < ( params.subdivLevel - 1) )
+				{
+					tmpVert = _subVert;
+					tmpMesh = _subMesh;
+				}
+			}
+		}
+		
+		draw( _subVert, _subMesh, _subNorm, params );
+		if ( params.normals )
+		{
+			drawNormals( _subVert, _subNorm );
+		}
+	}
+}
+
+/**
+ * Draw the model
+ * 
+ * @param vertices list of vertices
+ * @param indices list of faces
+ * @param vertexNormals list of normals
+ * @param params Rendering parameters
+ */
+void ObjModel::draw( const std::vector<point3d> &vertices, const std::vector<face> &indices, std::vector<vec3d> &vertexNormals, const RenderingParameters &params ) const
+{
+	if ( params.solid )
+	{
+		drawSolid( vertices, indices, vertexNormals, params );
+	}
+	if ( params.wireframe )
+	{
+		drawWireframe( vertices, indices, params );
+	}
+
+}
+
+void ObjModel::drawSolid( const vector<point3d> &vertices, const vector<face> &indices, vector<vec3d> &vertexNormals, const RenderingParameters &params ) const
+{
+	if ( params.useIndexRendering )
+	{
+		drawSmoothFaces( vertices, indices, vertexNormals, params );
+	}
+	else
+	{
+		drawFlatFaces( vertices, indices, params );
+	}
+}
+
+/**
+ * Draw the normals at each vertex
+ * @param vertices The list of vertices 
+ * @param vertexNormals The list of associated normals
+ */
+void ObjModel::drawNormals( const std::vector<point3d> &vertices, std::vector<vec3d> &vertexNormals ) const
+{
+	glDisable( GL_LIGHTING );
+
+	glColor3f( 0.8, 0, 0 );
+	glLineWidth( 2 );
+
+	for ( size_t i = 0; i < vertices.size( ); i++ )
+	{
+		glBegin( GL_LINES );
+
+		vec3d newP = vertices[i] + 0.1 * vertexNormals[i];
+		glVertex3fv( (float*) &vertices[i] );
+
+		glVertex3f( newP.x, newP.y, newP.z );
+
+		glEnd( );
+	}
+	glEnable( GL_LIGHTING );
+}
+
+/**
  * It scales the model to unitary size by translating it to the origin and
  * scaling it to fit in a unit cube around the origin.
  * 

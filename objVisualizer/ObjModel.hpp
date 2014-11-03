@@ -1,12 +1,22 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
+/**
+ * @file ObjModel.hpp
+ * @author  Simone Gasparini <simone.gasparini@enseeiht.fr>
+ * @version 1.0
+ *
+ * @section LICENSE
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+ * @section DESCRIPTION
+ * 
+ * Simple Class to load and draw 3D objects from OBJ files
+ * Using triangles and normals as static object. No texture mapping. 
+ * OBJ files must be triangulated!!!
+ *
+ */
 
-/***************************************************************************
-  Simple Class to load and draw 3D objects from OBJ files
-  Using triangles and normals as static object. No texture mapping. 
-  OBJ files must be triangulated!!!
- ***************************************************************************/
 
 #ifndef _OBJMODEL_HPP_
 #define	_OBJMODEL_HPP_
@@ -131,9 +141,9 @@ public:
 	float angleAtVertex(const point3d& v1, const point3d& v2, const point3d& v3) const;
 
 	/**
-	 *  Loads the model from an OBJ file
-	 * @param filename the OBJ file
-	 * @return 
+	 * Load the OBJ data from file
+	 * @param filename The name of the OBJ file
+	 * @return 0 if everything went well
 	 */
 	int load(char *filename);
 
@@ -158,7 +168,16 @@ public:
 
 
 private:
+	/**
+	* Draw the model
+	* 
+	* @param vertices list of vertices
+	* @param indices list of faces
+	* @param vertexNormals list of normals
+	* @param params Rendering parameters
+	*/
 	void draw(const std::vector<point3d> &vertices, const std::vector<face> &indices, std::vector<vec3d> &vertexNormals, const RenderingParameters &params) const;
+	
 	void drawSolid(const std::vector<point3d> &vertices, const std::vector<face> &indices, std::vector<vec3d> &vertexNormals, const RenderingParameters &params) const;
 	
 	/**
@@ -188,6 +207,11 @@ private:
 	* @param params The rendering parameters
 	*/
 	void drawFlatFaces(const std::vector<point3d> &vertices, const std::vector<face> &indices, const RenderingParameters &params) const;
+	/**
+	* Draw the normals at each vertex
+	* @param vertices The list of vertices 
+	* @param vertexNormals The list of associated normals
+	*/
 	void drawNormals(const std::vector<point3d> &vertices, std::vector<vec3d> &vertexNormals) const;
 	
 	

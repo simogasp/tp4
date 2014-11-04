@@ -268,7 +268,6 @@ inline std::ostream& operator<<( std::ostream& os, const EdgeList& l )
 /**************************************************************************/
 
 
-/**************************************************************************/
 
 /**
  * A generic vector of three elements
@@ -509,8 +508,13 @@ inline v3f operator /( const float &a, const v3f& p )
 	return (p / a );
 }
 
+
+/**************************************************************************/
+
+
+
 /**
- * A triplet of indices
+ * The face as a triplet of indices
  */
 struct face
 {

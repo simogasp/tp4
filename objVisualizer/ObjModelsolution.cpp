@@ -21,8 +21,8 @@
 
 #include <iostream>
 #include <fstream>
-//#include <stdio.h>
-//#include <string.h>
+#include <stdio.h>
+#include <string.h>
 #include <assert.h>
 //#include <stdlib.h>
 
@@ -407,10 +407,10 @@ void ObjModel::loopSubdivision( const std::vector<point3d> &origVert,			//!< the
 	//*********************************************************************
 	
 	// A list containing the occurrence of each vertex
-	vector<size_t> occurrences( destVert.size( ), 0 );
+	vector<size_t> occurrences( origVert.size( ), 0 );
 
 	// A list of the same size as destVert with all the elements initialized to [0 0 0]
-	vector<point3d> tmp( destVert.size( ) );
+	vector<point3d> tmp( origVert.size( ) );
 
 	//*********************************************************************
 	// for each face

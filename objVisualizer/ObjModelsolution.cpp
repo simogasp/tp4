@@ -374,7 +374,7 @@ void ObjModel::loopSubdivision( const std::vector<point3d> &origVert,			//!< the
 		idxtype c = getNewVertex( edge( v3, v1 ), destVert, origMesh, newVertices );
 
 		//*********************************************************************
-		// create the four new triangle
+		// create the four new triangles
 		// BE CAREFULL WITH THE VERTEX ORDER!!
 		//		       v2
 		//			   /\
@@ -409,7 +409,7 @@ void ObjModel::loopSubdivision( const std::vector<point3d> &origVert,			//!< the
 	// A list containing the occurrence of each vertex
 	vector<size_t> occurrences( origVert.size( ), 0 );
 
-	// A list of the same size as destVert with all the elements initialized to [0 0 0]
+	// A list of the same size as origVert with all the elements initialized to [0 0 0]
 	vector<point3d> tmp( origVert.size( ) );
 
 	//*********************************************************************

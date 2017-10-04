@@ -47,7 +47,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL Linux)
 	#########################################################
 	find_package(Threads REQUIRED)
 	# this force all libs to be include even if not directly used
-	set(CMAKE_SHARED_LINKER_FLAGS "-Wl,--as-needed")
+	set(CMAKE_EXE_LINKER_FLAGS  "-Wl,--no-as-needed")
 endif()
 
 

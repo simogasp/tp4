@@ -3,7 +3,7 @@ include(ExternalProject)
 
 project( OpenGLlabs )
 
-set(WITH_UNORDERED_MAP "FALSE" CACHE BOOL "Use unordered map for efficiency")
+set(WITH_UNORDERED_MAP ON CACHE BOOL "Use unordered map for efficiency")
 
 #########################################################
 #
@@ -38,6 +38,17 @@ if(NOT GLUT_FOUND)
 else()
 	message( "-- Found GLUT" )
 endif(NOT GLUT_FOUND)
+
+if(CMAKE_SYSTEM_NAME STREQUAL Linux)
+	#########################################################
+	# FIND Threads, not used but necessary for linkning on linux
+	# funny story, even if it is not used it is needed by other
+	# dependencies which do not propagate their dependencies (?)
+	#########################################################
+	find_package(Threads REQUIRED)
+	# this force all libs to be include even if not directly used
+	set(CMAKE_EXE_LINKER_FLAGS  "-Wl,--no-as-needed")
+endif()
 
 
 #########################################################

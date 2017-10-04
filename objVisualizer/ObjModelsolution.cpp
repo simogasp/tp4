@@ -68,6 +68,8 @@ int ObjModel::load( char* filename )
 
 				//**************************************************
 				// add the new point to the list of the vertices
+				// and its normal to the list of normals: for the time
+				// being it is a [0, 0 ,0] normal.
 				//**************************************************
 				_vertices.push_back( p );
 				_normals.push_back( vec3d( ) );

@@ -24,9 +24,9 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <stdio.h>
-#include <string.h>
-#include <assert.h>
+#include <cstdio>
+#include <cstring>
+#include <cassert>
 
 
 #define KEY_ESCAPE 27

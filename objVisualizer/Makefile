@@ -5,7 +5,7 @@ ifeq ($(UNAME_S),Darwin)
 LIBS := -framework OpenGL -lglut -lm
 CXXFLAGS += -Wno-deprecated 
 else
-LIBS = -lGL -lglut -lm -lGLU
+LIBS = -Wl,--no-as-needed -lpthread -lGL -lglut -lm -lGLU -pthread
 endif
 
 

@@ -39,6 +39,17 @@ else()
 	message( "-- Found GLUT" )
 endif(NOT GLUT_FOUND)
 
+if(CMAKE_SYSTEM_NAME STREQUAL Linux)
+	#########################################################
+	# FIND Threads, not used but necessary for linkning on linux
+	# funny story, even if it is not used it is needed by other
+	# dependencies which do not propagate their dependencies (?)
+	#########################################################
+	find_package(Threads REQUIRED)
+	# this force all libs to be include even if not directly used
+	set(CMAKE_SHARED_LINKER_FLAGS "-Wl,--as-needed")
+endif()
+
 
 #########################################################
 # SET COMPILATION FLAGS FOR C++11 

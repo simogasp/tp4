@@ -510,7 +510,7 @@ idxtype ObjModel::getNewVertex( const edge &e,
         //*********************************************************************
         // generate new index (vertex.size)
         //*********************************************************************
-        idxtype idxnew = vertList.size( );  //!!
+        idxtype idxnew = static_cast<idxtype>(vertList.size( ));  //!!
 
         //*********************************************************************
         // add the edge and index to the newVertList

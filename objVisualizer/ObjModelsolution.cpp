@@ -71,8 +71,8 @@ int ObjModel::load( char* filename )
                 // and its normal to the list of normals: for the time
                 // being it is a [0, 0 ,0] normal.
                 //**************************************************
-                _vertices.push_back( p ); //!!
-                _normals.push_back( vec3d( ) ); //!!
+                _vertices.push_back( p );  //!!
+                _normals.emplace_back();  //!!
 
                 // update the bounding box, if it is the first vertex simply
                 // set the bb to it
@@ -393,10 +393,10 @@ void ObjModel::loopSubdivision( const std::vector<point3d> &origVert,			//!< the
         // hence v1-a-c, a-b-c and so on
         //*********************************************************************
 
-        destMesh.push_back( face( v1, a, c ) );  //<!!
-        destMesh.push_back( face( a, b, c ) );
-        destMesh.push_back( face( a, v2, b ) );
-        destMesh.push_back( face( c, b, v3 ) );  //>!!
+        destMesh.emplace_back(v1, a, c);  //<!!
+        destMesh.emplace_back(a, b, c);
+        destMesh.emplace_back(a, v2, b);
+        destMesh.emplace_back(c, b, v3);  //>!!
     }
 
     //*********************************************************************

@@ -11,12 +11,14 @@ set -e
 
 STUDENTIFY=/Users/sgaspari/dev/code/n7/tptool/studentify.py
 
-mkdir tmp
-cp  objVisualizer/Makefile objVisualizer/ObjModel.cxx objVisualizer/ObjModel.hpp objVisualizer/core.* objVisualizer/main.cpp tmp
-cp -r data tmp
+DESTNAME=codeTP
 
-$STUDENTIFY objVisualizer/ObjModelsolution.cpp -o tmp/ObjModel.cpp --force
+mkdir $DESTNAME
+cp  objVisualizer/Makefile objVisualizer/ObjModel.cxx objVisualizer/ObjModel.hpp objVisualizer/core.* objVisualizer/main.cpp $DESTNAME
+cp -r data $DESTNAME
 
-tar -zcvf objVisualizer.tar.gz tmp
+$STUDENTIFY objVisualizer/ObjModelsolution.cpp -o $DESTNAME/ObjModel.cpp --force
 
-rm -rf tmp
+tar -zcvf $DESTNAME.tar.gz $DESTNAME
+
+rm -rf $DESTNAME

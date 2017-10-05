@@ -440,7 +440,7 @@ void ObjModel::loopSubdivision( const std::vector<point3d> &origVert,			//!< the
     //*********************************************************************
     for ( size_t i = 0; i < origVert.size( ); ++i )  //!!
     {
-        assert( occurrences[i] != 0 );
+        assert( occurrences[i] != 0 );  //??
         destVert[i] = tmp[i] / occurrences[i];  //!!
     }
     //PRINTVAR(destVert);

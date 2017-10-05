@@ -13,7 +13,7 @@ mkdir tmp
 cp  objVisualizer/Makefile objVisualizer/ObjModel.cxx objVisualizer/ObjModel.hpp objVisualizer/core.* objVisualizer/main.cpp tmp
 cp -r data tmp
 
-STUDENTIFY objVisualizer/ObjModelsolution.cpp -o tmp/ObjModel.cpp --force
+$STUDENTIFY objVisualizer/ObjModelsolution.cpp -o tmp/ObjModel.cpp --force
 
 tar -zcvf objVisualizer.tar.gz tmp
 

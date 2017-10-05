@@ -7,6 +7,8 @@
 # with the code for the student to complete.
 # Replace the path in STUDENTIFY with your location to the script.
 
+set -e
+
 STUDENTIFY=/Users/sgaspari/dev/code/n7/tptool/studentify.py
 
 mkdir tmp

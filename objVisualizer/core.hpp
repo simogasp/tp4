@@ -220,7 +220,7 @@ class EdgeList
 {
 public:
 
-    EdgeList( ) { }
+    EdgeList( ) = default;
 
     /**
      * Add the edge and the index of the new vertex generated on it
@@ -295,7 +295,7 @@ struct v3f
      * Constructor from an array of three elements
      * @param[in] a the array from which to copy the elements
      */
-    v3f( const float a[3] ) : x( a[0] ), y( a[1] ), z( a[2] ) { }
+    explicit v3f( const float a[3] ) : x( a[0] ), y( a[1] ), z( a[2] ) { }
 
     /**
      * Normalize the vector (ie divide by the norm)

@@ -114,23 +114,23 @@ float v3f::max() const
 
 v3f v3f::cross(const v3f& v)
 {
-    return v3f(y*v.z - z*v.y,
+    return {y*v.z - z*v.y,
                z*v.x - x*v.z,
-               x*v.y - y*v.x);
+               x*v.y - y*v.x};
 }
 
 v3f v3f::cross(const float v[3])
 {
-    return v3f(y*v[2] - z*v[1],
+    return {y*v[2] - z*v[1],
                z*v[0] - x*v[2],
-               x*v[1] - y*v[0]);
+               x*v[1] - y*v[0]};
 }
 
 // OPERATOR OVERLOADINGS
 
 v3f v3f::operator +(const v3f& a) const
 {
-    return v3f(x + a.x, y + a.y, z + a.z);
+    return {x + a.x, y + a.y, z + a.z};
 }
 
 v3f& v3f::operator +=(const v3f& a)
@@ -143,7 +143,7 @@ v3f& v3f::operator +=(const v3f& a)
 
 v3f v3f::operator +(const float a[3]) const
 {
-    return v3f(x + a[0], y + a[1], z + a[2]);
+    return {x + a[0], y + a[1], z + a[2]};
 }
 
 v3f& v3f::operator +=(const float a[3])
@@ -156,7 +156,7 @@ v3f& v3f::operator +=(const float a[3])
 
 v3f v3f::operator +(const float &a) const
 {
-    return v3f(x + a, y + a, z + a);
+    return {x + a, y + a, z + a};
 }
 
 v3f& v3f::operator +=(const float &a)
@@ -171,7 +171,7 @@ v3f& v3f::operator +=(const float &a)
 
 v3f v3f::operator -(const v3f& a) const
 {
-    return v3f(x - a.x, y - a.y, z - a.z);
+    return {x - a.x, y - a.y, z - a.z};
 }
 
 v3f& v3f::operator -=(const v3f& a)
@@ -184,7 +184,7 @@ v3f& v3f::operator -=(const v3f& a)
 
 v3f v3f::operator -(const float a[3]) const
 {
-    return v3f(x - a[0], y - a[1], z - a[2]);
+    return {x - a[0], y - a[1], z - a[2]};
 }
 
 v3f& v3f::operator -=(const float a[3])
@@ -197,7 +197,7 @@ v3f& v3f::operator -=(const float a[3])
 
 v3f v3f::operator -(const float &a) const
 {
-    return v3f(x - a, y - a, z - a);
+    return {x - a, y - a, z - a};
 }
 
 v3f& v3f::operator -=(const float& a)
@@ -212,7 +212,7 @@ v3f& v3f::operator -=(const float& a)
 
 v3f v3f::operator *(const v3f& a) const
 {
-    return v3f(x * a.x, y * a.y, z * a.z);
+    return {x * a.x, y * a.y, z * a.z};
 }
 
 v3f& v3f::operator *=(const v3f& a)
@@ -225,7 +225,7 @@ v3f& v3f::operator *=(const v3f& a)
 
 v3f v3f::operator *(const float a[3]) const
 {
-    return v3f(x * a[0], y * a[1], z * a[2]);
+    return {x * a[0], y * a[1], z * a[2]};
 }
 
 v3f& v3f::operator *=(const float a[3])
@@ -238,7 +238,7 @@ v3f& v3f::operator *=(const float a[3])
 
 v3f v3f::operator *(const float &a) const
 {
-    return v3f(x * a, y * a, z * a);
+    return {x * a, y * a, z * a};
 }
 
 v3f& v3f::operator *=(const float &a)
@@ -253,7 +253,7 @@ v3f& v3f::operator *=(const float &a)
 
 v3f v3f::operator /(const v3f& a) const
 {
-    return v3f(x / a.x, y / a.y, z / a.z);
+    return {x / a.x, y / a.y, z / a.z};
 }
 v3f& v3f::operator /=(const v3f& a)
 {
@@ -265,7 +265,7 @@ v3f& v3f::operator /=(const v3f& a)
 
 v3f v3f::operator /(const float a[3]) const
 {
-    return v3f(x / a[0], y / a[1], z / a[2]);
+    return {x / a[0], y / a[1], z / a[2]};
 }
 v3f& v3f::operator /=(const float a[3])
 {
@@ -277,7 +277,7 @@ v3f& v3f::operator /=(const float a[3])
 
 v3f v3f::operator /(const float &a) const
 {
-    return v3f(x / a, y / a, z / a);
+    return {x / a, y / a, z / a};
 }
 v3f& v3f::operator /=(const float &a)
 {
@@ -326,7 +326,7 @@ bool face::containsEdge(const edge &e, idxtype &oppositeVertex) const
 // ********** SUM
 face face::operator +(const face& a) const
 {
-    return face(v1 + a.v1, v2 + a.v2, v3 + a.v3);
+    return {v1 + a.v1, v2 + a.v2, v3 + a.v3};
 
 }
 face& face::operator +=(const face& a)
@@ -339,7 +339,7 @@ face& face::operator +=(const face& a)
 
 face face::operator +(const idxtype &a) const
 {
-    return face(v1 + a, v2 + a, v3 + a);
+    return {v1 + a, v2 + a, v3 + a};
 }
 face& face::operator +=(const idxtype &a)
 {
@@ -352,7 +352,7 @@ face& face::operator +=(const idxtype &a)
 // ********** DIFFERENCE
 face face::operator -(const face& a) const
 {
-    return face(v1 - a.v1, v2 - a.v2, v3 - a.v3);
+    return {v1 - a.v1, v2 - a.v2, v3 - a.v3};
 }
 face& face::operator -=(const face& a)
 {
@@ -364,7 +364,7 @@ face& face::operator -=(const face& a)
 
 face face::operator -(const idxtype &a) const
 {
-    return face(v1 - a, v2 - a, v3 - a);
+    return {v1 - a, v2 - a, v3 - a};
 }
 face& face::operator -=(const idxtype &a)
 {
@@ -377,7 +377,7 @@ face& face::operator -=(const idxtype &a)
 // ********** MULTIPLICATION
 face face::operator *(const face& a) const
 {
-    return face(v1 * a.v1, v2 * a.v2, v3 * a.v3);
+    return {v1 * a.v1, v2 * a.v2, v3 * a.v3};
 }
 face& face::operator *=(const face& a)
 {
@@ -389,7 +389,7 @@ face& face::operator *=(const face& a)
 
 face face::operator *(const idxtype &a) const
 {
-    return face(v1 * a, v2 * a, v3 * a);
+    return {v1 * a, v2 * a, v3 * a};
 }
 face& face::operator *=(const idxtype &a)
 {

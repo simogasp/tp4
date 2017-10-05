@@ -60,7 +60,7 @@
 #define DEBUGGING 1
 
 #if DEBUGGING
-#define PRINTVAR( a ) std::cout << #a << " = " << a << std::endl << std::endl;
+#define PRINTVAR( a ) std::cout << #a << " = " << (a) << std::endl << std::endl;
 #else
 #define PRINTVAR( a )
 #endif
@@ -199,8 +199,8 @@ typedef std::map< edge, idxtype, edgeCompare > _edgeList;
 inline std::ostream& operator<<( std::ostream& os, const _edgeList& l )
 {
     os << std::endl;
-    for ( _edgeList::const_iterator it = l.begin( ); it != l.end( ); ++it )
-        os << "\t" << it->first << "\t" << it->second << std::endl;
+    for (const auto &it : l)
+        os << "\t" << it.first << "\t" << it.second << std::endl;
     return os;
 }
 
@@ -459,8 +459,8 @@ inline std::ostream& operator<<( std::ostream& os, const v3f& p )
 inline std::ostream& operator<<( std::ostream& os, const std::vector<v3f>& p )
 {
     os << std::endl;
-    for ( size_t i = 0; i < p.size( ); ++i )
-        os << "\t" << p[i] << std::endl;
+    for (const auto& v : p)
+        os << "\t" << v << std::endl;
     return os;
 }
 
@@ -595,8 +595,8 @@ inline std::ostream& operator<<( std::ostream& os, const face& p )
 inline std::ostream& operator<<( std::ostream& os, const std::vector<face>& p )
 {
     os << std::endl;
-    for ( size_t i = 0; i < p.size( ); ++i )
-        os << "\t" << p[i] << std::endl;
+    for (auto v : p)
+        os << "\t" << v << std::endl;
     return os;
 }
 

@@ -155,12 +155,12 @@ void ObjModel::drawNormals( const std::vector<point3d> &vertices, std::vector<ve
     glColor3f( 0.8, 0, 0 );
     glLineWidth( 2 );
 
-    for ( size_t i = 0; i < vertices.size( ); i++ )
+    for(const auto &v : vertices)
     {
         glBegin( GL_LINES );
 
-        vec3d newP = vertices[i] + 0.1 * vertexNormals[i];
-        glVertex3fv( (float*) &vertices[i] );
+        vec3d newP = v + 0.1 * v;
+        glVertex3fv( (float*) &v );
 
         glVertex3f( newP.x, newP.y, newP.z );
 
@@ -203,17 +203,17 @@ float ObjModel::unitizeModel( )
         cout << "scale: " << scale << " cx " << c.x << " cy " << c.y << " cz " << c.z << endl;
 
         // translate each vertex wrt to the center and then apply the scaling to the coordinate
-        for ( size_t i = 0; i < _vertices.size( ); i++ )
+        for(auto& v : _vertices)
         {
             //****************************************
             // translate the vertex
             //****************************************
-            _vertices[i].translate( -c.x, -c.y, -c.z );
+            v.translate( -c.x, -c.y, -c.z );
 
             //****************************************
             // apply the scaling
             //****************************************
-            _vertices[i].scale( scale );
+            v.scale( scale );
 
         }
 
@@ -291,19 +291,19 @@ void ObjModel::flatDraw( ) const
     glShadeModel( GL_SMOOTH );
 
     // for each triangle draw the vertices and the normals
-    for ( size_t i = 0; i < _mesh.size( ); i++ )
+    for(const auto &face : _mesh)
     {
         glBegin( GL_TRIANGLES );
         //compute the normal of the triangle
         vec3d n;
-        computeNormal( _vertices[_mesh[i].v1], _vertices[(int) _mesh[i].v2], _vertices[(int) _mesh[i].v3], n );
+        computeNormal( _vertices[face.v1], _vertices[(int) face.v2], _vertices[(int) face.v3], n );
         glNormal3fv( (float*) &n );
 
-        glVertex3fv( (float*) &_vertices[_mesh[i].v1] );
+        glVertex3fv( (float*) &_vertices[face.v1] );
 
-        glVertex3fv( (float*) &_vertices[_mesh[i].v2] );
+        glVertex3fv( (float*) &_vertices[face.v2] );
 
-        glVertex3fv( (float*) &_vertices[_mesh[i].v3] );
+        glVertex3fv( (float*) &_vertices[face.v3] );
 
         glEnd( );
     }

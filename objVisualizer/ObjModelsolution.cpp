@@ -456,7 +456,7 @@ void ObjModel::loopSubdivision( const std::vector<point3d> &origVert,			//!< the
     //*********************************************************************
     //  Recompute the normals for each face
     //*********************************************************************
-    for (auto &face : destMesh)  //!!
+    for(const auto &face : destMesh)  //!!
     {
         //*********************************************************************
         //  Calculate the normal of the triangles, it will be the same for each vertex
@@ -475,7 +475,7 @@ void ObjModel::loopSubdivision( const std::vector<point3d> &origVert,			//!< the
     //*********************************************************************
     // normalize the normals of each vertex
     //*********************************************************************
-    for (auto &n : destNorm)  //<!!
+    for(auto &n : destNorm)  //<!!
     {
         n.normalize( );
     }  //>!!

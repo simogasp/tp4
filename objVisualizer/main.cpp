@@ -23,6 +23,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <utility>
 #include <vector>
 #include <cstdio>
 #include <cstring>
@@ -41,16 +42,21 @@ using namespace std;
 
 //  Window
 
-typedef struct
+struct glutWindow
 {
-    int width;
-    int height;
+    int width{1024};
+    int height{760};
     string title;
 
-    float field_of_view_angle;
-    float z_near;
-    float z_far;
-} glutWindow;
+    float field_of_view_angle{45};
+    float z_near{0.25f};
+    float z_far{500.0f};
+
+    glutWindow() = default;
+
+    explicit glutWindow(string &winName) : title(winName) { }
+
+} ;
 
 
 
@@ -168,13 +174,12 @@ void display( )
     glutSwapBuffers( );
 }
 
-void keyboard( unsigned char key, int x, int y )
+void keyboard( unsigned char key, int , int  )
 {
     switch ( key )
     {
         case KEY_ESCAPE:
             exit( 0 );
-            break;
         case 's':
             params.useIndexRendering = !params.useIndexRendering;
             PRINTVAR( params.useIndexRendering );
@@ -212,7 +217,7 @@ void keyboard( unsigned char key, int x, int y )
     glutPostRedisplay( );
 }
 
-void arrows( int key, int x, int y )
+void arrows( int key, int , int )
 {
     switch ( key )
     {

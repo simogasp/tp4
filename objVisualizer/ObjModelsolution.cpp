@@ -362,16 +362,16 @@ void ObjModel::loopSubdivision( const std::vector<point3d> &origVert,			//!< the
         //*********************************************************************
         // get the indices of the triangle vertices
         //*********************************************************************
-        idxtype v1 = f.v1;  //<!!
-        idxtype v2 = f.v2;
-        idxtype v3 = f.v3;  //>!!
+        const idxtype v1 = f.v1;  //<!!
+        const idxtype v2 = f.v2;
+        const idxtype v3 = f.v3;  //>!!
 
         //*********************************************************************
         // for each edge get the index of the vertex of the midpoint using getNewVertex
         //*********************************************************************
-        idxtype a = getNewVertex( edge( v1, v2 ), destVert, origMesh, newVertices );  //<!!
-        idxtype b = getNewVertex( edge( v2, v3 ), destVert, origMesh, newVertices );
-        idxtype c = getNewVertex( edge( v3, v1 ), destVert, origMesh, newVertices );  //>!!
+        const idxtype a = getNewVertex( edge( v1, v2 ), destVert, origMesh, newVertices );  //<!!
+        const idxtype b = getNewVertex( edge( v2, v3 ), destVert, origMesh, newVertices );
+        const idxtype c = getNewVertex( edge( v3, v1 ), destVert, origMesh, newVertices );  //>!!
 
         //*********************************************************************
         // create the four new triangles
@@ -507,7 +507,7 @@ idxtype ObjModel::getNewVertex( const edge &e,
         //*********************************************************************
         // generate new index (vertex.size)
         //*********************************************************************
-        idxtype idxnew = static_cast<idxtype>(vertList.size( ));  //!!
+        const auto idxnew = static_cast<idxtype>(vertList.size( ));  //!!
 
         //*********************************************************************
         // add the edge and index to the newVertList

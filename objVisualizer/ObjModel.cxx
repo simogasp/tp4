@@ -183,22 +183,21 @@ float ObjModel::unitizeModel( )
         // calculate model width, height, and
         // depth using the bounding box
         //****************************************
-        float w, h, d;
-        w = fabs( _bb.pmax.x - _bb.pmin.x );
-        h = fabs( _bb.pmax.y - _bb.pmin.y );
-        d = fabs( _bb.pmax.z - _bb.pmin.z );
+        const float w = fabs( _bb.pmax.x - _bb.pmin.x );
+        const float h = fabs( _bb.pmax.y - _bb.pmin.y );
+        const float d = fabs( _bb.pmax.z - _bb.pmin.z );
 
         cout << "size: w: " << w << " h " << h << " d " << d << endl;
         //****************************************
         // calculate center of the bounding box of the model
         //****************************************
-        point3d c = (_bb.pmax + _bb.pmin) * 0.5;
+        const point3d c = (_bb.pmax + _bb.pmin) * 0.5;
 
         //****************************************
         // calculate the unitizing scale factor as the
         // maximum of the 3 dimensions
         //****************************************
-        float scale = 2.0 / std::max( std::max( w, h ), d );
+        const float scale = 2.0 / std::max( std::max( w, h ), d );
 
         cout << "scale: " << scale << " cx " << c.x << " cy " << c.y << " cz " << c.z << endl;
 

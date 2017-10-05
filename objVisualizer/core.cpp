@@ -24,7 +24,7 @@
 
 void v3f::normalize()
 {
-    float n = norm();
+    const float n = norm();
     if (n > (100.f * std::numeric_limits<float>::epsilon()) )
     {
         x /= n;

@@ -425,13 +425,13 @@ void ObjModel::loopSubdivision( const std::vector<point3d> &origVert,			//!< the
         // how many times each vertex is summed in the general case...
         //*********************************************************************
 
-        occurrences[face.v1]++;  //<!!
+        ++occurrences[face.v1];  //<!!
         tmp[face.v1] += (0.625f * origVert[face.v1] + 0.1875f * origVert[face.v2] + 0.1875f * origVert[face.v3]);
 
-        occurrences[face.v2]++;
+        ++occurrences[face.v2];
         tmp[face.v2] += (0.625f * origVert[face.v2] + 0.1875f * origVert[face.v1] + 0.1875f * origVert[face.v3]);
 
-        occurrences[face.v3]++;
+        ++occurrences[face.v3];
         tmp[face.v3] += (0.625f * origVert[face.v3] + 0.1875f * origVert[face.v2] + 0.1875f * origVert[face.v1]);  //>!!
     }
 

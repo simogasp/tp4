@@ -377,7 +377,7 @@ void ObjModel::loopSubdivision( const std::vector<point3d> &origVert,			//!< the
 
 		//*********************************************************************
 		// create the four new triangles
-		// BE CAREFULL WITH THE VERTEX ORDER!!
+		// BE CAREFUL WITH THE VERTEX ORDER!!
 		//		       v2
 		//			   /\
 		//		      /  \

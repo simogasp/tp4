@@ -33,9 +33,6 @@
 
 using namespace std;
 
-ObjModel::ObjModel( ) { }
-
-
 
 /**
  * Load the OBJ data from file

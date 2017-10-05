@@ -106,10 +106,10 @@ private:
 
     BoundingBox _bb;					//!< the current bounding box of the model
 
-    ushort _currentSubdivLevel;		    //!< the current subdivision level
+    ushort _currentSubdivLevel{};		    //!< the current subdivision level
 
 public:
-    ObjModel();
+    ObjModel() = default;
 
     /**
      * Calculate the normal of a triangular face defined by three points

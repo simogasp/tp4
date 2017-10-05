@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+# script used to generate the package to be given to the student
+# It generates objVisualizer.tar.gz containing all the cpp and the
+# makefile needed to compile
+# It uses the python script studentify.py to generate the cpp file
+# with the code for the student to complete.
+# Replace the path in STUDENTIFY with your location to the script.
+
+STUDENTIFY=/Users/sgaspari/dev/code/n7/tptool/studentify.py
+
+mkdir tmp
+cp  objVisualizer/Makefile objVisualizer/ObjModel.cxx objVisualizer/ObjModel.hpp objVisualizer/core.* objVisualizer/main.cpp tmp
+cp -r data tmp
+
+STUDENTIFY objVisualizer/ObjModelsolution.cpp -o tmp/ObjModel.cpp --force
+
+tar -zcvf objVisualizer.tar.gz tmp
+
+rm -rf tmp

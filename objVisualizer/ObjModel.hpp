@@ -74,26 +74,19 @@ typedef struct BoundingBox
 } BoundingBox;
 
 
-typedef struct RenderingParameters
+struct RenderingParameters
 {
-    bool wireframe;					//!< wireframe on/off
-    bool solid;						//!< draw the mesh on/off
-    bool useIndexRendering;			//!< use opengl drawElements on/off
-    bool subdivision;				//!< subdivision on/off
-    bool smooth;					//!< GL_SMOOTH on/off
-    bool normals;					//!< show normals on/off
-    ushort subdivLevel;				//!< number of subdivision level
+    bool wireframe{true};					//!< wireframe on/off
+    bool solid{true};						//!< draw the mesh on/off
+    bool useIndexRendering{false};			//!< use opengl drawElements on/off
+    bool subdivision{false};				//!< subdivision on/off
+    bool smooth{false};					    //!< GL_SMOOTH on/off
+    bool normals{false};					//!< show normals on/off
+    ushort subdivLevel{1};				    //!< number of subdivision level
 
-    RenderingParameters() :
-    wireframe(true),
-    solid(true),
-    useIndexRendering(false),
-    subdivision(false),
-    smooth(false),
-    normals(false),
-    subdivLevel(1) { }
+    RenderingParameters() = default;
 
-} RenderingParameters;
+};
 
 /**
  * The class containing and managing the 3D model 

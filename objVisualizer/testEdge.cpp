@@ -29,11 +29,11 @@ int main(int argc, char **argv)
     _edgeList mylist;
 
 
-     mylist.insert(std::pair<edge,GLushort>(edge(6,5),6));
-     mylist.insert(std::pair<edge,GLushort>(edge(1,2),1));
-      mylist.insert(std::pair<edge,GLushort>(edge(2,1),4));
-      mylist.insert(std::pair<edge,GLushort>(edge(1,4),5));
-      mylist.insert(std::pair<edge,GLushort>(edge(3,5),6));
+    mylist.insert(std::pair<edge,GLushort>(edge(6,5),6));
+    mylist.insert(std::pair<edge,GLushort>(edge(1,2),1));
+    mylist.insert(std::pair<edge,GLushort>(edge(2,1),4));
+    mylist.insert(std::pair<edge,GLushort>(edge(1,4),5));
+    mylist.insert(std::pair<edge,GLushort>(edge(3,5),6));
 //     mylist[edge(3,2)] = 10;
 
     PRINTVAR(mylist);

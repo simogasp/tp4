@@ -55,17 +55,12 @@ endif()
 # SET COMPILATION FLAGS FOR C++11 
 #########################################################
 
-if (CMAKE_COMPILER_IS_GNUCC)
-    execute_process(COMMAND ${CMAKE_C_COMPILER} -dumpversion
-                    OUTPUT_VARIABLE GCC_VERSION)
-    if (GCC_VERSION VERSION_LESS 4.7 )
-        message(STATUS "Version < 4.7")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
-    else(GCC_VERSION VERSION_LESS 4.7 )
-        message(STATUS "Version >= 4.7")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-    endif(GCC_VERSION VERSION_LESS 4.7 )
-endif(CMAKE_COMPILER_IS_GNUCC)
+if (CMAKE_VERSION VERSION_LESS "3.1")
+    set(CMAKE_CXX_FLAGS "-std=gnu++11 ${CMAKE_CXX_FLAGS}")
+else ()
+    set(CMAKE_CXX_STANDARD 11)
+    set(CMAKE_CXX_STANDARD_REQUIRED ON)
+endif ()
 
 
 IF (WITH_UNORDERED_MAP)

@@ -129,7 +129,11 @@ int ObjModel::load( char* filename )
         //*********************************************************************
         // normalize the normals of each vertex
         //*********************************************************************
-        for ( size_t i = 0; i < _normals.size( ); _normals[i++].normalize( ) );  //!!
+        for(auto &normal : _normals)  //<!!
+        {
+            normal.normalize();
+        }  //>!!
+
 //		PRINTVAR( _normals );
 
         // Close OBJ file
@@ -179,17 +183,17 @@ void ObjModel::drawWireframe( const std::vector<point3d> &vertices, const std::v
     //**************************************************
     // for each face of the mesh...
     //**************************************************
-    for ( size_t i = 0; i < mesh.size( ); i++ )  //!!
+    for(const auto &face : mesh)  //!!
     {
         //**************************************************
         // draw the contour of the face as a  GL_LINE_LOOP
         //**************************************************
         glBegin( GL_LINE_LOOP );  //<!!
-            glVertex3fv( (float*) &vertices[mesh[i].v1] );
+            glVertex3fv( (float*) &vertices[face.v1] );
 
-            glVertex3fv( (float*) &vertices[mesh[i].v2] );
+            glVertex3fv( (float*) &vertices[face.v2] );
 
-            glVertex3fv( (float*) &vertices[mesh[i].v3] );
+            glVertex3fv( (float*) &vertices[face.v3] );
         glEnd( );  //>!!
     }
 
@@ -244,7 +248,7 @@ void ObjModel::drawFlatFaces( const std::vector<point3d> &vertices, const std::v
     //**************************************************
     // for each face
     //**************************************************
-    for ( size_t i = 0; i < mesh.size( ); i++ )  //!!
+    for(const auto &face : mesh)  //!!
     {
         //**************************************************
         // Compute the normal to the face and then draw the
@@ -253,14 +257,14 @@ void ObjModel::drawFlatFaces( const std::vector<point3d> &vertices, const std::v
         glBegin( GL_TRIANGLES );  //<!!
 
             vec3d n; //the normal of the face
-            computeNormal( vertices[mesh[i].v1], vertices[mesh[i].v2], vertices[mesh[i].v3], n );
+            computeNormal( vertices[face.v1], vertices[face.v2], vertices[face.v3], n );
             glNormal3fv( (float*) &n );
 
-            glVertex3fv( (float*) &vertices[mesh[i].v1] );
+            glVertex3fv( (float*) &vertices[face.v1] );
 
-            glVertex3fv( (float*) &vertices[mesh[i].v2] );
+            glVertex3fv( (float*) &vertices[face.v2] );
 
-            glVertex3fv( (float*) &vertices[mesh[i].v3] );
+            glVertex3fv( (float*) &vertices[face.v3] );
 
         glEnd( );  //>!!
     }
@@ -277,9 +281,9 @@ void ObjModel::drawFlatFaces( const std::vector<point3d> &vertices, const std::v
  * @param params The rendering parameters
  */
 void ObjModel::drawSmoothFaces( const std::vector<point3d> &vertices, 
-                            const std::vector<face> &mesh,
-                            std::vector<vec3d> &vertexNormals,
-                            const RenderingParameters &params ) const
+                                const std::vector<face> &mesh,
+                                std::vector<vec3d> &vertexNormals,
+                                const RenderingParameters &params ) const
 {
     if ( params.smooth )
     {
@@ -356,14 +360,14 @@ void ObjModel::loopSubdivision( const std::vector<point3d> &origVert,			//!< the
     //*********************************************************************
     // for each face
     //*********************************************************************
-    for ( size_t i = 0; i < origMesh.size( ); ++i )  //!!
+    for(const auto &f : origMesh)  //!!
     {
         //*********************************************************************
         // get the indices of the triangle vertices
         //*********************************************************************
-        idxtype v1 = origMesh[i].v1;  //<!!
-        idxtype v2 = origMesh[i].v2;
-        idxtype v3 = origMesh[i].v3;  //>!!
+        idxtype v1 = f.v1;  //<!!
+        idxtype v2 = f.v2;
+        idxtype v3 = f.v3;  //>!!
 
         //*********************************************************************
         // for each edge get the index of the vertex of the midpoint using getNewVertex
@@ -414,26 +418,24 @@ void ObjModel::loopSubdivision( const std::vector<point3d> &origVert,			//!< the
     //*********************************************************************
     // for each face
     //*********************************************************************
-    for ( size_t i = 0; i < origMesh.size( ); ++i )  //!!
+    for(const auto &face : origMesh)  //!!
     {
-        face t = origMesh[i];
-
         //*********************************************************************
         // consider each of the 3 vertices:
         // 1) increment its occurrence
         // 2) apply Loop update wrt the other 2 vertices of the face
-        // BE CAREFULL WITH THE COEFFICIENT OF THE OTHER 2 VERTICES!... consider
+        // BE CAREFUL WITH THE COEFFICIENT OF THE OTHER 2 VERTICES!... consider
         // how many times each vertex is summed in the general case...
         //*********************************************************************
 
-        occurrences[t.v1]++;  //<!!
-        tmp[t.v1] += (0.625f * origVert[t.v1] + 0.1875f * origVert[t.v2] + 0.1875f * origVert[t.v3]);
+        occurrences[face.v1]++;  //<!!
+        tmp[face.v1] += (0.625f * origVert[face.v1] + 0.1875f * origVert[face.v2] + 0.1875f * origVert[face.v3]);
 
-        occurrences[t.v2]++;
-        tmp[t.v2] += (0.625f * origVert[t.v2] + 0.1875f * origVert[t.v1] + 0.1875f * origVert[t.v3]);
+        occurrences[face.v2]++;
+        tmp[face.v2] += (0.625f * origVert[face.v2] + 0.1875f * origVert[face.v1] + 0.1875f * origVert[face.v3]);
 
-        occurrences[t.v3]++;
-        tmp[t.v3] += (0.625f * origVert[t.v3] + 0.1875f * origVert[t.v2] + 0.1875f * origVert[t.v1]);  //>!!
+        occurrences[face.v3]++;
+        tmp[face.v3] += (0.625f * origVert[face.v3] + 0.1875f * origVert[face.v2] + 0.1875f * origVert[face.v1]);  //>!!
     }
 
     //*********************************************************************
@@ -454,27 +456,30 @@ void ObjModel::loopSubdivision( const std::vector<point3d> &origVert,			//!< the
     //*********************************************************************
     //  Recompute the normals for each face
     //*********************************************************************
-    for ( size_t i = 0; i < destMesh.size( ); ++i )  //!!
+    for (auto &face : destMesh)  //!!
     {
         //*********************************************************************
         //  Calculate the normal of the triangles, it will be the same for each vertex
         //*********************************************************************
         vec3d norm;  //!!
-        computeNormal( destVert[ destMesh[i].v1], destVert[destMesh[i].v2], destVert[destMesh[i].v3], norm );  //!!
+        computeNormal( destVert[face.v1], destVert[face.v2], destVert[face.v3], norm );  //!!
 
         //*********************************************************************
         // Sum the normal of the face to each vertex normal using the angleAtVertex as weight
         //*********************************************************************
-        destNorm[destMesh[i].v1] += (vec3d( norm ) * angleAtVertex( destVert[ destMesh[i].v1], destVert[destMesh[i].v2], destVert[destMesh[i].v3] ));  //<!!
-        destNorm[destMesh[i].v2] += (vec3d( norm ) * angleAtVertex( destVert[ destMesh[i].v2], destVert[destMesh[i].v3], destVert[destMesh[i].v1] ));
-        destNorm[destMesh[i].v3] += (vec3d( norm ) * angleAtVertex( destVert[ destMesh[i].v3], destVert[destMesh[i].v1], destVert[destMesh[i].v2] ));  //>!!
+        destNorm[face.v1] += (vec3d( norm ) * angleAtVertex( destVert[face.v1], destVert[face.v2], destVert[face.v3] ));  //<!!
+        destNorm[face.v2] += (vec3d( norm ) * angleAtVertex( destVert[face.v2], destVert[face.v3], destVert[face.v1] ));
+        destNorm[face.v3] += (vec3d( norm ) * angleAtVertex( destVert[face.v3], destVert[face.v1], destVert[face.v2] ));  //>!!
 
     }
     //*********************************************************************
     // normalize the normals of each vertex
     //*********************************************************************
-    for ( size_t i = 0; i < destNorm.size( ); destNorm[i++].normalize( ) );  //!!
-    //PRINTVAR(newVertices);
+    for (auto &n : destNorm)  //<!!
+    {
+        n.normalize( );
+    }  //>!!
+
 }
 
 /**

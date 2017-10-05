@@ -32,10 +32,10 @@
 
 #define KEY_ESCAPE 27
 
-#define DELTA_ANGLE_X	5
-#define DELTA_ANGLE_Y	5
-#define DELTA_DISTANCE	0.3
-#define DISTANCE_MIN	0.0
+#define DELTA_ANGLE_X   5
+#define DELTA_ANGLE_Y   5
+#define DELTA_DISTANCE  0.3
+#define DISTANCE_MIN    0.0
 
 using namespace std;
 
@@ -155,7 +155,7 @@ void display( )
     glRotatef( angle_x, 1, 0, 0 );
     glRotatef( angle_y, 0, 1, 0 );
 
-    //		angle_y += 1;
+    //        angle_y += 1;
 
     DrawAxis( 1.0f );
 
@@ -261,7 +261,7 @@ int main( int argc, char **argv )
     glutCreateWindow( win.title.c_str() );
     glutDisplayFunc( display );
     glutReshapeFunc( reshape );
-    //	glutIdleFunc( display );									// register Idle Function
+    //    glutIdleFunc( display );                                    // register Idle Function
     glutKeyboardFunc( keyboard );
     glutSpecialFunc( arrows );
     initialize( );
@@ -295,41 +295,41 @@ void reshape( int width, int height )
 
     if ( aspect > 1.0f ) //w>h
     {
-        //		if (width < height)
-        //		{
-        //			glViewport(0,(height-width/aspect)/2, width, width/aspect);
-        //			cout << "a" << endl;
-        //		}
-        //		else if ( width/height > aspect )
-        //		{
-        //			glViewport((width-height*aspect)/2,0,height*aspect,height);
-        //			cout << "b" << endl;
-        //		}
-        //		else
+//        if (width < height)
+//        {
+//            glViewport(0,(height-width/aspect)/2, width, width/aspect);
+//            cout << "a" << endl;
+//        }
+//        else if ( width/height > aspect )
+//        {
+//            glViewport((width-height*aspect)/2,0,height*aspect,height);
+//            cout << "b" << endl;
+//        }
+//        else
         if ( width / height < aspect )
         {
             glViewport( 0, (height - width / aspect) / 2, width, width / aspect );
-            //			cout << "c " << (height-width/aspect)/2 << endl;
+//            cout << "c " << (height-width/aspect)/2 << endl;
         }
         else
         {
             glViewport( (width - height * aspect) / 2, 0, height*aspect, height );
-            //			cout << "d " << (width-height*aspect)/2 << endl;
+//            cout << "d " << (width-height*aspect)/2 << endl;
         }
     }
     else //h>h
     {
-        //		if (height < width)
-        //		{
-        //			glViewport((width-height*aspect)/2,0, height*aspect, height);
-        //			cout << "d "<< endl;
-        //		}
-        //		else if ( width/height > aspect )
-        //		{
-        //			glViewport((width-height*aspect)/2,0,height*aspect,height);
-        //			cout << "e" << endl;
-        //		}
-        //		else
+//        if (height < width)
+//        {
+//            glViewport((width-height*aspect)/2,0, height*aspect, height);
+//            cout << "d "<< endl;
+//        }
+//        else if ( width/height > aspect )
+//        {
+//            glViewport((width-height*aspect)/2,0,height*aspect,height);
+//            cout << "e" << endl;
+//        }
+//        else
         {
             glViewport( (width - height * aspect) / 2, 0, height*aspect, height );
             cout << "d " << (width - height * aspect) / 2 << endl;

@@ -61,13 +61,13 @@ int main(int argc, char **argv)
     idxtype a;
     face out;
     std::string b;
-//	std::stringstream parser (line);
-//	parser >> b
-//		   >> out.v1 >> b >> a
-//		   >> out.v2 >> b >> a
-//		   >> out.v3 >> b >> a;
-//	PRINTVAR(parser.fail());
-//	std::cout << out << a << b << std::endl;
+//    std::stringstream parser (line);
+//    parser >> b
+//           >> out.v1 >> b >> a
+//           >> out.v2 >> b >> a
+//           >> out.v3 >> b >> a;
+//    PRINTVAR(parser.fail());
+//    std::cout << out << a << b << std::endl;
     PRINTVAR(line);
     PRINTVAR( (sscanf(line.c_str(), "f %u//%u %u//%u %u//%u", &(out.v1), &a, &(out.v2), &a, &(out.v3), &a) == 6) );
     std::cout << out << a << b << std::endl;

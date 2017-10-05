@@ -71,8 +71,8 @@ void ObjModel::render( const RenderingParameters &params )
             // if they are different apply the missing steps: either restart from the beginning
             // if the required level is less than the current one or apply the missing
             // steps starting from the current one
-            vector<point3d> tmpVert;		//!< a temporary list of vertices used in the iterations
-            vector<face> tmpMesh;	//!< a temporary mesh used in the iterations
+            vector<point3d> tmpVert;        //!< a temporary list of vertices used in the iterations
+            vector<face> tmpMesh;           //!< a temporary mesh used in the iterations
 
             if(( _currentSubdivLevel == 0 ) || ( _currentSubdivLevel > params.subdivLevel ) )
             {
@@ -280,7 +280,7 @@ bool ObjModel::parseFaceString( const string &toParse, face &out ) const
 
 
 //*****************************************************************************
-//*						DEPRECATED FUNCTIONS
+//*                        DEPRECATED FUNCTIONS
 //*****************************************************************************
 
 // to be deprecated
@@ -399,7 +399,7 @@ void ObjModel::applyLoop( const face &t, const std::vector<point3d> &origVert, s
     // twice, so we use 3/16 instead of 3/8
     valence[t.v1]++;
     destVert[t.v1] += (0.625f * origVert[t.v1] + 0.1875f * origVert[t.v2] + 0.1875f * origVert[t.v3]);
-    //	PRINTVAR(valence[t.v1]);
+    //    PRINTVAR(valence[t.v1]);
 
     valence[t.v2]++;
     destVert[t.v2] += (0.625f * origVert[t.v2] + 0.1875f * origVert[t.v1] + 0.1875f * origVert[t.v3]);

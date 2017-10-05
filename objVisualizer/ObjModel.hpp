@@ -19,7 +19,7 @@
 
 
 #ifndef _OBJMODEL_HPP_
-#define	_OBJMODEL_HPP_
+#define _OBJMODEL_HPP_
 
 #include "core.hpp"
 
@@ -39,8 +39,8 @@
  */
 typedef struct BoundingBox
 {
-    point3d pmax;	//!<the maximum point of the bounding box
-    point3d pmin;	//!<the minimum point of the bounding box
+    point3d pmax;    //!<the maximum point of the bounding box
+    point3d pmin;    //!<the minimum point of the bounding box
 
     BoundingBox() :
     pmax(point3d()),
@@ -76,13 +76,13 @@ typedef struct BoundingBox
 
 struct RenderingParameters
 {
-    bool wireframe{true};					//!< wireframe on/off
-    bool solid{true};						//!< draw the mesh on/off
-    bool useIndexRendering{false};			//!< use opengl drawElements on/off
-    bool subdivision{false};				//!< subdivision on/off
-    bool smooth{false};					    //!< GL_SMOOTH on/off
-    bool normals{false};					//!< show normals on/off
-    ushort subdivLevel{1};				    //!< number of subdivision level
+    bool wireframe{true};                    //!< wireframe on/off
+    bool solid{true};                        //!< draw the mesh on/off
+    bool useIndexRendering{false};            //!< use opengl drawElements on/off
+    bool subdivision{false};                //!< subdivision on/off
+    bool smooth{false};                        //!< GL_SMOOTH on/off
+    bool normals{false};                    //!< show normals on/off
+    ushort subdivLevel{1};                    //!< number of subdivision level
 
     RenderingParameters() = default;
 
@@ -96,17 +96,17 @@ class ObjModel
 private:
 
     std::vector<face> _mesh;                //!< Stores the vertex indices for the triangles
-    std::vector<point3d> _vertices;			//!< Stores the vertices
-    std::vector<vec3d> _normals;			//!< Stores the normals for the triangles
+    std::vector<point3d> _vertices;         //!< Stores the vertices
+    std::vector<vec3d> _normals;            //!< Stores the normals for the triangles
 
     // Subdivision
-    std::vector<face> _subMesh;         //!< Stores the vertex indices for the triangles
-    std::vector<point3d> _subVert;		//!< Stores the vertices
-    std::vector<vec3d> _subNorm;		//!< Stores the normals for the triangles
+    std::vector<face> _subMesh;             //!< Stores the vertex indices for the triangles
+    std::vector<point3d> _subVert;          //!< Stores the vertices
+    std::vector<vec3d> _subNorm;            //!< Stores the normals for the triangles
 
-    BoundingBox _bb;					//!< the current bounding box of the model
+    BoundingBox _bb;                        //!< the current bounding box of the model
 
-    ushort _currentSubdivLevel{};		    //!< the current subdivision level
+    ushort _currentSubdivLevel{};           //!< the current subdivision level
 
 public:
     ObjModel() = default;

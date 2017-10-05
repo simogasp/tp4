@@ -16,7 +16,7 @@
  */
 
 #ifndef _CORE_HPP_
-#define	_CORE_HPP_
+#define _CORE_HPP_
 
 // for mac osx
 #ifdef __APPLE__

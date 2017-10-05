@@ -55,10 +55,10 @@ int ObjModel::load( char* filename )
             getline( objFile, line );
 
             // If the first character is a simple 'v'...
-//			PRINTVAR( line );
+//            PRINTVAR( line );
             if ( (line.c_str( )[0] == 'v') && (line.c_str( )[1] == ' ') ) // to drop all the vn and vn lines
             {
-//				PRINTVAR( line );
+//                PRINTVAR( line );
                 // Read 3 floats from the line:  X Y Z and store them in the corresponding place in _vertices
                 point3d p;
                 sscanf( line.c_str( ), "v %f %f %f ",  &p.x,  &p.y,  &p.z );
@@ -119,9 +119,9 @@ int ObjModel::load( char* filename )
         }
 
         cerr << "Found :\n\tNumber of triangles (_indices) " << _mesh.size( ) << "\n\tNumber of Vertices: " << _vertices.size( ) << "\n\tNumber of Normals: " << _normals.size( ) << endl;
-//		PRINTVAR( _mesh );
-//		PRINTVAR( _vertices );
-//		PRINTVAR( _normals );
+//        PRINTVAR( _mesh );
+//        PRINTVAR( _vertices );
+//        PRINTVAR( _normals );
 
         //*********************************************************************
         // normalize the normals of each vertex
@@ -131,7 +131,7 @@ int ObjModel::load( char* filename )
             normal.normalize();
         }  //>!!
 
-//		PRINTVAR( _normals );
+//        PRINTVAR( _normals );
 
         // Close OBJ file
         objFile.close( );
@@ -336,11 +336,11 @@ void ObjModel::drawSmoothFaces( const std::vector<point3d> &vertices,
  * @param[out] destMesh The new subdivided mesh (the vertex indices for each face/triangle)
  * @param[out] destNorm The new list of normals for each new vertex of the subdivided mesh
  */
-void ObjModel::loopSubdivision( const std::vector<point3d> &origVert,			//!< the original vertices
-                                const std::vector<face> &origMesh,		        //!< the original mesh
-                                std::vector<point3d> &destVert,					//!< the new vertices
-                                std::vector<face> &destMesh,			        //!< the new mesh
-                                std::vector<vec3d> &destNorm ) const			//!< the new normals
+void ObjModel::loopSubdivision( const std::vector<point3d> &origVert,           //!< the original vertices
+                                const std::vector<face> &origMesh,              //!< the original mesh
+                                std::vector<point3d> &destVert,                 //!< the new vertices
+                                std::vector<face> &destMesh,                    //!< the new mesh
+                                std::vector<vec3d> &destNorm ) const            //!< the new normals
 {
     // copy the original vertices in destVert
     destVert = origVert;
@@ -348,8 +348,8 @@ void ObjModel::loopSubdivision( const std::vector<point3d> &origVert,			//!< the
     // start fresh with the new mesh
     destMesh.clear( );
 
-    //	PRINTVAR(destVert);
-    //	PRINTVAR(origVert);
+    //    PRINTVAR(destVert);
+    //    PRINTVAR(origVert);
 
     // create a list of the new vertices creates with the reference to the edge
     EdgeList newVertices;
@@ -376,15 +376,15 @@ void ObjModel::loopSubdivision( const std::vector<point3d> &origVert,			//!< the
         //*********************************************************************
         // create the four new triangles
         // BE CAREFUL WITH THE VERTEX ORDER!!
-        //		       v2
-        //			   /\
-        //		      /  \
-        //		     /    \
-        //		    a ---- b
-        //         / \     /\
-        //		  /   \   /  \
-        //		 /     \ /    \
-        //		v1 ---- c ---- v3
+        //               v2
+        //               /\
+        //              /  \
+        //             /    \
+        //            a ---- b
+        //           / \     /\
+        //          /   \   /  \
+        //         /     \ /    \
+        //        v1 ---- c ---- v3
         //
         // the original triangle was v1-v2-v3, use the same clock-wise order for the other
         // hence v1-a-c, a-b-c and so on
@@ -496,8 +496,8 @@ idxtype ObjModel::getNewVertex( const edge &e,
                                 const std::vector<face> &mesh,
                                 EdgeList &newVertList ) const
 {
-    //	PRINTVAR(e);
-    //	PRINTVAR(newVertList);
+    //    PRINTVAR(e);
+    //    PRINTVAR(newVertList);
 
     //*********************************************************************
     // if the egde is NOT contained in the new vertex list (see EdgeList.contains() method)
@@ -515,9 +515,9 @@ idxtype ObjModel::getNewVertex( const edge &e,
         newVertList.add( e, idxnew );  //!!
 
         // generate new vertex
-        point3d nvert;		//!< this will contain the new vertex
-        idxtype oppV1;		//!< the index of the first "opposite" vertex
-        idxtype oppV2;		//!< the index of the second "opposite" vertex (if it exists)
+        point3d nvert;        //!< this will contain the new vertex
+        idxtype oppV1;        //!< the index of the first "opposite" vertex
+        idxtype oppV2;        //!< the index of the second "opposite" vertex (if it exists)
 
         //*********************************************************************
         // check if it is a boundary edge, ie check if there is another triangle

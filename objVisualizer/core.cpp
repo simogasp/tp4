@@ -25,12 +25,12 @@
 void v3f::normalize()
 {
     float n = norm();
-	if (n > (100.f * std::numeric_limits<float>::epsilon()) )
-	{
-		x /= n;
-		y /= n;
-		z /= n;
-	}
+    if (n > (100.f * std::numeric_limits<float>::epsilon()) )
+    {
+        x /= n;
+        y /= n;
+        z /= n;
+    }
 }
 
 float v3f::dot(const v3f &v) const
@@ -82,16 +82,16 @@ void v3f::scale( const float &a )
 
 void v3f::min( const v3f& a )
 {
-	x = std::min( x, a.x );
-	y = std::min( y, a.y );
-	z = std::min( z, a.z );
+    x = std::min( x, a.x );
+    y = std::min( y, a.y );
+    z = std::min( z, a.z );
 }
 
 void v3f::max( const v3f& a )
 {
-	x = std::max( x, a.x );
-	y = std::max( y, a.y );
-	z = std::max( z, a.z );
+    x = std::max( x, a.x );
+    y = std::max( y, a.y );
+    z = std::max( z, a.z );
 }
 
 /**
@@ -100,7 +100,7 @@ void v3f::max( const v3f& a )
  */
 float v3f::min() const
 {
-	return std::min( std::min( x, y ), z );
+    return std::min( std::min( x, y ), z );
 }
 
 /**
@@ -109,7 +109,7 @@ float v3f::min() const
  */
 float v3f::max() const
 {
-	return std::max( std::max( x, y ), z );
+    return std::max( std::max( x, y ), z );
 }
 
 v3f v3f::cross(const v3f& v)
@@ -253,11 +253,11 @@ v3f& v3f::operator *=(const float &a)
 
 v3f v3f::operator /(const v3f& a) const
 {
-	return v3f(x / a.x, y / a.y, z / a.z);
+    return v3f(x / a.x, y / a.y, z / a.z);
 }
 v3f& v3f::operator /=(const v3f& a)
 {
-	x /= a.x;
+    x /= a.x;
     y /= a.y;
     z /= a.z;
     return *this;
@@ -265,11 +265,11 @@ v3f& v3f::operator /=(const v3f& a)
 
 v3f v3f::operator /(const float a[3]) const
 {
-	return v3f(x / a[0], y / a[1], z / a[2]);
+    return v3f(x / a[0], y / a[1], z / a[2]);
 }
 v3f& v3f::operator /=(const float a[3])
 {
-	x /= a[0];
+    x /= a[0];
     y /= a[1];
     z /= a[2];
     return *this;
@@ -277,11 +277,11 @@ v3f& v3f::operator /=(const float a[3])
 
 v3f v3f::operator /(const float &a) const
 {
-	return v3f(x / a, y / a, z / a);
+    return v3f(x / a, y / a, z / a);
 }
 v3f& v3f::operator /=(const float &a)
 {
-	x /= a;
+    x /= a;
     y /= a;
     z /= a;
     return *this;
@@ -302,113 +302,113 @@ v3f& v3f::operator /=(const float &a)
  */
 bool face::containsEdge(const edge &e, idxtype &oppositeVertex) const
 {
-	if( edge(v1, v2) == e )
-	{
-		oppositeVertex = v3;
-		return true;
-	} 
-	else if ( edge(v2, v3) == e )
-	{
-		oppositeVertex = v1;
-		return true;
-	}
-	else if ( edge(v3, v1) == e )
-	{
-		oppositeVertex = v2;
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+    if( edge(v1, v2) == e )
+    {
+        oppositeVertex = v3;
+        return true;
+    }
+    else if ( edge(v2, v3) == e )
+    {
+        oppositeVertex = v1;
+        return true;
+    }
+    else if ( edge(v3, v1) == e )
+    {
+        oppositeVertex = v2;
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 // ********** SUM
 face face::operator +(const face& a) const
 {
-	return face(v1 + a.v1, v2 + a.v2, v3 + a.v3);
+    return face(v1 + a.v1, v2 + a.v2, v3 + a.v3);
 
 }
 face& face::operator +=(const face& a)
 {
-	v1 += a.v1;
-	v2 += a.v2;
-	v3 += a.v3;
-	return *this;
+    v1 += a.v1;
+    v2 += a.v2;
+    v3 += a.v3;
+    return *this;
 }
 
 face face::operator +(const idxtype &a) const
 {
-	return face(v1 + a, v2 + a, v3 + a);
+    return face(v1 + a, v2 + a, v3 + a);
 }
 face& face::operator +=(const idxtype &a)
 {
-	v1 += a;
-	v2 += a;
-	v3 += a;
-	return *this;
+    v1 += a;
+    v2 += a;
+    v3 += a;
+    return *this;
 }
 
 // ********** DIFFERENCE
 face face::operator -(const face& a) const
 {
-	return face(v1 - a.v1, v2 - a.v2, v3 - a.v3);
+    return face(v1 - a.v1, v2 - a.v2, v3 - a.v3);
 }
 face& face::operator -=(const face& a)
 {
-	v1 -= a.v1;
-	v2 -= a.v2;
-	v3 -= a.v3;
-	return *this;
+    v1 -= a.v1;
+    v2 -= a.v2;
+    v3 -= a.v3;
+    return *this;
 }
 
 face face::operator -(const idxtype &a) const
 {
-	return face(v1 - a, v2 - a, v3 - a);
+    return face(v1 - a, v2 - a, v3 - a);
 }
 face& face::operator -=(const idxtype &a)
 {
-	v1 -= a;
-	v2 -= a;
-	v3 -= a;
-	return *this;
+    v1 -= a;
+    v2 -= a;
+    v3 -= a;
+    return *this;
 }
 
 // ********** MULTIPLICATION
 face face::operator *(const face& a) const
 {
-	return face(v1 * a.v1, v2 * a.v2, v3 * a.v3);
+    return face(v1 * a.v1, v2 * a.v2, v3 * a.v3);
 }
 face& face::operator *=(const face& a)
 {
-	v1 *= a.v1;
-	v2 *= a.v2;
-	v3 *= a.v3;
-	return *this;
+    v1 *= a.v1;
+    v2 *= a.v2;
+    v3 *= a.v3;
+    return *this;
 }
 
 face face::operator *(const idxtype &a) const
 {
-	return face(v1 * a, v2 * a, v3 * a);
+    return face(v1 * a, v2 * a, v3 * a);
 }
 face& face::operator *=(const idxtype &a)
 {
-	v1 *= a;
-	v2 *= a;
-	v3 *= a;
-	return *this;
+    v1 *= a;
+    v2 *= a;
+    v3 *= a;
+    return *this;
 }
 
 bool face::operator==( const face& r) const
 {
-	return ( (v1 == r.v1) && (v2 == r.v2) && (v3 == r.v3));
+    return ( (v1 == r.v1) && (v2 == r.v2) && (v3 == r.v3));
 }
 /**
  * Two index triplets are different if... they are not equal
  */
 bool face::operator!=( const face& r ) const
 {
-	return ( !(*this == r));
+    return ( !(*this == r));
 }
 
 /**
@@ -424,20 +424,20 @@ bool face::operator!=( const face& r ) const
  */
 bool isBoundaryEdge(const edge &e, const std::vector<face> &mesh, idxtype &oppVert1, idxtype &oppVert2 )
 {
-	bool foundFirst = false;
-	bool foundSecond = false;
-	for(size_t i = 0; (i < mesh.size()) && ( !(foundFirst && foundSecond)); ++i )
-	{
-		if(!foundFirst)
-		{
-			foundFirst = mesh[i].containsEdge(e, oppVert1);
-		}
-		else
-		{
-			foundSecond = mesh[i].containsEdge(e, oppVert2);
-		}
-	}
-	// the edge should be in the list, so at least one should be found
-	assert(foundFirst);
-	return(foundFirst && (!foundSecond));
+    bool foundFirst = false;
+    bool foundSecond = false;
+    for(size_t i = 0; (i < mesh.size()) && ( !(foundFirst && foundSecond)); ++i )
+    {
+        if(!foundFirst)
+        {
+            foundFirst = mesh[i].containsEdge(e, oppVert1);
+        }
+        else
+        {
+            foundSecond = mesh[i].containsEdge(e, oppVert2);
+        }
+    }
+    // the edge should be in the list, so at least one should be found
+    assert(foundFirst);
+    return(foundFirst && (!foundSecond));
 }

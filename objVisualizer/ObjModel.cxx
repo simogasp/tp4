@@ -29,18 +29,18 @@
  */
 float ObjModel::angleAtVertex( const point3d& baseV, const point3d& v1, const point3d& v2 ) const
 {
-	vec3d e1 = baseV - v1;
-	vec3d e2 = baseV - v2;
-	//safe acos...
-	if ( fabs( (e1).dot( e2 ) / (e1.norm( ) * e2.norm( )) ) >= 1.0f )
-	{
-		cerr << "warning: using safe acos" << endl;
-		return (acos( 1.0f ));
-	}
-	else
-	{
-		return ( acos( (e1).dot( e2 ) / (e1.norm( ) * e2.norm( )) ));
-	}
+    vec3d e1 = baseV - v1;
+    vec3d e2 = baseV - v2;
+    //safe acos...
+    if ( fabs( (e1).dot( e2 ) / (e1.norm( ) * e2.norm( )) ) >= 1.0f )
+    {
+        cerr << "warning: using safe acos" << endl;
+        return (acos( 1.0f ));
+    }
+    else
+    {
+        return ( acos( (e1).dot( e2 ) / (e1.norm( ) * e2.norm( )) ));
+    }
 }
 
 
@@ -50,64 +50,64 @@ float ObjModel::angleAtVertex( const point3d& baseV, const point3d& v1, const po
 */
 void ObjModel::render( const RenderingParameters &params )
 {
-	// if we need to draw the original model
-	if ( !params.subdivision )
-	{
-		// draw it
-		draw( _vertices, _mesh, _normals, params );
-		// draw the normals
-		if ( params.normals )
-		{
-			drawNormals( _vertices, _normals );
-		}
-	}
-	else
-	{
-		PRINTVAR(params.subdivLevel);
-		PRINTVAR(_currentSubdivLevel);
-		// before drawing check the current level of subdivision and the required one
-		if ( ( _currentSubdivLevel == 0 ) || ( _currentSubdivLevel != params.subdivLevel ) )
-		{
-			// if they are different apply the missing steps: either restart from the beginning
-			// if the required level is less than the current one or apply the missing
-			// steps starting from the current one
-			vector<point3d> tmpVert;		//!< a temporary list of vertices used in the iterations
-			vector<face> tmpMesh;	//!< a temporary mesh used in the iterations
-			
-			if(( _currentSubdivLevel == 0 ) || ( _currentSubdivLevel > params.subdivLevel ) )
-			{
-				// start from the beginning
-				_currentSubdivLevel = 0;
-				tmpVert = _vertices;
-				tmpMesh = _mesh;
-			}
-			else
-			{
-				// start from the current level
-				tmpVert = _subVert;
-				tmpMesh = _subMesh;
-			}
-			
-			// apply the proper subdivision iterations
-			for( ; _currentSubdivLevel < params.subdivLevel; ++_currentSubdivLevel)
-			{
-				cerr << "[Loop subdivision] iteration " << _currentSubdivLevel << endl;
-				loopSubdivision( tmpVert, tmpMesh, _subVert, _subMesh, _subNorm );
-				// swap unless it's the last iteration
-				if( _currentSubdivLevel < ( params.subdivLevel - 1) )
-				{
-					tmpVert = _subVert;
-					tmpMesh = _subMesh;
-				}
-			}
-		}
-		
-		draw( _subVert, _subMesh, _subNorm, params );
-		if ( params.normals )
-		{
-			drawNormals( _subVert, _subNorm );
-		}
-	}
+    // if we need to draw the original model
+    if ( !params.subdivision )
+    {
+        // draw it
+        draw( _vertices, _mesh, _normals, params );
+        // draw the normals
+        if ( params.normals )
+        {
+            drawNormals( _vertices, _normals );
+        }
+    }
+    else
+    {
+        PRINTVAR(params.subdivLevel);
+        PRINTVAR(_currentSubdivLevel);
+        // before drawing check the current level of subdivision and the required one
+        if ( ( _currentSubdivLevel == 0 ) || ( _currentSubdivLevel != params.subdivLevel ) )
+        {
+            // if they are different apply the missing steps: either restart from the beginning
+            // if the required level is less than the current one or apply the missing
+            // steps starting from the current one
+            vector<point3d> tmpVert;		//!< a temporary list of vertices used in the iterations
+            vector<face> tmpMesh;	//!< a temporary mesh used in the iterations
+
+            if(( _currentSubdivLevel == 0 ) || ( _currentSubdivLevel > params.subdivLevel ) )
+            {
+                // start from the beginning
+                _currentSubdivLevel = 0;
+                tmpVert = _vertices;
+                tmpMesh = _mesh;
+            }
+            else
+            {
+                // start from the current level
+                tmpVert = _subVert;
+                tmpMesh = _subMesh;
+            }
+
+            // apply the proper subdivision iterations
+            for( ; _currentSubdivLevel < params.subdivLevel; ++_currentSubdivLevel)
+            {
+                cerr << "[Loop subdivision] iteration " << _currentSubdivLevel << endl;
+                loopSubdivision( tmpVert, tmpMesh, _subVert, _subMesh, _subNorm );
+                // swap unless it's the last iteration
+                if( _currentSubdivLevel < ( params.subdivLevel - 1) )
+                {
+                    tmpVert = _subVert;
+                    tmpMesh = _subMesh;
+                }
+            }
+        }
+
+        draw( _subVert, _subMesh, _subNorm, params );
+        if ( params.normals )
+        {
+            drawNormals( _subVert, _subNorm );
+        }
+    }
 }
 
 /**
@@ -120,27 +120,27 @@ void ObjModel::render( const RenderingParameters &params )
  */
 void ObjModel::draw( const std::vector<point3d> &vertices, const std::vector<face> &indices, std::vector<vec3d> &vertexNormals, const RenderingParameters &params ) const
 {
-	if ( params.solid )
-	{
-		drawSolid( vertices, indices, vertexNormals, params );
-	}
-	if ( params.wireframe )
-	{
-		drawWireframe( vertices, indices, params );
-	}
+    if ( params.solid )
+    {
+        drawSolid( vertices, indices, vertexNormals, params );
+    }
+    if ( params.wireframe )
+    {
+        drawWireframe( vertices, indices, params );
+    }
 
 }
 
 void ObjModel::drawSolid( const vector<point3d> &vertices, const vector<face> &indices, vector<vec3d> &vertexNormals, const RenderingParameters &params ) const
 {
-	if ( params.useIndexRendering )
-	{
-		drawSmoothFaces( vertices, indices, vertexNormals, params );
-	}
-	else
-	{
-		drawFlatFaces( vertices, indices, params );
-	}
+    if ( params.useIndexRendering )
+    {
+        drawSmoothFaces( vertices, indices, vertexNormals, params );
+    }
+    else
+    {
+        drawFlatFaces( vertices, indices, params );
+    }
 }
 
 /**
@@ -150,23 +150,23 @@ void ObjModel::drawSolid( const vector<point3d> &vertices, const vector<face> &i
  */
 void ObjModel::drawNormals( const std::vector<point3d> &vertices, std::vector<vec3d> &vertexNormals ) const
 {
-	glDisable( GL_LIGHTING );
+    glDisable( GL_LIGHTING );
 
-	glColor3f( 0.8, 0, 0 );
-	glLineWidth( 2 );
+    glColor3f( 0.8, 0, 0 );
+    glLineWidth( 2 );
 
-	for ( size_t i = 0; i < vertices.size( ); i++ )
-	{
-		glBegin( GL_LINES );
+    for ( size_t i = 0; i < vertices.size( ); i++ )
+    {
+        glBegin( GL_LINES );
 
-		vec3d newP = vertices[i] + 0.1 * vertexNormals[i];
-		glVertex3fv( (float*) &vertices[i] );
+        vec3d newP = vertices[i] + 0.1 * vertexNormals[i];
+        glVertex3fv( (float*) &vertices[i] );
 
-		glVertex3f( newP.x, newP.y, newP.z );
+        glVertex3f( newP.x, newP.y, newP.z );
 
-		glEnd( );
-	}
-	glEnable( GL_LIGHTING );
+        glEnd( );
+    }
+    glEnable( GL_LIGHTING );
 }
 
 /**
@@ -177,61 +177,61 @@ void ObjModel::drawNormals( const std::vector<point3d> &vertices, std::vector<ve
  */
 float ObjModel::unitizeModel( )
 {
-	if ( !_vertices.empty( ) && !_mesh.empty( ) )
-	{
-		//****************************************
-		// calculate model width, height, and 
-		// depth using the bounding box
-		//****************************************
-		float w, h, d;
-		w = fabs( _bb.pmax.x - _bb.pmin.x );
-		h = fabs( _bb.pmax.y - _bb.pmin.y );
-		d = fabs( _bb.pmax.z - _bb.pmin.z );
+    if ( !_vertices.empty( ) && !_mesh.empty( ) )
+    {
+        //****************************************
+        // calculate model width, height, and
+        // depth using the bounding box
+        //****************************************
+        float w, h, d;
+        w = fabs( _bb.pmax.x - _bb.pmin.x );
+        h = fabs( _bb.pmax.y - _bb.pmin.y );
+        d = fabs( _bb.pmax.z - _bb.pmin.z );
 
-		cout << "size: w: " << w << " h " << h << " d " << d << endl;
-		//****************************************
-		// calculate center of the bounding box of the model 
-		//****************************************
-		point3d c = (_bb.pmax + _bb.pmin) * 0.5;
+        cout << "size: w: " << w << " h " << h << " d " << d << endl;
+        //****************************************
+        // calculate center of the bounding box of the model
+        //****************************************
+        point3d c = (_bb.pmax + _bb.pmin) * 0.5;
 
-		//****************************************
-		// calculate the unitizing scale factor as the 
-		// maximum of the 3 dimensions
-		//****************************************
-		float scale = 2.0 / std::max( std::max( w, h ), d );
+        //****************************************
+        // calculate the unitizing scale factor as the
+        // maximum of the 3 dimensions
+        //****************************************
+        float scale = 2.0 / std::max( std::max( w, h ), d );
 
-		cout << "scale: " << scale << " cx " << c.x << " cy " << c.y << " cz " << c.z << endl;
+        cout << "scale: " << scale << " cx " << c.x << " cy " << c.y << " cz " << c.z << endl;
 
-		// translate each vertex wrt to the center and then apply the scaling to the coordinate
-		for ( size_t i = 0; i < _vertices.size( ); i++ )
-		{
-			//****************************************
-			// translate the vertex
-			//****************************************
-			_vertices[i].translate( -c.x, -c.y, -c.z );
+        // translate each vertex wrt to the center and then apply the scaling to the coordinate
+        for ( size_t i = 0; i < _vertices.size( ); i++ )
+        {
+            //****************************************
+            // translate the vertex
+            //****************************************
+            _vertices[i].translate( -c.x, -c.y, -c.z );
 
-			//****************************************
-			// apply the scaling
-			//****************************************
-			_vertices[i].scale( scale );
+            //****************************************
+            // apply the scaling
+            //****************************************
+            _vertices[i].scale( scale );
 
-		}
-
-
-		//****************************************
-		// update the bounding box, ie translate and scale the 6 coordinates
-		//****************************************
-		_bb.pmax = (_bb.pmax - c) * scale;
-		_bb.pmin = (_bb.pmin - c) * scale;
+        }
 
 
-		cout << "New bounding box : pmax=" << _bb.pmax << "  pmin=" << _bb.pmin << endl;
+        //****************************************
+        // update the bounding box, ie translate and scale the 6 coordinates
+        //****************************************
+        _bb.pmax = (_bb.pmax - c) * scale;
+        _bb.pmin = (_bb.pmin - c) * scale;
 
-		return scale;
 
-	}
+        cout << "New bounding box : pmax=" << _bb.pmax << "  pmin=" << _bb.pmin << endl;
 
-	return 0;
+        return scale;
+
+    }
+
+    return 0;
 }
 
 void ObjModel::release( ) { }
@@ -246,37 +246,37 @@ void ObjModel::release( ) { }
  */
 bool ObjModel::parseFaceString( const string &toParse, face &out ) const
 {
-	if ( toParse.c_str( )[0] == 'f' )
-	{
-		idxtype a;
-		// now check the different formats: %d, %d//%d, %d/%d, %d/%d/%d
-		if ( strstr( toParse.c_str( ), "//" ) )
-		{
-			// v//n
-			return ( sscanf( toParse.c_str( ), "f %u//%u %u//%u %u//%u", &(out.v1), &a, &(out.v2), &a, &(out.v3), &a ) == 6);
-		}
-		else if ( sscanf( toParse.c_str( ), "f %u/%u/%u", &a, &a, &a ) == 3 )
-		{
-			// v/t/n
-			return ( sscanf( toParse.c_str( ), "f %u/%u/%u %u/%u/%u %u/%u/%u", &(out.v1), &a, &a, &(out.v2), &a, &a, &(out.v3), &a, &a ) == 9);
-		}
-		else if ( sscanf( toParse.c_str( ), "f %u/%u", &a, &a ) == 2 )
-		{
-			// v/t .
-			return ( sscanf( toParse.c_str( ), "f %u/%u %u/%u %u/%u", &(out.v1), &a, &(out.v2), &a, &(out.v3), &a ) == 6);
-		}
-		else
-		{
-			// v
-			sscanf( toParse.c_str( ), "f %u %u %u", &(out.v1), &(out.v2), &(out.v3) );
-			PRINTVAR( out );
-			return ( sscanf( toParse.c_str( ), "f %u %u %u", &(out.v1), &(out.v2), &(out.v3) ) == 3);
-		}
-	}
-	else
-	{
-		return false;
-	}
+    if ( toParse.c_str( )[0] == 'f' )
+    {
+        idxtype a;
+        // now check the different formats: %d, %d//%d, %d/%d, %d/%d/%d
+        if ( strstr( toParse.c_str( ), "//" ) )
+        {
+            // v//n
+            return ( sscanf( toParse.c_str( ), "f %u//%u %u//%u %u//%u", &(out.v1), &a, &(out.v2), &a, &(out.v3), &a ) == 6);
+        }
+        else if ( sscanf( toParse.c_str( ), "f %u/%u/%u", &a, &a, &a ) == 3 )
+        {
+            // v/t/n
+            return ( sscanf( toParse.c_str( ), "f %u/%u/%u %u/%u/%u %u/%u/%u", &(out.v1), &a, &a, &(out.v2), &a, &a, &(out.v3), &a, &a ) == 9);
+        }
+        else if ( sscanf( toParse.c_str( ), "f %u/%u", &a, &a ) == 2 )
+        {
+            // v/t .
+            return ( sscanf( toParse.c_str( ), "f %u/%u %u/%u %u/%u", &(out.v1), &a, &(out.v2), &a, &(out.v3), &a ) == 6);
+        }
+        else
+        {
+            // v
+            sscanf( toParse.c_str( ), "f %u %u %u", &(out.v1), &(out.v2), &(out.v3) );
+            PRINTVAR( out );
+            return ( sscanf( toParse.c_str( ), "f %u %u %u", &(out.v1), &(out.v2), &(out.v3) ) == 3);
+        }
+    }
+    else
+    {
+        return false;
+    }
 }
 
 
@@ -288,25 +288,25 @@ bool ObjModel::parseFaceString( const string &toParse, face &out ) const
 
 void ObjModel::flatDraw( ) const
 {
-	glShadeModel( GL_SMOOTH );
+    glShadeModel( GL_SMOOTH );
 
-	// for each triangle draw the vertices and the normals
-	for ( size_t i = 0; i < _mesh.size( ); i++ )
-	{
-		glBegin( GL_TRIANGLES );
-		//compute the normal of the triangle
-		vec3d n;
-		computeNormal( _vertices[_mesh[i].v1], _vertices[(int) _mesh[i].v2], _vertices[(int) _mesh[i].v3], n );
-		glNormal3fv( (float*) &n );
+    // for each triangle draw the vertices and the normals
+    for ( size_t i = 0; i < _mesh.size( ); i++ )
+    {
+        glBegin( GL_TRIANGLES );
+        //compute the normal of the triangle
+        vec3d n;
+        computeNormal( _vertices[_mesh[i].v1], _vertices[(int) _mesh[i].v2], _vertices[(int) _mesh[i].v3], n );
+        glNormal3fv( (float*) &n );
 
-		glVertex3fv( (float*) &_vertices[_mesh[i].v1] );
+        glVertex3fv( (float*) &_vertices[_mesh[i].v1] );
 
-		glVertex3fv( (float*) &_vertices[_mesh[i].v2] );
+        glVertex3fv( (float*) &_vertices[_mesh[i].v2] );
 
-		glVertex3fv( (float*) &_vertices[_mesh[i].v3] );
+        glVertex3fv( (float*) &_vertices[_mesh[i].v3] );
 
-		glEnd( );
-	}
+        glEnd( );
+    }
 
 }
 
@@ -315,7 +315,7 @@ void ObjModel::flatDraw( ) const
 void ObjModel::drawWireframe( ) const
 {
 
-	drawWireframe( _vertices, _mesh, RenderingParameters( ) );
+    drawWireframe( _vertices, _mesh, RenderingParameters( ) );
 
 }
 
@@ -323,88 +323,88 @@ void ObjModel::drawWireframe( ) const
 
 void ObjModel::indexDraw( ) const
 {
-	glShadeModel( GL_SMOOTH );
-	//****************************************
-	// Enable vertex arrays
-	//****************************************
-	glEnableClientState( GL_VERTEX_ARRAY );
+    glShadeModel( GL_SMOOTH );
+    //****************************************
+    // Enable vertex arrays
+    //****************************************
+    glEnableClientState( GL_VERTEX_ARRAY );
 
-	//****************************************
-	// Enable normal arrays
-	//****************************************
-	glEnableClientState( GL_NORMAL_ARRAY );
+    //****************************************
+    // Enable normal arrays
+    //****************************************
+    glEnableClientState( GL_NORMAL_ARRAY );
 
-	//****************************************
-	// Vertex Pointer to triangle array
-	//****************************************
-	glEnableClientState( GL_VERTEX_ARRAY );
+    //****************************************
+    // Vertex Pointer to triangle array
+    //****************************************
+    glEnableClientState( GL_VERTEX_ARRAY );
 
-	//****************************************
-	// Normal pointer to normal array
-	//****************************************
-	glNormalPointer( GL_FLOAT, 0, (float*) &_normals[0] );
+    //****************************************
+    // Normal pointer to normal array
+    //****************************************
+    glNormalPointer( GL_FLOAT, 0, (float*) &_normals[0] );
 
-	//****************************************
-	// Index pointer to normal array
-	//****************************************
-	glVertexPointer( COORD_PER_VERTEX, GL_FLOAT, 0, (float*) &_vertices[0] );
+    //****************************************
+    // Index pointer to normal array
+    //****************************************
+    glVertexPointer( COORD_PER_VERTEX, GL_FLOAT, 0, (float*) &_vertices[0] );
 
-	//****************************************
-	// Draw the triangles
-	//****************************************
-	glDrawElements( GL_TRIANGLES, _mesh.size( ) * VERTICES_PER_TRIANGLE, GL_UNSIGNED_INT, (idxtype*) & _mesh[0] );
+    //****************************************
+    // Draw the triangles
+    //****************************************
+    glDrawElements( GL_TRIANGLES, _mesh.size( ) * VERTICES_PER_TRIANGLE, GL_UNSIGNED_INT, (idxtype*) & _mesh[0] );
 
-	//****************************************
-	// Disable vertex arrays
-	//****************************************
-	glDisableClientState( GL_VERTEX_ARRAY ); // disable vertex arrays
+    //****************************************
+    // Disable vertex arrays
+    //****************************************
+    glDisableClientState( GL_VERTEX_ARRAY ); // disable vertex arrays
 
-	//****************************************
-	// Disable normal arrays
-	//****************************************
-	glDisableClientState( GL_NORMAL_ARRAY );
+    //****************************************
+    // Disable normal arrays
+    //****************************************
+    glDisableClientState( GL_NORMAL_ARRAY );
 }
 
 // to be deprecated
 
 void ObjModel::drawSubdivision( )
 {
-	if ( _subMesh.empty( ) || _subNorm.empty( ) || _subVert.empty( ) )
-	{
-		loopSubdivision( _vertices, _mesh, _subVert, _subMesh, _subNorm );
-	}
+    if ( _subMesh.empty( ) || _subNorm.empty( ) || _subVert.empty( ) )
+    {
+        loopSubdivision( _vertices, _mesh, _subVert, _subMesh, _subNorm );
+    }
 
-	glShadeModel( GL_SMOOTH );
+    glShadeModel( GL_SMOOTH );
 
-	glEnableClientState( GL_NORMAL_ARRAY );
-	glEnableClientState( GL_VERTEX_ARRAY );
+    glEnableClientState( GL_NORMAL_ARRAY );
+    glEnableClientState( GL_VERTEX_ARRAY );
 
-	glNormalPointer( GL_FLOAT, 0, (float*) &_subNorm[0] );
-	glVertexPointer( COORD_PER_VERTEX, GL_FLOAT, 0, (float*) &_subVert[0] );
+    glNormalPointer( GL_FLOAT, 0, (float*) &_subNorm[0] );
+    glVertexPointer( COORD_PER_VERTEX, GL_FLOAT, 0, (float*) &_subVert[0] );
 
-	glDrawElements( GL_TRIANGLES, _subMesh.size( ) * VERTICES_PER_TRIANGLE, GL_UNSIGNED_SHORT, (idxtype*) & _subMesh[0] );
+    glDrawElements( GL_TRIANGLES, _subMesh.size( ) * VERTICES_PER_TRIANGLE, GL_UNSIGNED_SHORT, (idxtype*) & _subMesh[0] );
 
 
-	glDisableClientState( GL_VERTEX_ARRAY ); // disable vertex arrays
-	glDisableClientState( GL_NORMAL_ARRAY );
+    glDisableClientState( GL_VERTEX_ARRAY ); // disable vertex arrays
+    glDisableClientState( GL_NORMAL_ARRAY );
 
-	drawWireframe( _subVert, _subMesh, RenderingParameters( ) );
+    drawWireframe( _subVert, _subMesh, RenderingParameters( ) );
 
 }
 
 // to be removed
 void ObjModel::applyLoop( const face &t, const std::vector<point3d> &origVert, std::vector<size_t> &valence, std::vector<point3d> &destVert ) const
 {
-	// 5/8 V + 3/8 sum(V_i))
-	// in this case since we are summing each face the other vertices are counted
-	// twice, so we use 3/16 instead of 3/8
-	valence[t.v1]++;
-	destVert[t.v1] += (0.625f * origVert[t.v1] + 0.1875f * origVert[t.v2] + 0.1875f * origVert[t.v3]);
-	//	PRINTVAR(valence[t.v1]);
+    // 5/8 V + 3/8 sum(V_i))
+    // in this case since we are summing each face the other vertices are counted
+    // twice, so we use 3/16 instead of 3/8
+    valence[t.v1]++;
+    destVert[t.v1] += (0.625f * origVert[t.v1] + 0.1875f * origVert[t.v2] + 0.1875f * origVert[t.v3]);
+    //	PRINTVAR(valence[t.v1]);
 
-	valence[t.v2]++;
-	destVert[t.v2] += (0.625f * origVert[t.v2] + 0.1875f * origVert[t.v1] + 0.1875f * origVert[t.v3]);
+    valence[t.v2]++;
+    destVert[t.v2] += (0.625f * origVert[t.v2] + 0.1875f * origVert[t.v1] + 0.1875f * origVert[t.v3]);
 
-	valence[t.v3]++;
-	destVert[t.v3] += (0.625f * origVert[t.v3] + 0.1875f * origVert[t.v2] + 0.1875f * origVert[t.v1]);
+    valence[t.v3]++;
+    destVert[t.v3] += (0.625f * origVert[t.v3] + 0.1875f * origVert[t.v2] + 0.1875f * origVert[t.v1]);
 }

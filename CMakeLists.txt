@@ -3,7 +3,7 @@ include(ExternalProject)
 
 project( OpenGLlabs LANGUAGES CXX VERSION 0.1)
 
-set(WITH_UNORDERED_MAP ON CACHE BOOL "Use unordered map for efficiency")
+option(WITH_UNORDERED_MAP "Use unordered map for efficiency" ON)
 
 #########################################################
 #

@@ -12,7 +12,7 @@
 #include "core.hpp"
 #include "ObjModel.hpp"
 #include <sstream>
-#include <stdio.h>
+#include <cstdio>
 #include <cstdlib>
 #include <cassert>
 

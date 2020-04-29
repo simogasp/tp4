@@ -25,7 +25,7 @@
 
 #include <vector>
 #include <ostream>
-#include <math.h>
+#include <cmath>
 
 
 #define VERTICES_PER_TRIANGLE 3

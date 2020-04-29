@@ -5,7 +5,7 @@
 #include "core.hpp"
 #include "ObjModel.hpp"
 #include <sstream>
-#include <stdio.h>
+#include <cstdio>
 
 #if HAVE_STD_UNORDERED_MAP
 #include <unordered_map>

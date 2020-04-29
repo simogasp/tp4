@@ -4,6 +4,7 @@ include(ExternalProject)
 project( OpenGLlabs LANGUAGES CXX VERSION 0.1)
 
 option(WITH_UNORDERED_MAP "Use unordered map for efficiency" ON)
+option(BUILD_TESTS "Build tests" OFF)
 
 #########################################################
 #
@@ -185,6 +186,7 @@ endif()
 
 add_subdirectory(objVisualizer)
 
-
-enable_testing()
-add_test( testEdgeList bin/testEdgeList 1000 )
+if(BUILD_TESTS)
+    enable_testing()
+    add_test( testEdgeList bin/testEdgeList 1000 )
+endif()

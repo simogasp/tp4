@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 include(ExternalProject)
 
-project( OpenGLlabs )
+project( OpenGLlabs LANGUAGES CXX VERSION 0.1)
 
 set(WITH_UNORDERED_MAP ON CACHE BOOL "Use unordered map for efficiency")
 

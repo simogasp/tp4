@@ -30,7 +30,10 @@ echo "Removing studentify..."
 rm -rf ${STUDENTIFYDIR}
 
 echo "Generating archive..."
-zip -r ${ARCHIVE_NAME}.zip ${DESTNAME}
+cd ${TMPDIR}
+zip -r ${ARCHIVE_NAME}.zip ${ARCHIVE_NAME}
+cd -
+mv  ${TMPDIR}/${ARCHIVE_NAME}.zip .
 
 echo "Cleaning up..."
 rm -rf ${DESTNAME}

@@ -15,8 +15,7 @@
  *
  */
 
-#ifndef _CORE_HPP_
-#define _CORE_HPP_
+#pragma once
 
 // for mac osx
 #ifdef __APPLE__
@@ -613,4 +612,3 @@ inline std::ostream& operator<<( std::ostream& os, const std::vector<face>& p )
  */
 bool isBoundaryEdge( const edge &e, const std::vector<face> &triangleList, idxtype &oppVert1, idxtype &oppVert2 );
 
-#endif //_CORE_HPP_

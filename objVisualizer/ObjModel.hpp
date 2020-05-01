@@ -18,8 +18,7 @@
  */
 
 
-#ifndef _OBJMODEL_HPP_
-#define _OBJMODEL_HPP_
+#pragma once
 
 #include "core.hpp"
 
@@ -259,6 +258,3 @@ private:
     DEPRECATED(void applyLoop(const face &t, const std::vector<point3d> &orig, std::vector<size_t> &valence, std::vector<point3d> &dest) const);
 
 };
-
-#endif
-

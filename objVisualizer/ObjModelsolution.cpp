@@ -55,10 +55,10 @@ int ObjModel::load( char* filename )
             getline( objFile, line );
 
             // If the first character is a simple 'v'...
-//            PRINTVAR( line );
+            PRINTVAR( line );
             if ( (line.c_str( )[0] == 'v') && (line.c_str( )[1] == ' ') ) // to drop all the vn and vn lines
             {
-//                PRINTVAR( line );
+                PRINTVAR( line );
                 // Read 3 floats from the line:  X Y Z and store them in the corresponding place in _vertices
                 point3d p;
                 sscanf( line.c_str( ), "v %f %f %f ",  &p.x,  &p.y,  &p.z );
@@ -89,7 +89,8 @@ int ObjModel::load( char* filename )
             {
 
                 face t;
-                assert( parseFaceString( line, t ) );
+                const auto ok = parseFaceString( line, t );
+                if(!ok) throw std::runtime_error("Error while reading line: " + line );
 
                 //**************************************************
                 // correct the indices: OBJ starts counting from 1, in C the arrays starts at 0...

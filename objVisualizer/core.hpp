@@ -427,7 +427,7 @@ inline v3f operator +( const float &a, const v3f& p )
 
 inline v3f operator +( const float a[3], const v3f& p )
 {
-    return (p + a[3] );
+    return (p + a );
 }
 
 inline v3f operator -( const float &a, const v3f& p )
@@ -437,12 +437,12 @@ inline v3f operator -( const float &a, const v3f& p )
 
 inline v3f operator -( const float a[3], const v3f& p )
 {
-    return (p - a[3] );
+    return (p - a );
 }
 
 inline v3f operator *( const float a[3], const v3f& p )
 {
-    return (p * a[3] );
+    return (p * a );
 }
 
 inline v3f operator *( const float &a, const v3f& p )
@@ -452,7 +452,7 @@ inline v3f operator *( const float &a, const v3f& p )
 
 inline v3f operator /( const float a[3], const v3f& p )
 {
-    return (p / a[3] );
+    return (p / a );
 }
 
 inline v3f operator /( const float &a, const v3f& p )

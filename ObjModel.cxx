@@ -17,6 +17,8 @@
  *
  */
 
+#include <algorithm>
+
 /**
  * Computes the angle at vertex baseV formed by the edges connecting it with the
  * vertices v1 and v2 respectively, ie the baseV-v1 and baseV-v2 edges

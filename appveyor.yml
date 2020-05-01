@@ -7,6 +7,7 @@ platform:
 
 configuration:
   - Release
+  - Debug
 
 #install:
 #    - vcpkg upgrade --no-dry-run

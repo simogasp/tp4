@@ -60,7 +60,9 @@ endif()
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
     target_compile_options(visualizer PRIVATE -Wall -Wextra -pedantic -Wno-comment)
 endif()
-
+if(MSVC)
+    target_compile_definitions(visualizer PUBLIC -DNOMINMAX)
+endif()
 
 if(BUILD_TESTS)
     add_executable( testEdge testEdge.cpp core.cpp)

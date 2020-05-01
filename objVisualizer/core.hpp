@@ -330,14 +330,14 @@ struct v3f
      * @param v the other vector
      * @return the cross product
      */
-    v3f cross( const v3f& v );
+    v3f cross( const v3f& v ) const;
 
     /**
      * Return the cross product of two vectors
      * @param v the other array
      * @return the cross product
      */
-    v3f cross( const float v[3] );
+    v3f cross( const float v[3] ) const;
 
     // element-wise addition
 

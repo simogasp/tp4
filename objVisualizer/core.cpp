@@ -112,14 +112,14 @@ float v3f::max() const
     return std::max( std::max( x, y ), z );
 }
 
-v3f v3f::cross(const v3f& v)
+v3f v3f::cross(const v3f& v) const
 {
     return {y*v.z - z*v.y,
                z*v.x - x*v.z,
                x*v.y - y*v.x};
 }
 
-v3f v3f::cross(const float v[3])
+v3f v3f::cross(const float v[3]) const
 {
     return {y*v[2] - z*v[1],
                z*v[0] - x*v[2],

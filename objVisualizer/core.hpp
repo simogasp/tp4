@@ -146,9 +146,9 @@ struct edgeHash
 /**
  * An edge list is a map of edges (the keys) and a index of the vertex
  */
+using edge2vertex = std::unordered_map< edge, idxtype, edgeHash, edgeEquivalent >;
 
-
-inline std::ostream& operator<<( std::ostream& os, const _edgeList& l )
+inline std::ostream& operator<<( std::ostream& os, const edge2vertex & l )
 {
     os << std::endl;
     for (const auto &it : l)
@@ -208,7 +208,7 @@ public:
 
 
 private:
-    _edgeList list;
+  edge2vertex list;
 
 };
 

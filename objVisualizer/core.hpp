@@ -41,19 +41,8 @@
 #include <vector>
 #include <iostream>
 
-#if HAVE_STD_UNORDERED_MAP || HAVE_STD_UNORDERED_MAP_IN_TR1_NAMESPACE
 #include <unordered_map>
-#elif HAVE_TR1_UNORDERED_MAP
-#include <tr1/unordered_map>
-#elif HAVE_NO_UNORDERED_MAP
-#include <map>
-#endif
-
-#if HAVE_STD_FUNCTIONAL || HAVE_STD_HASH_IN_TR1_NAMESPACE
 #include <functional>
-#elif HAVE_TR1_FUNCTIONAL
-#include <tr1/functional>
-#endif
 
 
 #define DEBUGGING 1
@@ -120,30 +109,6 @@ inline idxtype min( const edge &e )
     return (( e.first > e.second ) ? ( e.second ) : ( e.first ) );
 }
 
-#if HAVE_NO_UNORDERED_MAP
-
-/**
- * Structure used to compare two edges
- */
-struct edgeCompare
-{
-
-    bool operator( ) ( const edge &a, const edge &b ) const
-    {
-        //      return !( ( (a.first == b.first) && (a.second == b.second) ) ||
-        //               ( (a.first == b.second) && (a.second == b.first) ) );
-
-        // two edges are equal if their sum is equal and their min is the same
-        // our ordering policy is that first is the sum to be compared and then if the sum is
-        // equal we use the ordering on the min. This guarantees that when edgeCompare is used
-        // in map to detect equal keys it really detects the same edge independently of the index
-        // order. edgeCompare is indeed used with reflexively: 2 edges are equivalent if !comp(a,b) && !comp(b,a)
-        return ( ( sum( a ) < sum( b ) ) ||
-                ( ( sum( a ) == sum( b ) ) && ( min( a ) < min( b ) ) ) );
-    }
-};
-#else
-
 /**
  * Structure used to compare two edges
  */
@@ -171,29 +136,17 @@ struct edgeHash
 
     size_t operator( ) ( const edge &a ) const
     {
-#if HAVE_STD_HASH_IN_TR1_NAMESPACE
-        std::hash<std::tr1::string> fun;
-#else
         std::hash<std::string> fun;
-#endif
         return (fun( ( a.first > a.second ) ? ( "v" + std::to_string( a.second ) + "-" + std::to_string( a.first ) ) :
                 ( "v" + std::to_string( a.first ) + "-" + std::to_string( a.second ) ) ) );
     }
 };
-#endif
+
 
 /**
  * An edge list is a map of edges (the keys) and a index of the vertex
  */
 
-
-#if HAVE_TR1_UNORDERED_MAP || HAVE_STD_UNORDERED_MAP_IN_TR1_NAMESPACE
-typedef std::tr1::unordered_map< edge, idxtype, edgeCompare > _edgeList;
-#elif HAVE_STD_UNORDERED_MAP
-typedef std::unordered_map< edge, idxtype, edgeHash, edgeEquivalent > _edgeList;
-#else
-typedef std::map< edge, idxtype, edgeCompare > _edgeList;
-#endif
 
 inline std::ostream& operator<<( std::ostream& os, const _edgeList& l )
 {

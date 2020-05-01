@@ -81,7 +81,7 @@ struct RenderingParameters
     bool subdivision{false};                //!< subdivision on/off
     bool smooth{false};                        //!< GL_SMOOTH on/off
     bool normals{false};                    //!< show normals on/off
-    ushort subdivLevel{1};                    //!< number of subdivision level
+    unsigned short subdivLevel{1};          //!< number of subdivision level
 
     RenderingParameters() = default;
 
@@ -105,7 +105,7 @@ private:
 
     BoundingBox _bb;                        //!< the current bounding box of the model
 
-    ushort _currentSubdivLevel{};           //!< the current subdivision level
+    unsigned short _currentSubdivLevel{};   //!< the current subdivision level
 
 public:
     ObjModel() = default;

@@ -40,6 +40,7 @@
 
 #include <vector>
 #include <iostream>
+#include <string>
 
 #include <unordered_map>
 #include <functional>
@@ -79,8 +80,8 @@ inline std::ostream& operator<<( std::ostream& os, const edge& e )
  * It checks whether two edges are equals: two edges are equal if their indices
  * are the same, no matter the order
  * 
- * @param a The first edge
- * @param b The second edge
+ * @param[in] a The first edge
+ * @param[in] b The second edge
  * @return true if the edges are equal
  */
 inline bool operator==( const edge& a, const edge& b )
@@ -540,8 +541,8 @@ inline std::ostream& operator<<( std::ostream& os, const face& p )
 
 /**
  * Print a vector of faces on a string
- * @param os the string to fill with the faces
- * @param p the vector of faces to print
+ * @param[in,out] os the string to fill with the faces
+ * @param[in] p the vector of faces to print
  * @return the string filled with the faces
  */
 inline std::ostream& operator<<( std::ostream& os, const std::vector<face>& p )

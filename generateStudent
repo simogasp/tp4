@@ -1,24 +1,36 @@
 #!/usr/bin/env bash
 
 # script used to generate the package to be given to the student
-# It generates objVisualizer.tar.gz containing all the cpp and the
+# It generates tp4ogl-vX-Y-Z-commit.zip containing all the cpp and the
 # makefile needed to compile
 # It uses the python script studentify.py to generate the cpp file
 # with the code for the student to complete.
-# Replace the path in STUDENTIFY with your location to the script.
+
+VERSION=$(git describe --tags | sed -e 's/^v//')
+ARCHIVE_NAME=tp4ogl-v${VERSION}
+
+TMPDIR=/tmp
+
+DESTNAME=${TMPDIR}/${ARCHIVE_NAME}
+mkdir ${DESTNAME}
+
+cp * ${DESTNAME}
 
 set -e
+cp -r data freeglut ${DESTNAME}
 
-STUDENTIFY=/Users/sgaspari/dev/code/n7/tptool/studentify.py
+STUDENTIFYDIR=${TMPDIR}/tpt
+# get the python script
+git clone git@gitlab.enseeiht.fr:vortex/tptool.git ${STUDENTIFYDIR}
+# run it
+echo "Applying studentify..."
+python ${STUDENTIFYDIR}/studentify.py ${DESTNAME}/ObjModel.cpp -o ${DESTNAME}/ObjModel.cpp --force
+# remove python script
+echo "Removing studentify..."
+rm -rf ${STUDENTIFYDIR}
 
-DESTNAME=codeTP
+echo "Generating archive..."
+zip -r ${ARCHIVE_NAME}.zip ${DESTNAME}
 
-mkdir $DESTNAME
-cp  objVisualizer/Makefile objVisualizer/ObjModel.cxx objVisualizer/ObjModel.hpp objVisualizer/core.* objVisualizer/main.cpp $DESTNAME
-cp -r data $DESTNAME
-
-$STUDENTIFY objVisualizer/ObjModelsolution.cpp -o $DESTNAME/ObjModel.cpp --force
-
-tar -zcvf $DESTNAME.tar.gz $DESTNAME
-
-rm -rf $DESTNAME
+echo "Cleaning up..."
+rm -rf ${DESTNAME}

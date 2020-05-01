@@ -75,11 +75,11 @@ typedef struct BoundingBox
 
 struct RenderingParameters
 {
-    bool wireframe{true};                    //!< wireframe on/off
-    bool solid{true};                        //!< draw the mesh on/off
-    bool useIndexRendering{false};            //!< use opengl drawElements on/off
+    bool wireframe{true};                   //!< wireframe on/off
+    bool solid{true};                       //!< draw the mesh on/off
+    bool useIndexRendering{false};          //!< use opengl drawElements on/off
     bool subdivision{false};                //!< subdivision on/off
-    bool smooth{false};                        //!< GL_SMOOTH on/off
+    bool smooth{false};                     //!< GL_SMOOTH on/off
     bool normals{false};                    //!< show normals on/off
     unsigned short subdivLevel{1};          //!< number of subdivision level
 
@@ -125,16 +125,16 @@ public:
      * vertices v1 and v2 respectively, ie the baseV-v1 and baseV-v2 edges
      *
      * @brief Computes the angle at vertex
-     * @param baseV the vertex at which to compute the angle
-     * @param v1 the other vertex of the first edge baseV-v1
-     * @param v2 the other vertex of the second edge baseV-v2
+     * @param[in] baseV the vertex at which to compute the angle
+     * @param[in] v1 the other vertex of the first edge baseV-v1
+     * @param[in] v2 the other vertex of the second edge baseV-v2
      * @return the angle in radiants
      */
     float angleAtVertex(const point3d& v1, const point3d& v2, const point3d& v3) const;
 
     /**
      * Load the OBJ data from file
-     * @param filename The name of the OBJ file
+     * @param[in] filename The name of the OBJ file
      * @return 0 if everything went well
      */
     int load(char *filename);
@@ -163,10 +163,10 @@ private:
     /**
     * Draw the model
     *
-    * @param vertices list of vertices
-    * @param indices list of faces
-    * @param vertexNormals list of normals
-    * @param params Rendering parameters
+    * @param[in] vertices list of vertices
+    * @param[in] indices list of faces
+    * @param[in] vertexNormals list of normals
+    * @param[in] params Rendering parameters
     */
     void draw(const std::vector<point3d> &vertices, const std::vector<face> &indices, std::vector<vec3d> &vertexNormals, const RenderingParameters &params) const;
 

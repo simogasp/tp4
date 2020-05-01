@@ -51,14 +51,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # PUT ALL THE BINARY IN A BIN DIRECTORY
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
 
-
-
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    # suppress the hideous deprecated warning
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated")
-endif()
-
-
 add_subdirectory(objVisualizer)
 
 if(BUILD_TESTS)

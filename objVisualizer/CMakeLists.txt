@@ -3,7 +3,7 @@ target_include_directories(visualizer PUBLIC ${OPENGL_INCLUDE_DIR} ${GLUT_INCLUD
 target_link_libraries( visualizer ${OPENGL_opengl_LIBRARY} ${OPENGL_glu_LIBRARY} ${GLUT_LIBRARIES} )
 target_compile_options(visualizer PRIVATE -Wall -Wextra -pedantic -Wno-comment)
 
-if(APPLE)
+if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     target_compile_options(visualizer PRIVATE -Wno-deprecated-declarations)
 endif()
 

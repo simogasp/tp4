@@ -245,6 +245,7 @@ void ObjModel::release( ) { }
  */
 bool ObjModel::parseFaceString( const string &toParse, face &out ) const
 {
+  PRINTVAR( toParse );
     if ( toParse.c_str( )[0] == 'f' )
     {
         idxtype a;
@@ -267,7 +268,8 @@ bool ObjModel::parseFaceString( const string &toParse, face &out ) const
         else
         {
             // v
-            sscanf( toParse.c_str( ), "f %u %u %u", &(out.v1), &(out.v2), &(out.v3) );
+//            sscanf( toParse.c_str( ), "f %u %u %u", &(out.v1), &(out.v2), &(out.v3) );
+
             PRINTVAR( out );
             return ( sscanf( toParse.c_str( ), "f %u %u %u", &(out.v1), &(out.v2), &(out.v3) ) == 3);
         }

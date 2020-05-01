@@ -1,5 +1,5 @@
 CC = g++
-CXXFLAGS = -Wall -O3 -DHAVE_STD_UNORDERED_MAP -DHAVE_STD_FUNCTIONAL -std=c++11 -Wno-comment
+CXXFLAGS = -Wall -O3 -std=c++11 -Wno-comment
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Darwin)
 LIBS := -framework OpenGL -lglut -lm

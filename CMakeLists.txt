@@ -1,5 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
-include(ExternalProject)
+cmake_minimum_required(VERSION 3.1)
 
 project( OpenGLlabs LANGUAGES CXX VERSION 0.1)
 
@@ -45,13 +44,9 @@ endif()
 #########################################################
 # SET COMPILATION FLAGS FOR C++11 
 #########################################################
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-if (CMAKE_VERSION VERSION_LESS "3.1")
-    set(CMAKE_CXX_FLAGS "-std=gnu++11 ${CMAKE_CXX_FLAGS}")
-else ()
-    set(CMAKE_CXX_STANDARD 11)
-    set(CMAKE_CXX_STANDARD_REQUIRED ON)
-endif ()
 
 # PUT ALL THE BINARY IN A BIN DIRECTORY
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})

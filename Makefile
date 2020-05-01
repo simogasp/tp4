@@ -15,8 +15,5 @@ all: visualizer
 visualizer: main.o ObjModel.o core.o
 	$(CC) $(CXXFLAGS) -o $@ $^ $(LIBS)
 
-solution: main.o ObjModelsolution.o core.o
-	$(CC) $(CXXFLAGS) -o $@ $^ $(LIBS)
-
 clean:
-	rm -f *.o visualizer solution
+	rm -f *.o visualizer

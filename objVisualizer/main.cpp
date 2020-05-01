@@ -174,6 +174,20 @@ void display( )
     glutSwapBuffers( );
 }
 
+void printKeyboardHelp()
+{
+  std::cout << "keys:"
+            << "\t s - use index rendering\n"
+            << "\t w - draw wireframe\n"
+            << "\t s - enable/disable subdivision\n"
+            << "\t 1-4 - with subdivision enabled, level of subdivision\n"
+            << "\t d - enable/disable solid rendering\n"
+            << "\t a - enable/disable smooth rendering\n"
+            << "\t arrow keys - rotate around the object\n"
+            << "\t pg down/up - zoom out/in\n"
+            << std::endl;
+}
+
 void keyboard( unsigned char key, int , int  )
 {
     switch ( key )
@@ -215,6 +229,7 @@ void keyboard( unsigned char key, int , int  )
             break;
     }
     glutPostRedisplay( );
+    printKeyboardHelp();
 }
 
 void arrows( int key, int , int )
@@ -275,6 +290,8 @@ int main( int argc, char **argv )
     // Make it unitary
     //***********************************************
     obj.unitizeModel( );
+
+    printKeyboardHelp();
 
     glutMainLoop( );
 

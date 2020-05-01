@@ -50,15 +50,17 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_executable( visualizer main.cpp ObjModel.cpp core.cpp)
 target_include_directories(visualizer PUBLIC ${OPENGL_INCLUDE_DIR} ${GLUT_INCLUDE_DIR})
 target_link_libraries( visualizer ${OPENGL_opengl_LIBRARY} ${OPENGL_glu_LIBRARY} ${GLUT_LIBRARIES} )
-target_compile_options(visualizer PRIVATE -Wall -Wextra -pedantic -Wno-comment)
+if(CMAKE_SYSTEM_NAME STREQUAL Linux)
+    target_link_libraries( visualizer ${CMAKE_THREAD_LIBS_INIT} )
+endif()
 
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     target_compile_options(visualizer PRIVATE -Wno-deprecated-declarations)
 endif()
-
-if(CMAKE_SYSTEM_NAME STREQUAL Linux)
-    target_link_libraries( visualizer ${CMAKE_THREAD_LIBS_INIT} )
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
+    target_compile_options(visualizer PRIVATE -Wall -Wextra -pedantic -Wno-comment)
 endif()
+
 
 if(BUILD_TESTS)
     add_executable( testEdge testEdge.cpp core.cpp)

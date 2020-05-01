@@ -15,30 +15,21 @@ option(BUILD_TESTS "Build tests" OFF)
 #########################################################
 # FIND OPENGL
 #########################################################
+set(OpenGL_GL_PREFERENCE "GLVND")
 find_package(OpenGL REQUIRED)
-include_directories(${OpenGL_INCLUDE_DIRS})
-link_directories(${OpenGL_LIBRARY_DIRS})
-add_definitions(${OpenGL_DEFINITIONS})
-# message( "${OPENGL_LIBRARIES}" )
-# message( "${OPENGL_LIBRARIES_DIRS}" )
-# message( "${OPENGL_DEFINITIONS}" )
-if(NOT OPENGL_FOUND)
-    message(ERROR " OPENGL not found!")
-endif(NOT OPENGL_FOUND)
+message(STATUS "OPENGL_gl_LIBRARY: ${OPENGL_gl_LIBRARY}")
 
 #########################################################
 # FIND GLUT
 #########################################################
+if(MSVC)
+    set(GLUT_ROOT_PATH "${CMAKE_SOURCE_DIR}/freeglut")
+    message(STATUS "GLUT_ROOT_PATH: ${GLUT_ROOT_PATH}")
+endif()
 find_package(GLUT REQUIRED)
-include_directories(${GLUT_INCLUDE_DIR})
-link_directories(${GLUT_LIBRARY_DIRS})
-add_definitions(${GLUT_DEFINITIONS})
-# message( "glut ${GLUT_INCLUDE_DIR}" )
-if(NOT GLUT_FOUND)
-    message(ERROR " GLUT not found!")
-else()
-    message( "-- Found GLUT" )
-endif(NOT GLUT_FOUND)
+message(STATUS "GLUT_FOUND: ${GLUT_FOUND}")
+message(STATUS "GLUT_INCLUDE_DIR: ${GLUT_INCLUDE_DIR}")
+message(STATUS "GLUT_LIBRARIES: ${GLUT_LIBRARIES}")
 
 if(CMAKE_SYSTEM_NAME STREQUAL Linux)
     #########################################################
@@ -64,6 +55,7 @@ else ()
 endif ()
 
 set(VISUALIZER_DEFINITIONS "")
+
 if (WITH_UNORDERED_MAP)
 #########################################################
 # FIND UNORDERED MAP

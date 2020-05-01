@@ -55,10 +55,10 @@ int ObjModel::load( char* filename )
             getline( objFile, line );
 
             // If the first character is a simple 'v'...
-            PRINTVAR( line );
+//            PRINTVAR( line );
             if ( (line.c_str( )[0] == 'v') && (line.c_str( )[1] == ' ') ) // to drop all the vn and vn lines
             {
-                PRINTVAR( line );
+//                PRINTVAR( line );
                 // Read 3 floats from the line:  X Y Z and store them in the corresponding place in _vertices
                 point3d p;
                 sscanf( line.c_str( ), "v %f %f %f ",  &p.x,  &p.y,  &p.z );
@@ -567,6 +567,12 @@ idxtype ObjModel::getNewVertex( const edge &e,
         //*********************************************************************
         return ( newVertList.getIndex( e ));  //!!
     }
+
+    // this is just to avoid compilation errors at the beginning
+    // execution should normally never reach here
+    // the return instructions go inside each branch of the if - else above
+    std::cerr << "WARNING: the subdivision may not be implemented correctly" << std::endl;
+    return 0;
 }
 
 

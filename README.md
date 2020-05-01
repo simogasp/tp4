@@ -1,41 +1,40 @@
-OpenGL exercises
-===========================================
+# OpenGL OBJ Visualizer
 
-------------
-Introduction
-------------
+## Introduction
 
-The objective of these TP sessions is to get familiar with OpenGL.
+The fifth TP is about creating a visualizer for models loaded from [Wavefront OBJ format](https://en.wikipedia.org/wiki/Wavefront_.obj_file) files. 
+It also lets you implement a simple subdivision model of the mesh using Loop's algorithm.
 
------------------
-Code Organization
------------------
+![alt text](data/img/screeshot.png "Application visualizer")
 
-The fifth TP is about creating a visualizer for models loaded from Wavefront OBJ format files. The code is in `objVisualizer` 
+The application lets you navigate the scene and change the different rendering algorithms.
+The keys are:
+
+* `s` - use index rendering
+* `w` - draw wireframe
+* `s` - enable/disable subdivision
+* `1`-`4` - with subdivision enabled, level of subdivision
+* `d` - enable/disable solid rendering
+* `a` - enable/disable smooth rendering
+* `arrow keys` - rotate around the object
+* `pg down/up` - zoom out/in
 
 
---------
-Building
---------
+The folder [data/models](data/models) contains some 3D models to play with.
+
+## Building
 
 See [BUILD](BUILD.md) text file
 
-
--------
-License
--------
+## License
 
 See [LICENSE](LICENSE) text file
 
--------
-Authors
--------
+## Authors
 
 Simone Gasparini
 
 
----------
-Contact
----------
+## Contact
 
-Simone Gasparini simone.gasparini@enseeiht.fr
+Simone Gasparini simone.gasparini@irit.fr

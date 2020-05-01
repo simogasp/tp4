@@ -56,12 +56,12 @@
 /**
  * Renaming, the type of an index is a unsigned int
  */
-typedef GLuint idxtype;
+using idxtype = GLuint;
 
 /**
  * An edge is defined as a pair of indices of the vertices
  */
-typedef std::pair<idxtype, idxtype> edge;
+using edge = std::pair<idxtype, idxtype>;
 
 /**
  * Function to print the values of an edge
@@ -388,8 +388,8 @@ struct v3f
 /**
  * Some definitions
  */
-typedef struct v3f point3d;
-typedef struct v3f vec3d;
+using point3d = struct v3f ;
+using vec3d = struct v3f;
 
 /**
  * Print the elements of a vector

@@ -68,13 +68,24 @@ This step enables you to create the project file to load inside VS:
 
 * execute the code:  
 
-  * Select the project you want to run (e.g. `visualizer`), right click on it and select **Set as Startup Project** 
+  * From VS: 
+     * Select the project you want to run (e.g. `visualizer`), right click on it and select **Set as Startup Project** 
+     
+     * From **Debug > visualizer Properties... > Configuration Porpoerties > Command Arguments**, insert the full path of the obj file that you want to test
+       
+       (In French: **Déboguer > Propriétés de visualizer > Débogage > Arguments de la commande**)
   
-  * On the menu bar, choose **Debug** --> **Start without debugging**.)
+     * On the menu bar, choose **Debug** --> **Start without debugging**.)
 
-(see https://docs.microsoft.com/en-us/cpp/build/vscpp-step-2-build?view=vs-2019 for how to build, execute, etc)
+      (see https://docs.microsoft.com/en-us/cpp/build/vscpp-step-2-build?view=vs-2019 for how to build, execute, etc)
 
-
+  * From the command line:
+  
+     * Open a Terminal and go to `build/Release`
+     
+     * launch `visualizer ../../data/models/cube.obj`  (the argument being the model to load)
+     
+     
 ### Editing the code
 
 Edit the code according to the assignments that are given, rebuild the solution and execute. 

@@ -15,7 +15,7 @@
 \usepackage{lmodern}
 \usepackage[utf8x]{inputenc}
 \usepackage[LGR,T1]{fontenc}
-\usepackage[normalem]{ulem}
+\usepackage[normalem]{ulem} 
 \usepackage{pgfplots}
 \usetikzlibrary{shadows}
 %\usepackage{fullpage}
@@ -24,7 +24,7 @@
 \usepackage{lscape}
 \usepackage{sectsty}
 \usepackage{import}
-\usepackage[outputdir=build,cache=false]{minted}
+\usepackage{minted}
 \usepackage[autostyle=true]{csquotes}
 \usepackage[super]{nth}
 \usepackage{relsize}
@@ -297,7 +297,7 @@ void glDrawElements(GLenum mode, GLsizei count, GLenum type, const GLvoid * indi
 	\item Deactivate the arrays previosly enabled by using the function \coden{glDisableClientState()}:\\
 
 {\smaller
-\begin{cppcode}
+\begin{cppcode} 
 // The opposite of glEnableClientState()
 void glDisableClientState(GLenum array);
 \end{cppcode}
@@ -409,11 +409,15 @@ In this first bunch of exercises we will experiment different ways to render the
 
 As a final note, most of the code is already provided, you just need to complete the functions following the proposed trace and fill up the missing instructions after the comments surrounded by \code{//*************************}. For debugging purpose, a macro \code{PRINTVAR( variable );} is defined in order to print the value of a variable, be it a single variable or a list / vector of elements.
 
-Finally, in order to compile your source code you just need to do a \code{make} in the current directory. It will produce an executable named \code{visualizer} which can be called passing the \brand{OBJ} model as parameter, \ie:\\
-\begin{bashcode}
-./visualizer path/to/file.obj
-\end{bashcode}
-You can find some \brand{OBJ} models in the folder \code{data/models/}.
+Finally, in order to compile and execute the code check the \code{BUILD.md} file for the instructions of your platform.
+In the folder \code{data/models} you can find some 3D models (obj files) that you can use to test the visualizer.
+It is strongly suggested to start with very simple models such as \coden{cube.obj} and \coden{icosahedron.obj} that are easier to debug.
+
+%Finally, in order to compile your source code you just need to do a \code{make} in the current directory. It will produce an executable named \code{visualizer} which can be called passing the \brand{OBJ} model as parameter, \ie:\\
+%\begin{bashcode}
+%./visualizer path/to/file.obj
+%\end{bashcode}
+%You can find some \brand{OBJ} models in the folder \code{data/models/}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{First basic wire-frame rendering}

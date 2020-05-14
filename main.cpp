@@ -144,6 +144,7 @@ void place_light( GLfloat x, GLfloat y, GLfloat z )
 
 void display( )
 {
+    glClearColor(0.5, .5, .75, 1.);
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
     glMatrixMode( GL_MODELVIEW );

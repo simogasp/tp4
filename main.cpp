@@ -385,10 +385,10 @@ void DrawAxis( float scale )
     glVertex3f( 0.0, 1.0, 0.0 );
 
     // z-axis
+    glColor3f( 0.0, 0.0, 1.0 );
     glVertex3f( 0.0, 0.0, 0.0 );
     glVertex3f( 0.0, 0.0, 1.0 );
     /*  Letter Z */
-    glColor3f( 0.0, 0.0, 1.0 );
     glVertex3f( 0.0, 0.05f, 0.8 ); // bottom horizontal leg
     glVertex3f( 0.0, 0.05f, 1.0 );
     glVertex3f( 0.0, 0.05f, 1.0 ); // slash

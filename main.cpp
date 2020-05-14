@@ -261,6 +261,12 @@ void arrows( int key, int , int )
 
 int main( int argc, char **argv )
 {
+    if(argc ==1 )
+    {
+      std::cout << "No obj file to load, displaying an emply scene with the reference system" << std::endl;
+      std::cout << "Usage:\n\t" + std::string(argv[0]) + " <obj file>" << std::endl;
+    }
+
     // set window values
     win.width = 1024;
     win.height = 760;

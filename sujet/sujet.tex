@@ -145,7 +145,11 @@
 \newcount\nextyear
 \nextyear=\year
 \advance\nextyear by 1
+\newcount\prevyear
+\prevyear=\year
+\advance\prevyear by -1
 \newcommand{\ayear}{\the\year-\the\nextyear}
+\newcommand{\ayearSecond}{\the\prevyear-\the\year}
 
 \newcommand{\todocode}[1]{\todo[color=green!40]{#1}}
 
@@ -194,11 +198,11 @@ nonterminal/.style={rectangle,minimum width=3mm,top color=white,font=\ttfamily}]
 \newcommand{\course}{Modélisation et rendu}
 
 \title{\sf\bfseries TP5 - Working with meshes \\ {\small Visualizing more complex 3D objects}}
-\author{\course, \ayear\\ \nth{2} year, Multimedia track}
+\author{\course, \ayearSecond\\ \nth{2} year, Multimedia track}
 % \date{December \nth{4}, \the\year}
 \date{Session 5\\~\\{\small Version: \gitReln{} \\\vskip -2mm {\tiny (\gitBranch\,@\,\gitAbbrevHash{} \gitAuthorDate)}}}
 \pagestyle{fancyplain}
-\fancyhead[R]{\sf \course, \ayear}
+\fancyhead[R]{\sf \course, \ayearSecond}
 % \fancyhead[L]{\sf INPT-ENSEEIHT}
 \fancyhead[L]{\includegraphics[height=5mm]{inp-enseeiht.jpg}}
 

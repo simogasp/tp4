@@ -14,7 +14,7 @@ std::unordered_map< int, int > map;
 
 int main(int argc, char **argv)
 {
-    _edgeList mylist;
+    edge2vertex mylist;
 
 
     mylist.insert(std::pair<edge,GLushort>(edge(6,5),6));

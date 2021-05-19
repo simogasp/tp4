@@ -55,7 +55,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL Linux)
     target_link_libraries( visualizer ${CMAKE_THREAD_LIBS_INIT} )
 endif()
 
-if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+if(APPLE)
     target_compile_options(visualizer PRIVATE -Wno-deprecated-declarations)
 endif()
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")

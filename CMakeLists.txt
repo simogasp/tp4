@@ -47,7 +47,7 @@ endif()
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_executable( visualizer main.cpp ObjModel.cpp core.cpp)
+add_executable( visualizer main.cpp ObjModel.cpp ObjModel.hpp core.cpp core.hpp )
 #target_include_directories(visualizer PUBLIC ${OPENGL_INCLUDE_DIR} ${GLUT_INCLUDE_DIR})
 #target_link_libraries( visualizer ${OPENGL_opengl_LIBRARY} ${OPENGL_glu_LIBRARY} ${GLUT_LIBRARIES} )
 target_link_libraries( visualizer OpenGL::GL OpenGL::GLU GLUT::GLUT )

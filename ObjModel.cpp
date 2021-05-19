@@ -36,10 +36,10 @@ using namespace std;
 
 /**
  * Load the OBJ data from file
- * @param filename The name of the OBJ file
- * @return 0 if everything went well
+ * @param[in] filename The name of the OBJ file
+ * @return true if everything went well, false otherwise
  */
-int ObjModel::load( char* filename )
+bool ObjModel::load( char* filename )
 {
 
     string line;
@@ -146,7 +146,7 @@ int ObjModel::load( char* filename )
 
     cout << "Object loaded with " << _vertices.size( ) << " vertices and " << _mesh.size( ) << " faces" << endl;
     cout << "Bounding box : pmax=" << _bb.pmax << "  pmin=" << _bb.pmin << endl;
-    return 0;
+    return true;
 }
 
 /**

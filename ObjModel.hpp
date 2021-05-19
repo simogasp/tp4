@@ -134,10 +134,10 @@ public:
 
     /**
      * Load the OBJ data from file
-     * @param[in] filename The name of the OBJ file
-     * @return 0 if everything went well
+      * @param[in] filename The name of the OBJ file
+      * @return true if everything went well, false otherwise
      */
-    int load(char *filename);
+    bool load(char *filename);
 
     /**
      * Render the model according to the provided parameters

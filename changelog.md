@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2021.0.0] 
+### Added
+- clang format
+
+### Fixed
+- fixed tests
+- fixed generate student to copy only necessary files
+- normal were shown wrong
+
+### Changed
+- better management of the input file with safeguard and messages
+
 ## [2020.1.0] 2020-05-14
 ### Added
 - support for windows

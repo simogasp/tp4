@@ -14,7 +14,7 @@ TMPDIR=/tmp
 DESTNAME=${TMPDIR}/${ARCHIVE_NAME}
 mkdir ${DESTNAME}
 
-cp * ${DESTNAME}
+cp BUILD.md CMakeLists.txt  core.cpp  core.hpp  main.cpp  ObjModel.cpp  ObjModel.cxx  ObjModel.hpp  README.md  ${DESTNAME}
 # remove this very script
 rm ${DESTNAME}/$0
 

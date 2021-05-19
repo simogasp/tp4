@@ -157,11 +157,14 @@ void ObjModel::drawNormals( const std::vector<point3d> &vertices, std::vector<ve
     glColor3f( 0.8, 0, 0 );
     glLineWidth( 2 );
 
-    for(const auto &v : vertices)
+    for(std::size_t i = 0; i < vertices.size(); ++i)
     {
         glBegin( GL_LINES );
 
-        vec3d newP = v + 0.1 * v;
+        const auto v = vertices[i];
+        const auto n = vertexNormals[i];
+
+        vec3d newP = v +  0.05 * n;
         glVertex3fv( (float*) &v );
 
         glVertex3f( newP.x, newP.y, newP.z );

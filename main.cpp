@@ -289,16 +289,24 @@ int main( int argc, char **argv )
     glutSpecialFunc( arrows );
     initialize( );
 
-    //***********************************************
-    // Load the obj model from file
-    //***********************************************
-    obj.load( argv[1] );
+    if(argc == 2)
+    {
+        //***********************************************
+        // Load the obj model from file
+        //***********************************************
+        if(obj.load(argv[1]))
+        {
 
-    //***********************************************
-    // Make it unitary
-    //***********************************************
-    obj.unitizeModel( );
-
+            //***********************************************
+            // Make it unitary
+            //***********************************************
+            obj.unitizeModel();
+        }
+        else
+        {
+            std::cerr << "error while opening the model\n";
+        }
+    }
     printKeyboardHelp();
 
     glutMainLoop( );

@@ -45,103 +45,101 @@ bool ObjModel::load( char* filename )
     string line;
     ifstream objFile( filename );
 
-    // If obj file is open, continue
-    if ( objFile.is_open( ) )
+    // If obj file is not open return (e.g. file does not exist
+    if (! objFile.is_open( ) )
     {
-        // Start reading file data
-        while( !objFile.eof( ) )
-        {
-            // Get a line from file
-            getline( objFile, line );
+        std::cerr << "Unable to open file " << filename << std::endl;
+        return false;
+    }
 
-            // If the first character is a simple 'v'...
+    // Start reading file data
+    while( !objFile.eof( ) )
+    {
+        // Get a line from file
+        getline( objFile, line );
+
+        // If the first character is a simple 'v'...
 //            PRINTVAR( line );
-            if ( (line.c_str( )[0] == 'v') && (line.c_str( )[1] == ' ') ) // to drop all the vn and vn lines
-            {
+        if ( (line.c_str( )[0] == 'v') && (line.c_str( )[1] == ' ') ) // to drop all the vn and vn lines
+        {
 //                PRINTVAR( line );
-                // Read 3 floats from the line:  X Y Z and store them in the corresponding place in _vertices
-                point3d p;
-                sscanf( line.c_str( ), "v %f %f %f ",  &p.x,  &p.y,  &p.z );
+            // Read 3 floats from the line:  X Y Z and store them in the corresponding place in _vertices
+            point3d p;
+            sscanf( line.c_str( ), "v %f %f %f ",  &p.x,  &p.y,  &p.z );
 
-                //**************************************************
-                // add the new point to the list of the vertices
-                // and its normal to the list of normals: for the time
-                // being it is a [0, 0 ,0] normal.
-                //**************************************************
-                _vertices.push_back( p );  //!!
-                _normals.emplace_back();  //!!
+            //**************************************************
+            // add the new point to the list of the vertices
+            // and its normal to the list of normals: for the time
+            // being it is a [0, 0 ,0] normal.
+            //**************************************************
+            _vertices.push_back( p );  //!!
+            _normals.emplace_back();  //!!
 
-                // update the bounding box, if it is the first vertex simply
-                // set the bb to it
-                if ( _vertices.size( ) == 1 )
-                {
-                    _bb.set( p );
-                }
-                else
-                {
-                    // otherwise add the point
-                    _bb.add( p );
-                }
-
-            }
-            // If the first character is a 'f'...
-            if ( line.c_str( )[0] == 'f' )
+            // update the bounding box, if it is the first vertex simply
+            // set the bb to it
+            if ( _vertices.size( ) == 1 )
             {
-
-                face t;
-                const auto ok = parseFaceString( line, t );
-                if(!ok) throw std::runtime_error("Error while reading line: " + line );
-
-                //**************************************************
-                // correct the indices: OBJ starts counting from 1, in C the arrays starts at 0...
-                //**************************************************
-                t -= 1;  //!!
-
-                //**************************************************
-                // add it to the mesh
-                //**************************************************
-                _mesh.push_back( t );  //!!
-
-                //*********************************************************************
-                //  Compute the normal of the face
-                //*********************************************************************
-                vec3d norm;  //!!
-                computeNormal( _vertices[ t.v1], _vertices[t.v2], _vertices[t.v3], norm );  //!!
-
-                //*********************************************************************
-                // Sum the normal of the face to each vertex normal
-                //*********************************************************************
-
-                _normals[t.v1] += (vec3d( norm ) * angleAtVertex( _vertices[ t.v1], _vertices[t.v2], _vertices[t.v3] ));  //!!
-                _normals[t.v2] += (vec3d( norm ) * angleAtVertex( _vertices[ t.v2], _vertices[t.v1], _vertices[t.v3] ));  //!!
-                _normals[t.v3] += (vec3d( norm ) * angleAtVertex( _vertices[ t.v3], _vertices[t.v1], _vertices[t.v2] ));  //!!
-
+                _bb.set( p );
             }
-        }
+            else
+            {
+                // otherwise add the point
+                _bb.add( p );
+            }
 
-        cerr << "Found :\n\tNumber of triangles (_indices) " << _mesh.size( ) << "\n\tNumber of Vertices: " << _vertices.size( ) << "\n\tNumber of Normals: " << _normals.size( ) << endl;
+        }
+        // If the first character is a 'f'...
+        if ( line.c_str( )[0] == 'f' )
+        {
+
+            face t;
+            const auto ok = parseFaceString( line, t );
+            if(!ok) throw std::runtime_error("Error while reading line: " + line );
+
+            //**************************************************
+            // correct the indices: OBJ starts counting from 1, in C the arrays starts at 0...
+            //**************************************************
+            t -= 1;  //!!
+
+            //**************************************************
+            // add it to the mesh
+            //**************************************************
+            _mesh.push_back( t );  //!!
+
+            //*********************************************************************
+            //  Compute the normal of the face
+            //*********************************************************************
+            vec3d norm;  //!!
+            computeNormal( _vertices[ t.v1], _vertices[t.v2], _vertices[t.v3], norm );  //!!
+
+            //*********************************************************************
+            // Sum the normal of the face to each vertex normal
+            //*********************************************************************
+
+            _normals[t.v1] += (vec3d( norm ) * angleAtVertex( _vertices[ t.v1], _vertices[t.v2], _vertices[t.v3] ));  //!!
+            _normals[t.v2] += (vec3d( norm ) * angleAtVertex( _vertices[ t.v2], _vertices[t.v1], _vertices[t.v3] ));  //!!
+            _normals[t.v3] += (vec3d( norm ) * angleAtVertex( _vertices[ t.v3], _vertices[t.v1], _vertices[t.v2] ));  //!!
+
+        }
+    }
+
+    cerr << "Found :\n\tNumber of triangles (_indices) " << _mesh.size( ) << "\n\tNumber of Vertices: " << _vertices.size( ) << "\n\tNumber of Normals: " << _normals.size( ) << endl;
 //        PRINTVAR( _mesh );
 //        PRINTVAR( _vertices );
 //        PRINTVAR( _normals );
 
-        //*********************************************************************
-        // normalize the normals of each vertex
-        //*********************************************************************
-        for(auto &normal : _normals)  //<!!
-        {
-            normal.normalize();
-        }  //>!!
+    //*********************************************************************
+    // normalize the normals of each vertex
+    //*********************************************************************
+    for(auto &normal : _normals)  //<!!
+    {
+        normal.normalize();
+    }  //>!!
 
 //        PRINTVAR( _normals );
 
-        // Close OBJ file
-        objFile.close( );
-
-    }
-    else
-    {
-        cout << "Unable to open file";
-    }
+    // Close OBJ file
+    objFile.close( );
 
 
     cout << "Object loaded with " << _vertices.size( ) << " vertices and " << _mesh.size( ) << " faces" << endl;

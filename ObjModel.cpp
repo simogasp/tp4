@@ -350,7 +350,7 @@ void ObjModel::loopSubdivision( const std::vector<point3d> &origVert,           
     //    PRINTVAR(destVert);
     //    PRINTVAR(origVert);
 
-    // create a list of the new vertices creates with the reference to the edge
+    // create a list of the new vertices created with the reference to the edge
     EdgeList newVertices;
 
     //*********************************************************************

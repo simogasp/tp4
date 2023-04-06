@@ -32,10 +32,10 @@
 
 #define KEY_ESCAPE 27
 
-#define DELTA_ANGLE_X   5
-#define DELTA_ANGLE_Y   5
-#define DELTA_DISTANCE  0.3
-#define DISTANCE_MIN    0.0
+constexpr int DELTA_ANGLE_X{5};
+constexpr int DELTA_ANGLE_Y{5};
+constexpr float DELTA_DISTANCE{ .3f };
+constexpr float DISTANCE_MIN{ .0f };
 
 using namespace std;
 
@@ -54,7 +54,7 @@ struct glutWindow
 
     glutWindow() = default;
 
-    explicit glutWindow(string &winName) : title(winName) { }
+    explicit glutWindow(string winName) : title(std::move(winName)) { }
 
 } ;
 
@@ -122,15 +122,15 @@ void place_light( GLfloat x, GLfloat y, GLfloat z )
 {
 
     GLfloat light_position[4];
-    GLfloat light_ambient[] = { 0.2, 0.2, 0.2, 1.0 };
-    GLfloat light_diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
-    GLfloat light_specular[] = { 1.0, 1.0, 1.0, 1.0 };
+    GLfloat light_ambient[] = { .2f, .2f, .2f, 1.f };
+    GLfloat light_diffuse[] = { 1.f, 1.f, 1.f, 1.f };
+    GLfloat light_specular[] = { 1.f, 1.f, 1.f, 1.f };
 
 
     light_position[0] = x;
     light_position[1] = y;
     light_position[2] = z;
-    light_position[3] = 1.0;
+    light_position[3] = 1.f;
 
     glLightfv( GL_LIGHT0, GL_AMBIENT, light_ambient );
     glLightfv( GL_LIGHT0, GL_DIFFUSE, light_diffuse );
@@ -153,17 +153,17 @@ void display( )
     glPushMatrix( );
     place_light( 0, 0, 140 );
     glTranslatef( 0, 0, -camDistance );
-    glRotatef( angle_x, 1, 0, 0 );
-    glRotatef( angle_y, 0, 1, 0 );
+    glRotatef(static_cast<GLfloat>(angle_x), 1.f, .0f, .0f );
+    glRotatef(static_cast<GLfloat>(angle_y), .0f, 1.f, .0f );
 
     //        angle_y += 1;
 
     DrawAxis( 1.0f );
 
     define_material(
-                     0.2, 0.2, 0.2,
-                     0.8, 0.8, 0.8,
-                     1.0, 0.8, 0.8,
+                     .2f, .2f, .2f,
+                     .8f, .8f, .8f,
+                     1.f, .8f, .8f,
                      100 );
     //***********************************************
     // draw the model
@@ -224,7 +224,7 @@ void keyboard( unsigned char key, int , int  )
         case '2':
         case '3':
         case '4':
-            params.subdivLevel = (key - '0');
+            params.subdivLevel = static_cast<decltype(params.subdivLevel)>(key - '0');
             PRINTVAR( params.subdivLevel );
             break;
         default:
@@ -254,7 +254,7 @@ void arrows( int key, int , int )
             camDistance += DELTA_DISTANCE;
             break;
         case GLUT_KEY_PAGE_UP:
-            camDistance -= (camDistance > DISTANCE_MIN) ? DELTA_DISTANCE : 0.0;
+            camDistance -= (camDistance > DISTANCE_MIN) ? DELTA_DISTANCE : 0.f;
             break;
         default: break;
     }
@@ -265,7 +265,7 @@ int main( int argc, char **argv )
 {
     if(argc ==1 )
     {
-      std::cout << "No obj file to load, displaying an emply scene with the reference system" << std::endl;
+      std::cout << "No obj file to load, displaying an empty scene with the reference system" << std::endl;
       std::cout << "Usage:\n\t" + std::string(argv[0]) + " <obj file>" << std::endl;
     }
 
@@ -275,7 +275,7 @@ int main( int argc, char **argv )
     win.title = string("OpenGL/GLUT OBJ Loader.");
     win.field_of_view_angle = 45;
     win.z_near = 0.25f;
-    win.z_far = 500.0f;
+    win.z_far = 500.f;
 
     // initialize and run program
     glutInit( &argc, argv );
@@ -324,7 +324,7 @@ void reshape( int width, int height )
     // define the viewport transformation;
     glViewport( 0, 0, width, height );
 
-    GLfloat aspect = (GLfloat) win.width / win.height;
+    const GLfloat aspect = static_cast<GLfloat>(win.width) / static_cast<GLfloat>(win.height);
 
     if ( aspect > 1.0f ) //w>h
     {
@@ -339,14 +339,18 @@ void reshape( int width, int height )
 //            cout << "b" << endl;
 //        }
 //        else
-        if ( width / height < aspect )
+        if ((static_cast<GLfloat>(width) / static_cast<GLfloat>(height)) < aspect )
         {
-            glViewport( 0, (height - width / aspect) / 2, width, width / aspect );
+            const auto y_viewport = static_cast<GLint>((static_cast<float>(height) - (float)width / aspect) / 2);
+            const auto height_viewport = static_cast<GLint>(static_cast<GLfloat>(width) / aspect);
+            glViewport( 0, y_viewport, width, height_viewport );
 //            cout << "c " << (height-width/aspect)/2 << endl;
         }
         else
         {
-            glViewport( (width - height * aspect) / 2, 0, height*aspect, height );
+            const auto x_viewport = static_cast<GLint>((static_cast<float>(width) - (float)height * aspect) / 2);
+            const auto width_viewport = static_cast<GLint>(static_cast<GLfloat>(height) * aspect);
+            glViewport( x_viewport, 0, width_viewport, height );
 //            cout << "d " << (width-height*aspect)/2 << endl;
         }
     }
@@ -364,8 +368,10 @@ void reshape( int width, int height )
 //        }
 //        else
         {
-            glViewport( (width - height * aspect) / 2, 0, height*aspect, height );
-            cout << "d " << (width - height * aspect) / 2 << endl;
+            const auto x_viewport = static_cast<GLint>((static_cast<float>(width) - (float)height * aspect) / 2);
+            const auto width_viewport = static_cast<GLint>(static_cast<GLfloat>(height) * aspect);
+            glViewport( x_viewport, 0, width_viewport, height );
+            cout << "d " << x_viewport << endl;
         }
     }
 }
@@ -379,32 +385,32 @@ void DrawAxis( float scale )
 
     glBegin( GL_LINES );
 
-    glColor3f( 1.0, 0.0, 0.0 );
+    glColor3f( 1.f, .0f, .0f );
     /*  X axis */
-    glVertex3f( 0.0, 0.0, 0.0 );
-    glVertex3f( 1.0, 0.0, 0.0 );
+    glVertex3f( .0f, .0f, .0f );
+    glVertex3f( 1.f, .0f, .0f );
     /*  Letter X */
-    glVertex3f( .8f, 0.05f, 0.0 ); // "backslash""
-    glVertex3f( 1.0, 0.25f, 0.0 );
-    glVertex3f( 0.8f, .25f, 0.0 ); // "slash"
-    glVertex3f( 1.0, 0.05f, 0.0 );
+    glVertex3f( .8f, 0.05f, .0f ); // "backslash""
+    glVertex3f( 1.f, 0.25f, .0f );
+    glVertex3f( 0.8f, .25f, .0f ); // "slash"
+    glVertex3f( 1.f, 0.05f, .0f );
 
     /*  Y axis */
-    glColor3f( 0.0, 1.0, 0.0 );
-    glVertex3f( 0.0, 0.0, 0.0 );
-    glVertex3f( 0.0, 1.0, 0.0 );
+    glColor3f( .0f, 1.f, .0f );
+    glVertex3f( .0f, .0f, .0f );
+    glVertex3f( .0f, 1.f, .0f );
 
     // z-axis
-    glColor3f( 0.0, 0.0, 1.0 );
-    glVertex3f( 0.0, 0.0, 0.0 );
-    glVertex3f( 0.0, 0.0, 1.0 );
+    glColor3f( .0f, .0f, 1.f );
+    glVertex3f( .0f, .0f, .0f );
+    glVertex3f( .0f, .0f, 1.f );
     /*  Letter Z */
-    glVertex3f( 0.0, 0.05f, 0.8 ); // bottom horizontal leg
-    glVertex3f( 0.0, 0.05f, 1.0 );
-    glVertex3f( 0.0, 0.05f, 1.0 ); // slash
-    glVertex3f( 0.0, 0.25f, 0.8 );
-    glVertex3f( 0.0, 0.25f, 0.8 ); // upper horizontal leg
-    glVertex3f( 0.0, 0.25f, 1.0 );
+    glVertex3f( .0f, 0.05f, .8f ); // bottom horizontal leg
+    glVertex3f( .0f, 0.05f, 1.f );
+    glVertex3f( .0f, 0.05f, 1.f ); // slash
+    glVertex3f( .0f, 0.25f, .8f );
+    glVertex3f( .0f, 0.25f, .8f ); // upper horizontal leg
+    glVertex3f( .0f, 0.25f, 1.f );
 
     glEnd( );
 
@@ -429,7 +435,7 @@ void initialize( )
 
     glMatrixMode( GL_PROJECTION );
     glViewport( 0, 0, win.width, win.height );
-    GLfloat aspect = (GLfloat) win.width / win.height;
+    GLfloat aspect = (GLfloat) win.width / (GLfloat) win.height;
     glMatrixMode( GL_PROJECTION );
     glLoadIdentity( );
     gluPerspective( win.field_of_view_angle, aspect, win.z_near, win.z_far );

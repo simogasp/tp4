@@ -172,8 +172,8 @@ void ObjModel::drawWireframe( const std::vector<point3d> &vertices, const std::v
     else
     {
         // otherwise use white thinner lines for wireframe only
-        glColor3f( .8, .8, .8 );
-        glLineWidth( .21 );
+        glColor3f( .8f, .8f, .8f );
+        glLineWidth( .21f );
     }
 
     //**************************************************
@@ -312,7 +312,7 @@ void ObjModel::drawSmoothFaces( const std::vector<point3d> &vertices,
     //****************************************
     // Draw the faces
     //****************************************
-    glDrawElements( GL_TRIANGLES, mesh.size( ) * VERTICES_PER_TRIANGLE, GL_UNSIGNED_INT, (idxtype*) & mesh[0] );  //!!
+    glDrawElements( GL_TRIANGLES, static_cast<GLsizei>( mesh.size( )) * VERTICES_PER_TRIANGLE, GL_UNSIGNED_INT, (idxtype*) & mesh[0] );  //!!
 
     //****************************************
     // Disable vertex arrays
@@ -440,7 +440,7 @@ void ObjModel::loopSubdivision( const std::vector<point3d> &origVert,           
     for ( size_t i = 0; i < origVert.size( ); ++i )  //!!
     {
         assert( occurrences[i] != 0 );  //??
-        destVert[i] = tmp[i] / occurrences[i];  //!!
+        destVert[i] = tmp[i] / static_cast<float>(occurrences[i]);  //!!
     }
     //PRINTVAR(destVert);
 

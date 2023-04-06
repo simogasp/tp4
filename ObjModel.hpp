@@ -26,12 +26,12 @@
 #include <ostream>
 #include <cmath>
 
-
-#define VERTICES_PER_TRIANGLE 3
-#define COORD_PER_VERTEX 3
-#define TOTAL_FLOATS_IN_TRIANGLE (VERTICES_PER_TRIANGLE*COORD_PER_VERTEX)
-
-
+/// number of vertices in a triangle
+constexpr GLsizei VERTICES_PER_TRIANGLE{3};
+/// number of coordinates per vertex
+constexpr GLsizei COORD_PER_VERTEX{3};
+/// total number of floats in a triangle
+constexpr GLsizei TOTAL_FLOATS_IN_TRIANGLE { (VERTICES_PER_TRIANGLE * COORD_PER_VERTEX) };
 
 /**
  * A structure that model the bounding box
@@ -45,7 +45,7 @@ typedef struct BoundingBox
     pmax(point3d()),
     pmin(point3d()) { }
 
-    BoundingBox(const point3d &p) :
+    explicit BoundingBox(const point3d &p) :
     pmax(p),
     pmin(p) { }
 
@@ -130,7 +130,7 @@ public:
      * @param[in] v2 the other vertex of the second edge baseV-v2
      * @return the angle in radiants
      */
-    float angleAtVertex(const point3d& v1, const point3d& v2, const point3d& v3) const;
+    [[nodiscard]] float angleAtVertex(const point3d& v1, const point3d& v2, const point3d& v3) const;
 
     /**
      * Load the OBJ data from file
@@ -204,15 +204,15 @@ private:
     * @param vertices The list of vertices
     * @param vertexNormals The list of associated normals
     */
-    void drawNormals(const std::vector<point3d> &vertices, std::vector<vec3d> &vertexNormals) const;
+    void drawNormals(const std::vector<point3d> &vertices, const std::vector<vec3d>& vertexNormals) const;
 
 
     /////////////////////////////
     // DEPRECATED METHODS
-    DEPRECATED(void drawSubdivision());
-    DEPRECATED(void indexDraw() const);
-    DEPRECATED(void flatDraw() const);
-    DEPRECATED(void drawWireframe() const);
+    [[deprecated]] void drawSubdivision();
+    [[deprecated]] void indexDraw() const;
+    [[deprecated]] void flatDraw() const;
+    [[deprecated]] void drawWireframe() const;
 
 
 
@@ -255,6 +255,7 @@ private:
      */
     bool parseFaceString(const std::string &toParse, face &out) const;
 
-    DEPRECATED(void applyLoop(const face &t, const std::vector<point3d> &orig, std::vector<size_t> &valence, std::vector<point3d> &dest) const);
+    [[deprecated]]
+    void applyLoop(const face &t, const std::vector<point3d> &orig, std::vector<size_t> &valence, std::vector<point3d> &dest) const;
 
 };

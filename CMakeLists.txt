@@ -49,9 +49,9 @@ endif()
 
 
 #########################################################
-# SET COMPILATION FLAGS FOR C++11 
+# SET COMPILATION FLAGS FOR C++17
 #########################################################
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable( visualizer main.cpp ObjModel.cpp ObjModel.hpp core.cpp core.hpp )

@@ -25,7 +25,7 @@ int main( int argc, char** argv )
 {
 
     EdgeList list;
-    int numTrial;
+    idxtype numTrial;
 
     if(argc == 2)
     {
@@ -43,7 +43,7 @@ int main( int argc, char** argv )
 
     // fill up the list with random edges
     cout << "Filling up data..." << endl;
-    for(size_t i =0; i < numTrial; ++i)
+    for(idxtype i =0; i < numTrial; ++i)
     {
         edge e(rand() % maxIdx, rand() % maxIdx);
         listEdges.push_back(e);

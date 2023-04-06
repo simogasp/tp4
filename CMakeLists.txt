@@ -4,6 +4,13 @@ project( tp4 LANGUAGES CXX VERSION 2021.0.0)
 
 option(BUILD_TESTS "Build tests" OFF)
 
+if(BUILD_SHARED_LIBS)
+    if(WIN32)
+        # export all symbols on a windows build of dynamic libs
+        set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS  ON)
+    endif()
+endif()
+
 #########################################################
 #
 # EXTERNAL LIBRARIES
@@ -77,6 +84,10 @@ if(BUILD_TESTS)
         target_link_libraries( testEdge ${CMAKE_THREAD_LIBS_INIT} )
         target_link_libraries( testEdgeList ${CMAKE_THREAD_LIBS_INIT} )
     endif()
+    if(MSVC)
+        target_compile_definitions(testEdge PUBLIC -DNOMINMAX)
+        target_compile_definitions(testEdgeList PUBLIC -DNOMINMAX)
+    endif()
     enable_testing()
-    add_test( testEdgeList bin/testEdgeList 1000 )
+    add_test( testEdgeList testEdgeList 1000 )
 endif()

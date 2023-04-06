@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.1)
 
-project( tp4 LANGUAGES CXX VERSION 2021.0.0)
+project( tp4 LANGUAGES CXX VERSION 2023.1.0)
 
 option(BUILD_TESTS "Build tests" OFF)
 

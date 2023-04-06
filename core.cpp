@@ -43,17 +43,11 @@ float v3f::norm() const
     return std::sqrt(x*x + y*y + z*z);
 }
 
-/**
- * Translate the vector
- * @param x the delta x of the translation
- * @param y the delta y of the translation
- * @param z the delta z of the translation
- */
-void v3f::translate( const float &x, const float &y, const float &z )
+void v3f::translate( float xc, float yc, float zc )
 {
-    this->x += x;
-    this->y += y;
-    this->z += z;
+    this->x += xc;
+    this->y += yc;
+    this->z += zc;
 }
 
 void v3f::translate( const v3f &t )
@@ -70,9 +64,9 @@ void v3f::scale( const v3f &t )
     z *= t.z;
 }
 
-void v3f::scale( const float &x, const float &y, const float &z )
+void v3f::scale(float xc, float yc, float zc)
 {
-    scale(v3f(x,y,z));
+    scale(v3f(xc, yc, zc));
 }
 
 void v3f::scale( const float &a )

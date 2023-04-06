@@ -29,15 +29,6 @@
 #include <GL/gl.h>
 #endif
 
-#ifdef __GNUC__
-#define DEPRECATED(func) func __attribute__ ((deprecated))
-#elif defined(_MSC_VER)
-#define DEPRECATED(func) __declspec(deprecated) func
-#else
-#pragma message("WARNING: You need to implement DEPRECATED for this compiler")
-#define DEPRECATED(func) func
-#endif //__attribute__ ((deprecated))
-
 #include <vector>
 #include <iostream>
 #include <string>
@@ -227,22 +218,25 @@ inline std::ostream& operator<<( std::ostream& os, const EdgeList& l )
  */
 struct v3f
 {
-    float x; //!< the first component
-    float y; //!< the second component
-    float z; //!< the third component
+    /// the first component
+    float x{0.f};
+    /// the second component
+    float y{0.f};
+    /// the third component
+    float z{0.f};
 
     /**
      * Generic constructor
-     * @param x the first element
-     * @param y the second element
-     * @param z the third element
+     * @param[in] xc the first element
+     * @param[in] yc the second element
+     * @param[in] zc the third element
      */
-    v3f( float x, float y, float z ) : x( x ), y( y ), z( z ) { }
+    v3f( float xc, float yc, float zc ) : x( xc ), y( yc ), z( zc ) { }
 
     /**
      * Default constructor, everything is initialized to 0
      */
-    v3f( ) : x( 0 ), y( 0 ), z( 0 ) { }
+    v3f() = default;
 
     /**
      * Constructor from an array of three elements
@@ -274,7 +268,7 @@ struct v3f
      * @param[in] y the delta y of the translation
      * @param[in] z the delta z of the translation
      */
-    void translate( const float &x, const float &y, const float &z );
+    void translate( float x, float y, float z );
 
     /**
      * Translate the vector
@@ -294,7 +288,7 @@ struct v3f
      * @param y the scale value on y
      * @param z the scale value on z
      */
-    void scale( const float &x, const float& y, const float &z );
+    void scale(float x, float y, float z );
 
     /**
      * Scale each element of the vector by the same value
@@ -471,22 +465,25 @@ inline v3f operator /( const float &a, const v3f& p )
  */
 struct face
 {
-    idxtype v1; //!< the first index
-    idxtype v2; //!< the second index
-    idxtype v3; //!< the third index
+    /// the first index
+    idxtype v1{0};
+    /// the second index
+    idxtype v2{0};
+    /// the third index
+    idxtype v3{0};
 
     /**
      * Default constructor, everything set to 0
      */
-    face( ) : v1( 0 ), v2( 0 ), v3( 0 ) { }
+    face() = default;
 
     /**
      * Constructor from indices
-     * @param v1 the first index
-     * @param v2 the second index
-     * @param v3 the third index
+     * @param[in] v1_ the first index
+     * @param[in] v2_ the second index
+     * @param[in] v3_ the third index
      */
-    face( idxtype v1, idxtype v2, idxtype v3 ) : v1( v1 ), v2( v2 ), v3( v3 ) { }
+    face( idxtype v1_, idxtype v2_, idxtype v3_ ) : v1( v1_ ), v2( v2_ ), v3( v3_ ) { }
 
     /**
      * Return true if the edge e is contained in the triplet of indices. If it is

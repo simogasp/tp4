@@ -150,11 +150,11 @@ void ObjModel::drawSolid( const vector<point3d> &vertices, const vector<face> &i
  * @param vertices The list of vertices 
  * @param vertexNormals The list of associated normals
  */
-void ObjModel::drawNormals( const std::vector<point3d> &vertices, std::vector<vec3d> &vertexNormals ) const
+void ObjModel::drawNormals( const std::vector<point3d> &vertices, const std::vector<vec3d>& vertexNormals ) const
 {
     glDisable( GL_LIGHTING );
 
-    glColor3f( 0.8, 0, 0 );
+    glColor3f( 0.8f, .0f, .0f );
     glLineWidth( 2 );
 
     for(std::size_t i = 0; i < vertices.size(); ++i)
@@ -164,7 +164,7 @@ void ObjModel::drawNormals( const std::vector<point3d> &vertices, std::vector<ve
         const auto v = vertices[i];
         const auto n = vertexNormals[i];
 
-        vec3d newP = v +  0.05 * n;
+        vec3d newP = v +  0.05f * n;
         glVertex3fv( (float*) &v );
 
         glVertex3f( newP.x, newP.y, newP.z );
@@ -202,7 +202,7 @@ float ObjModel::unitizeModel( )
         // calculate the unitizing scale factor as the
         // maximum of the 3 dimensions
         //****************************************
-        const float scale = 2.0 / std::max( std::max( w, h ), d );
+        const auto scale = static_cast<float>(2.f / std::max(std::max(w, h), d));
 
         cout << "scale: " << scale << " cx " << c.x << " cy " << c.y << " cz " << c.z << endl;
 
@@ -358,7 +358,7 @@ void ObjModel::indexDraw( ) const
     //****************************************
     // Draw the triangles
     //****************************************
-    glDrawElements( GL_TRIANGLES, _mesh.size( ) * VERTICES_PER_TRIANGLE, GL_UNSIGNED_INT, (idxtype*) & _mesh[0] );
+    glDrawElements( GL_TRIANGLES, static_cast<GLsizei>(_mesh.size( )) * VERTICES_PER_TRIANGLE, GL_UNSIGNED_INT, (idxtype*) & _mesh[0] );
 
     //****************************************
     // Disable vertex arrays
@@ -388,7 +388,7 @@ void ObjModel::drawSubdivision( )
     glNormalPointer( GL_FLOAT, 0, (float*) &_subNorm[0] );
     glVertexPointer( COORD_PER_VERTEX, GL_FLOAT, 0, (float*) &_subVert[0] );
 
-    glDrawElements( GL_TRIANGLES, _subMesh.size( ) * VERTICES_PER_TRIANGLE, GL_UNSIGNED_SHORT, (idxtype*) & _subMesh[0] );
+    glDrawElements( GL_TRIANGLES, static_cast<GLsizei>(_subMesh.size( )) * VERTICES_PER_TRIANGLE, GL_UNSIGNED_SHORT, (idxtype*) & _subMesh[0] );
 
 
     glDisableClientState( GL_VERTEX_ARRAY ); // disable vertex arrays

@@ -175,34 +175,34 @@ private:
     /**
     * Draw the wireframe of the model
     *
-    * @param vertices The list of vertices
-    * @param mesh The mesh as a list of faces, each face is a tripleIndex of vertex indices
-    * @param params The rendering parameters
+    * @param[in] vertices The list of vertices
+    * @param[in] mesh The mesh as a list of faces, each face is a tripleIndex of vertex indices
+    * @param[in] params The rendering parameters
     */
     void drawWireframe(const std::vector<point3d> &vertices, const std::vector<face> &indices, const RenderingParameters &params) const;
 
     /**
      * Draw the model using the vertex indices and using a single normal for each vertex
      *
-     * @param vertices The vertices
-     * @param indices The list of the faces, each face containing the 3 indices of the vertices
-     * @param vertexNormals The list of normals associated to each vertex
-     * @param params The rendering parameters
+     * @param[in] vertices The vertices of the model as a list of points.
+     * @param[in] indices The list of the faces, each face containing the 3 indices of the vertices.
+     * @param[in] vertexNormals The list of normals associated to each vertex.
+     * @param[in] params The rendering parameters
      */
     void drawSmoothFaces(const std::vector<point3d> &vertices, const std::vector<face> &indices, std::vector<vec3d> &vertexNormals, const RenderingParameters &params) const;
 
     /**
     * Draw the faces using the computed normal of each face
     *
-    * @param vertices The list of vertices
-    * @param mesh The list of face, each face containing the indices of the vertices
-    * @param params The rendering parameters
+    * @param[in] vertices The list of vertices
+    * @param[in] mesh The list of face, each face containing the indices of the vertices
+    * @param[in] params The rendering parameters
     */
     void drawFlatFaces(const std::vector<point3d> &vertices, const std::vector<face> &indices, const RenderingParameters &params) const;
     /**
-    * Draw the normals at each vertex
-    * @param vertices The list of vertices
-    * @param vertexNormals The list of associated normals
+    * Draw the normals at each vertex of the model.
+    * @param[in] vertices The list of vertices
+    * @param[in] vertexNormals The list of associated normals
     */
     void drawNormals(const std::vector<point3d> &vertices, const std::vector<vec3d>& vertexNormals) const;
 

@@ -225,9 +225,9 @@ void ObjModel::computeNormal( const point3d& v1, const point3d& v2, const point3
 /**
  * Draw the faces using the computed normal of each face
  * 
- * @param vertices The list of vertices
- * @param mesh The list of face, each face containing the indices of the vertices
- * @param params The rendering parameters
+ * @param[in] vertices The list of vertices
+ * @param[in] mesh The list of face, each face containing the indices of the vertices
+ * @param[in] params The rendering parameters
  */
 void ObjModel::drawFlatFaces( const std::vector<point3d> &vertices, const std::vector<face> &mesh, const RenderingParameters &params ) const
 {

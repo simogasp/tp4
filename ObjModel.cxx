@@ -302,7 +302,7 @@ void ObjModel::flatDraw( ) const
         glBegin( GL_TRIANGLES );
         //compute the normal of the triangle
         vec3d n;
-        computeNormal( _vertices[face.v1], _vertices[(int) face.v2], _vertices[(int) face.v3], n );
+        computeNormal( _vertices[face.v1], _vertices[face.v2], _vertices[face.v3], n );
         glNormal3fv( (float*) &n );
 
         glVertex3fv( (float*) &_vertices[face.v1] );

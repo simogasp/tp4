@@ -11,6 +11,15 @@ if(BUILD_SHARED_LIBS)
     endif()
 endif()
 
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
+    set(MY_COMPILE_OPTIONS "-Wall;-Wextra;-pedantic;-Wno-comment;-Wshadow;-Wnon-virtual-dtor;-Wpedantic;-Wconversion;-Wmisleading-indentation;-Wsign-conversion")
+elseif(MSVC)
+    set(MY_COMPILE_OPTIONS "/W4 /permissive-")
+endif()
+if(APPLE)
+    list(APPEND MY_COMPILE_OPTIONS "-Wno-deprecated-declarations")
+endif()
+
 #########################################################
 #
 # EXTERNAL LIBRARIES
@@ -47,7 +56,6 @@ if(CMAKE_SYSTEM_NAME STREQUAL Linux)
     set(CMAKE_EXE_LINKER_FLAGS  "-Wl,--no-as-needed")
 endif()
 
-
 #########################################################
 # SET COMPILATION FLAGS FOR C++17
 #########################################################
@@ -58,15 +66,13 @@ add_executable( visualizer main.cpp ObjModel.cpp ObjModel.hpp core.cpp core.hpp 
 #target_include_directories(visualizer PUBLIC ${OPENGL_INCLUDE_DIR} ${GLUT_INCLUDE_DIR})
 #target_link_libraries( visualizer ${OPENGL_opengl_LIBRARY} ${OPENGL_glu_LIBRARY} ${GLUT_LIBRARIES} )
 target_link_libraries( visualizer OpenGL::GL OpenGL::GLU GLUT::GLUT )
+target_compile_options(visualizer PRIVATE ${MY_COMPILE_OPTIONS})
 if(CMAKE_SYSTEM_NAME STREQUAL Linux)
     target_link_libraries( visualizer ${CMAKE_THREAD_LIBS_INIT} )
 endif()
 
-if(APPLE)
-    target_compile_options(visualizer PRIVATE -Wno-deprecated-declarations)
-endif()
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
-    target_compile_options(visualizer PRIVATE -Wall -Wextra -pedantic -Wno-comment -Wshadow -Wnon-virtual-dtor -Wpedantic -Wconversion -Wmisleading-indentation)
+
 endif()
 if(MSVC)
     target_compile_definitions(visualizer PUBLIC -DNOMINMAX)
@@ -80,6 +86,8 @@ if(BUILD_TESTS)
     add_executable( testEdgeList testEdgeList.cpp core.cpp)
     target_include_directories(testEdgeList PUBLIC ${OPENGL_INCLUDE_DIR} ${GLUT_INCLUDE_DIR})
     target_link_libraries( testEdgeList ${OPENGL_opengl_LIBRARY} ${OPENGL_glu_LIBRARY} ${GLUT_LIBRARIES} )
+    target_compile_options( testEdge PRIVATE ${MY_COMPILE_OPTIONS})
+    target_compile_options( testEdgeList PRIVATE ${MY_COMPILE_OPTIONS})
     if(CMAKE_SYSTEM_NAME STREQUAL Linux)
         target_link_libraries( testEdge ${CMAKE_THREAD_LIBS_INIT} )
         target_link_libraries( testEdgeList ${CMAKE_THREAD_LIBS_INIT} )

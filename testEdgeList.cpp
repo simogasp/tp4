@@ -29,7 +29,7 @@ int main( int argc, char** argv )
 
     if(argc == 2)
     {
-        numTrial = atoi(argv[1]);
+        numTrial = static_cast<idxtype>(atoi(argv[1]));
     }
     else
     {
@@ -45,7 +45,7 @@ int main( int argc, char** argv )
     cout << "Filling up data..." << endl;
     for(idxtype i =0; i < numTrial; ++i)
     {
-        edge e(rand() % maxIdx, rand() % maxIdx);
+        edge e(static_cast<idxtype>(rand()) % maxIdx, static_cast<idxtype>(rand()) % maxIdx);
         listEdges.push_back(e);
         listIdx.push_back(i);
 

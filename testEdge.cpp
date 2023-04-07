@@ -12,7 +12,7 @@
 std::unordered_map< int, int > map;
 
 
-int main(int argc, char **argv)
+int main(int, char **)
 {
     edge2vertex mylist;
 

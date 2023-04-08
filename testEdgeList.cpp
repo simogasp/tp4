@@ -29,7 +29,7 @@ int main( int argc, char** argv )
 
     if(argc == 2)
     {
-        numTrial = static_cast<idxtype>(atoi(argv[1]));
+        numTrial = static_cast<idxtype>(std::strtoul(argv[1], nullptr, 10));
     }
     else
     {

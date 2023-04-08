@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - all warnings on linux and windows
 
 ### Removed
+- support for makefile building
 
 ## [2021.0.0]
 ### Added

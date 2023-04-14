@@ -214,7 +214,7 @@ inline std::ostream& operator<<( std::ostream& os, const EdgeList& l )
 
 
 /**
- * A generic vector of three elements
+ * A generic vector of three elements of type float (x, y, z)
  */
 struct v3f
 {
@@ -250,7 +250,7 @@ struct v3f
     void normalize( );
 
     /**
-     * Return the dot product
+     * Return the dot product with another vector
      * @param[in] v the other vector
      * @return the dot product
      */

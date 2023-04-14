@@ -94,7 +94,7 @@ void v3f::max( const v3f& a )
  */
 float v3f::min() const
 {
-    return std::min( std::min( x, y ), z );
+    return std::min( { x, y , z} );
 }
 
 /**
@@ -103,7 +103,7 @@ float v3f::min() const
  */
 float v3f::max() const
 {
-    return std::max( std::max( x, y ), z );
+    return std::max( { x, y, z} );
 }
 
 v3f v3f::cross(const v3f& v) const

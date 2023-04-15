@@ -3,7 +3,7 @@
 ## Building instructions
 
 Required tools:
-* C/C++ 11 compiler (gcc or visual studio or clang)
+* C/C++ 17 compiler (gcc or visual studio or clang)
 * cmake
 
 

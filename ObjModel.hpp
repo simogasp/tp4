@@ -25,6 +25,7 @@
 #include <vector>
 #include <ostream>
 #include <cmath>
+#include <optional>
 
 /// number of vertices in a triangle
 constexpr GLsizei VERTICES_PER_TRIANGLE{3};
@@ -82,7 +83,7 @@ struct RenderingParameters
     /// wireframe on/off
     bool wireframe{true};
     /// draw the mesh on/off
-    bool solid { true }
+    bool solid { true };
     /// use opengl drawElements on/off
     bool useIndexRendering{false};
     /// subdivision on/off
@@ -260,17 +261,30 @@ private:
      */
     idxtype getNewVertex(const edge &e, std::vector<point3d> &vertList, const std::vector<face> &mesh, EdgeList &newVertList) const;
 
-    /**
-     * It parses a line of the OBJ file containing a face and it return the result.
-     * NB: it only recover the indices, it discard normal and texture indices
-     *
-     * @param toParse the string to parse in the OBJ format for a face (f v/vt/vn v/vt/vn v/vt/vn) and its variants
-     * @param out the 3 indices for the face
-     * @return true if the parse was successful
-     */
-    bool parseFaceString(const std::string &toParse, face &out) const;
+
 
     [[deprecated]]
     void applyLoop(const face &t, const std::vector<point3d> &orig, std::vector<size_t> &valence, std::vector<point3d> &dest) const;
 
 };
+
+/**
+ * It parses a line of the OBJ file containing a face and it return the result.
+ * NB: it only recover the indices, it discard normal and texture indices
+ *
+ * @param[in] toParse the string to parse in the OBJ format for a face (f v/vt/vn v/vt/vn v/vt/vn) and its variants
+ * @return the 3 indices for the face
+ */
+face parseFaceString(const std::string &toParse);
+
+std::optional<face> parseFaceStringRegex( const std::string &toParse);
+
+/**
+ * It parses a line of the OBJ file containing a vertex and it return the result.
+ *
+ * @param[in] toParse the string to parse in the OBJ format for a vertex (v x y z)
+ * @return the 3 coordinates of the vertex
+ */
+point3d parseVertexString(const std::string &toParse);
+
+std::optional<point3d> parseVertexStringRegex(const std::string &toParse);

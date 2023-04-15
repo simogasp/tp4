@@ -33,7 +33,6 @@
 
 using namespace std;
 
-
 /**
  * Load the OBJ data from file
  * @param[in] filename The name of the OBJ file
@@ -64,8 +63,7 @@ bool ObjModel::load( char* filename )
         {
 //                PRINTVAR( line );
             // Read 3 floats from the line:  X Y Z and store them in the corresponding place in _vertices
-            point3d p;
-            sscanf( line.c_str( ), "v %f %f %f ",  &p.x,  &p.y,  &p.z );
+            const point3d p = parseVertexString(line);
 
             //**************************************************
             // add the new point to the list of the vertices
@@ -91,10 +89,7 @@ bool ObjModel::load( char* filename )
         // If the first character is a 'f'...
         if ( line.c_str( )[0] == 'f' )
         {
-
-            face t;
-            const auto ok = parseFaceString( line, t );
-            if(!ok) throw std::runtime_error("Error while reading line: " + line );
+            face t = parseFaceString( line);
 
             //**************************************************
             // correct the indices: OBJ starts counting from 1, in C the arrays starts at 0...

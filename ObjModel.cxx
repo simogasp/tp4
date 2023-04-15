@@ -18,6 +18,94 @@
  */
 
 #include <algorithm>
+#include <regex>
+#include <array>
+
+// lambda to convert the string matches to a face
+auto face_from_match(const std::string& vst1, const std::string& vst2, const std::string& vst3) -> face
+{
+    const auto v1 = static_cast<idxtype>(std::stoi(vst1));
+    const auto v2 = static_cast<idxtype>(std::stoi(vst2));
+    const auto v3 = static_cast<idxtype>(std::stoi(vst3));
+    return {v1, v2, v3};
+}
+
+face parseFaceString(const std::string &toParse)
+{
+    const auto res = parseFaceStringRegex(toParse);
+    if(!res.has_value())
+        throw std::runtime_error("Error while reading line: " + toParse);
+
+    return res.value();
+}
+
+std::optional<face> parseFaceStringRegex( const std::string &toParse)
+{
+    static const std::array<std::regex, 4> face_regexes {
+          // regex to match a face from a string in the format f v1 v2 v3
+          std::regex(R"(f\s+(\d+)\s+(\d+)\s+(\d+))"),
+          // regex to match a face from a string in the format f v1/t1 v2/t2 v3/t3
+          std::regex(R"(f\s+(\d+)(?:\/\d+){1}\s+(\d+)(?:\/\d+){1}\s+(\d+)(?:\/\d+){1})"),
+          // regex to match a face from a string in the format f v1/t1/n1 v2/t2/n2 v3/t3/n3
+          std::regex(R"(f\s+(\d+)(?:\/\d+){2}\s+(\d+)(?:\/\d+){2}\s+(\d+)(?:\/\d+){2})"),
+          // regex to match a face from a string in the format f v1//n1 v2//n2 v3//n3
+          std::regex (R"(f\s+(\d+)(?:\/\/\d+){1}\s+(\d+)(?:\/\/\d+){1}\s+(\d+)(?:\/\/\d+){1})")
+    };
+
+    // early exit if the string is empty or does not start with 'f'
+    if (toParse.empty() || toParse[0] != 'f' )
+    {
+        return {};
+    }
+
+    std::smatch face_match;
+
+    // try to match the string to each of the regexes
+    for(const auto& face_regex : face_regexes)
+    {
+        if(std::regex_search(toParse, face_match, face_regex))
+        {
+            return face_from_match(face_match[1], face_match[2], face_match[3]);
+        }
+    }
+
+    // if no match was found, return an empty optional
+    return {};
+}
+
+point3d parseVertexString(const std::string &toParse)
+{
+    const auto res = parseVertexStringRegex(toParse);
+    if(!res.has_value())
+        throw std::runtime_error("Error while reading line: " + toParse);
+
+    return res.value();
+}
+
+std::optional<point3d> parseVertexStringRegex(const std::string &toParse)
+{
+    static const std::regex vertex_regex(R"(v\s+([+-]?(?:[0-9]*[.])?[0-9]+)\s+([+-]?(?:[0-9]*[.])?[0-9]+)\s+([+-]?(?:[0-9]*[.])?[0-9]+))");
+
+    // early exit if the string is empty or does not start with 'v'
+    if (toParse.empty() || toParse[0] != 'v' )
+    {
+        return {};
+    }
+
+    std::smatch vertex_match;
+
+    // try to match the string to the regex
+    if(std::regex_search(toParse, vertex_match, vertex_regex))
+    {
+        const auto x = std::stof(vertex_match[1]);
+        const auto y = std::stof(vertex_match[2]);
+        const auto z = std::stof(vertex_match[3]);
+        return point3d(x, y, z);
+    }
+
+    // if no match was found, return an empty optional
+    return {};
+}
 
 /**
  * Computes the angle at vertex baseV formed by the edges connecting it with the
@@ -236,50 +324,6 @@ float ObjModel::unitizeModel( )
 
     return scale;
 
-
-/**
- * It parses a line of the OBJ file containing a face and it return the result. 
- * NB: it only recover the indices, it discard normal and texture indices
- * 
- * @param toParse the string to parse in the OBJ format for a face (f v/vt/vn v/vt/vn v/vt/vn) and its variants
- * @param out the 3 indices for the face
- * @return true if the parse was successful
- */
-bool ObjModel::parseFaceString( const string &toParse, face &out ) const
-{
-//  PRINTVAR( toParse );
-    if ( toParse.c_str( )[0] == 'f' )
-    {
-        idxtype a;
-        // now check the different formats: %d, %d//%d, %d/%d, %d/%d/%d
-        if ( strstr( toParse.c_str( ), "//" ) )
-        {
-            // v//n
-            return ( sscanf( toParse.c_str( ), "f %u//%u %u//%u %u//%u", &(out.v1), &a, &(out.v2), &a, &(out.v3), &a ) == 6);
-        }
-        else if ( sscanf( toParse.c_str( ), "f %u/%u/%u", &a, &a, &a ) == 3 )
-        {
-            // v/t/n
-            return ( sscanf( toParse.c_str( ), "f %u/%u/%u %u/%u/%u %u/%u/%u", &(out.v1), &a, &a, &(out.v2), &a, &a, &(out.v3), &a, &a ) == 9);
-        }
-        else if ( sscanf( toParse.c_str( ), "f %u/%u", &a, &a ) == 2 )
-        {
-            // v/t .
-            return ( sscanf( toParse.c_str( ), "f %u/%u %u/%u %u/%u", &(out.v1), &a, &(out.v2), &a, &(out.v3), &a ) == 6);
-        }
-        else
-        {
-            // v
-//            sscanf( toParse.c_str( ), "f %u %u %u", &(out.v1), &(out.v2), &(out.v3) );
-
-//            PRINTVAR( out );
-            return ( sscanf( toParse.c_str( ), "f %u %u %u", &(out.v1), &(out.v2), &(out.v3) ) == 3);
-        }
-    }
-    else
-    {
-        return false;
-    }
 }
 
 

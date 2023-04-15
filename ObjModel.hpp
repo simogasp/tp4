@@ -38,21 +38,25 @@ constexpr GLsizei TOTAL_FLOATS_IN_TRIANGLE { (VERTICES_PER_TRIANGLE * COORD_PER_
  */
 typedef struct BoundingBox
 {
-    point3d pmax;    //!<the maximum point of the bounding box
-    point3d pmin;    //!<the minimum point of the bounding box
+    /// the maximum point of the bounding box
+    point3d pmax{};
+    /// the minimum point of the bounding box
+    point3d pmin{};
 
-    BoundingBox() :
-    pmax(point3d()),
-    pmin(point3d()) { }
+    /**
+     * Default constructor
+     */
+    BoundingBox() = default;
 
-    explicit BoundingBox(const point3d &p) :
-    pmax(p),
-    pmin(p) { }
+    explicit BoundingBox(const point3d& p)
+      : pmax(p)
+      , pmin(p)
+    {}
 
     /**
      * Add a point to the bounding box. Its coordinates are taken into account
      * and the limits of the bounding box updated accordingly
-     * @param p the point to add
+     * @param[in] p the point to add
      */
     void add(const point3d &p)
     {
@@ -62,7 +66,7 @@ typedef struct BoundingBox
 
     /**
      * Set the bounding box to the given point
-     * @param p the point
+     * @param[in] p the point
      */
     void set(const point3d &p)
     {
@@ -75,13 +79,20 @@ typedef struct BoundingBox
 
 struct RenderingParameters
 {
-    bool wireframe{true};                   //!< wireframe on/off
-    bool solid{true};                       //!< draw the mesh on/off
-    bool useIndexRendering{false};          //!< use opengl drawElements on/off
-    bool subdivision{false};                //!< subdivision on/off
-    bool smooth{false};                     //!< GL_SMOOTH on/off
-    bool normals{false};                    //!< show normals on/off
-    unsigned short subdivLevel{1};          //!< number of subdivision level
+    /// wireframe on/off
+    bool wireframe{true};
+    /// draw the mesh on/off
+    bool solid { true }
+    /// use opengl drawElements on/off
+    bool useIndexRendering{false};
+    /// subdivision on/off
+    bool subdivision{false};
+    /// GL_SMOOTH on/off
+    bool smooth{false};
+    /// show normals on/off
+    bool normals{false};
+    /// number of subdivision level
+    unsigned short subdivLevel{1};
 
     RenderingParameters() = default;
 
@@ -94,18 +105,26 @@ class ObjModel
 {
 private:
 
-    std::vector<face> _mesh;                //!< Stores the vertex indices for the triangles
-    std::vector<point3d> _vertices;         //!< Stores the vertices
-    std::vector<vec3d> _normals;            //!< Stores the normals for the triangles
+    /// Stores the vertex indices for the triangles
+    std::vector<face> _mesh{};
+    /// Stores the vertices
+    std::vector<point3d> _vertices{};
+    /// Stores the normals for the triangles
+    std::vector<vec3d> _normals{};
 
     // Subdivision
-    std::vector<face> _subMesh;             //!< Stores the vertex indices for the triangles
-    std::vector<point3d> _subVert;          //!< Stores the vertices
-    std::vector<vec3d> _subNorm;            //!< Stores the normals for the triangles
+    /// Stores the vertex indices for the triangles
+    std::vector<face> _subMesh{};
+    /// Stores the vertices
+    std::vector<point3d> _subVert{};
+    /// Stores the normals for the triangles
+    std::vector<vec3d> _subNorm{};
 
-    BoundingBox _bb;                        //!< the current bounding box of the model
+    /// the current bounding box of the model
+    BoundingBox _bb{};
 
-    unsigned short _currentSubdivLevel{};   //!< the current subdivision level
+    /// the current subdivision level
+    unsigned short _currentSubdivLevel{};   
 
 public:
     ObjModel() = default;

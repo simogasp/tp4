@@ -34,6 +34,31 @@
 using namespace std;
 
 /**
+ * Calculate the normal of a triangular face defined by three points
+ *
+ * @param[in] v1 the first vertex of the face
+ * @param[in] v2 the second vertex of the face
+ * @param[in] v3 the third vertex of the face
+ * @return the normal of the face as a normalized vector
+ * @note the normal is normalized
+ */
+vec3d computeNormal( const point3d& v1, const point3d& v2, const point3d& v3)
+{
+    //**************************************************
+    // compute the cross product between two edges of the triangular face
+    //**************************************************
+    //++ vec3d norm;
+    auto norm = (v1 - v2).cross( v1 - v3 );  //!!
+
+    //**************************************************
+    // remember to normalize the result before returning it
+    //**************************************************
+    norm.normalize( );  //!!
+
+    return norm;
+}
+
+/**
  * Load the OBJ data from file
  * @param[in] filename The name of the OBJ file
  * @return true if everything went well, false otherwise
@@ -104,8 +129,7 @@ bool ObjModel::load( char* filename )
             //*********************************************************************
             //  Compute the normal of the face
             //*********************************************************************
-            vec3d norm;  //!!
-            computeNormal( _vertices[ t.v1], _vertices[t.v2], _vertices[t.v3], norm );  //!!
+            const vec3d norm = computeNormal( _vertices[ t.v1], _vertices[t.v2], _vertices[t.v3]);  //!!
 
             //*********************************************************************
             // Sum the normal of the face to each vertex normal
@@ -196,28 +220,6 @@ void ObjModel::drawWireframe( const std::vector<point3d> &vertices, const std::v
 
 
 /**
- * Calculate the normal of a triangular face defined by three points
- *
- * @param[in] v1 the first vertex
- * @param[in] v2 the second vertex
- * @param[in] v3 the third vertex
- * @param[out] norm the normal
- */
-void ObjModel::computeNormal( const point3d& v1, const point3d& v2, const point3d& v3, vec3d &norm ) const
-{
-    //**************************************************
-    // compute the cross product between two edges of the triangular face
-    //**************************************************
-    norm = (v1 - v2).cross( v1 - v3 );  //!!
-
-    //**************************************************
-    // remember to normalize the result
-    //**************************************************
-    norm.normalize( );  //!!
-}
-
-
-/**
  * Draw the faces using the computed normal of each face
  * 
  * @param[in] vertices The list of vertices
@@ -247,8 +249,7 @@ void ObjModel::drawFlatFaces( const std::vector<point3d> &vertices, const std::v
         //**************************************************
         glBegin( GL_TRIANGLES );  //<!!
 
-            vec3d n; //the normal of the face
-            computeNormal( vertices[face.v1], vertices[face.v2], vertices[face.v3], n );
+            const vec3d n = computeNormal( vertices[face.v1], vertices[face.v2], vertices[face.v3]);
             glNormal3fv( (float*) &n );
 
             glVertex3fv( (float*) &vertices[face.v1] );
@@ -452,8 +453,7 @@ void ObjModel::loopSubdivision( const std::vector<point3d> &origVert,           
         //*********************************************************************
         //  Calculate the normal of the triangles, it will be the same for each vertex
         //*********************************************************************
-        vec3d norm;  //!!
-        computeNormal( destVert[face.v1], destVert[face.v2], destVert[face.v3], norm );  //!!
+        vec3d norm = computeNormal( destVert[face.v1], destVert[face.v2], destVert[face.v3]);  //!!
 
         //*********************************************************************
         // Sum the normal of the face to each vertex normal using the angleAtVertex as weight

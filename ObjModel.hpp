@@ -131,16 +131,6 @@ public:
     ObjModel() = default;
 
     /**
-     * Calculate the normal of a triangular face defined by three points
-     *
-     * @param[in] v1 the first vertex
-     * @param[in] v2 the second vertex
-     * @param[in] cv3 the third vertex
-     * @param[out] norm the normal
-     */
-    void computeNormal(const point3d& v1, const point3d& v2, const point3d& v3, vec3d &norm) const;
-
-    /**
      * Computes the angle at vertex baseV formed by the edges connecting it with the
      * vertices v1 and v2 respectively, ie the baseV-v1 and baseV-v2 edges
      *
@@ -288,3 +278,14 @@ std::optional<face> parseFaceStringRegex( const std::string &toParse);
 point3d parseVertexString(const std::string &toParse);
 
 std::optional<point3d> parseVertexStringRegex(const std::string &toParse);
+
+/**
+ * Calculate the normal of a triangular face defined by three points
+ *
+ * @param[in] v1 the first vertex of the face
+ * @param[in] v2 the second vertex of the face
+ * @param[in] v3 the third vertex of the face
+ * @return the normal of the face as a normalized vector
+ * @note the normal is normalized
+ */
+vec3d computeNormal( const point3d& v1, const point3d& v2, const point3d& v3);

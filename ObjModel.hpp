@@ -164,10 +164,6 @@ public:
      */
     void render(const RenderingParameters &params = RenderingParameters());
 
-    /**
-     * Release the model
-     */
-    void release();
 
     /**
      * It scales the model to unitary size by translating it to the origin and

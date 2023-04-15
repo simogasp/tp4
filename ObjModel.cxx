@@ -238,7 +238,6 @@ float ObjModel::unitizeModel( )
     return 0;
 }
 
-void ObjModel::release( ) { }
 
 /**
  * It parses a line of the OBJ file containing a face and it return the result. 

@@ -110,22 +110,22 @@ std::optional<point3d> parseVertexStringRegex(const std::string &toParse)
 /**
  * Computes the angle at vertex baseV formed by the edges connecting it with the
  * vertices v1 and v2 respectively, ie the baseV-v1 and baseV-v2 edges
- * 
+ *
  * @brief Computes the angle at vertex
  * @param baseV the vertex at which to compute the angle
  * @param v1 the other vertex of the first edge baseV-v1
  * @param v2 the other vertex of the second edge baseV-v2
  * @return the angle in radiants
  */
-float ObjModel::angleAtVertex( const point3d& baseV, const point3d& v1, const point3d& v2 ) const
+float angleAtVertex( const point3d& baseV, const point3d& v1, const point3d& v2 )
 {
-    vec3d e1 = baseV - v1;
-    vec3d e2 = baseV - v2;
+    const vec3d e1 = baseV - v1;
+    const vec3d e2 = baseV - v2;
     //safe acos...
-    if ( fabs( (e1).dot( e2 ) / (e1.norm( ) * e2.norm( )) ) >= 1.0f )
+    if ( fabs( (e1).dot( e2 ) / (e1.norm( ) * e2.norm( )) ) >= 1.f )
     {
         cerr << "warning: using safe acos" << endl;
-        return (acos( 1.0f ));
+        return (acos( 1.f ));
     }
     else
     {

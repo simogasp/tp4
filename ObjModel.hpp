@@ -131,18 +131,6 @@ public:
     ObjModel() = default;
 
     /**
-     * Computes the angle at vertex baseV formed by the edges connecting it with the
-     * vertices v1 and v2 respectively, ie the baseV-v1 and baseV-v2 edges
-     *
-     * @brief Computes the angle at vertex
-     * @param[in] baseV the vertex at which to compute the angle
-     * @param[in] v1 the other vertex of the first edge baseV-v1
-     * @param[in] v2 the other vertex of the second edge baseV-v2
-     * @return the angle in radiants
-     */
-    [[nodiscard]] float angleAtVertex(const point3d& v1, const point3d& v2, const point3d& v3) const;
-
-    /**
      * Load the OBJ data from file
       * @param[in] filename The name of the OBJ file
       * @return true if everything went well, false otherwise
@@ -289,3 +277,15 @@ std::optional<point3d> parseVertexStringRegex(const std::string &toParse);
  * @note the normal is normalized
  */
 vec3d computeNormal( const point3d& v1, const point3d& v2, const point3d& v3);
+
+/**
+ * Computes the angle at vertex baseV formed by the edges connecting it with the
+ * vertices v1 and v2 respectively, ie the baseV-v1 and baseV-v2 edges
+ *
+ * @brief Computes the angle at vertex
+ * @param[in] baseV the vertex at which to compute the angle
+ * @param[in] v1 the other vertex of the first edge baseV-v1
+ * @param[in] v2 the other vertex of the second edge baseV-v2
+ * @return the angle in radiants
+ */
+[[nodiscard]] float angleAtVertex(const point3d& v1, const point3d& v2, const point3d& v3);

@@ -182,61 +182,59 @@ void ObjModel::drawNormals( const std::vector<point3d> &vertices, const std::vec
  */
 float ObjModel::unitizeModel( )
 {
-    if ( !_vertices.empty( ) && !_mesh.empty( ) )
+    if ( _vertices.empty( ) || _mesh.empty( ) )
+    {
+        return .0f;
+    }
+
+    //****************************************
+    // calculate model width, height, and
+    // depth using the bounding box
+    //****************************************
+    const float w = fabs( _bb.pmax.x - _bb.pmin.x );
+    const float h = fabs( _bb.pmax.y - _bb.pmin.y );
+    const float d = fabs( _bb.pmax.z - _bb.pmin.z );
+
+    cout << "size: w: " << w << " h " << h << " d " << d << endl;
+    //****************************************
+    // calculate center of the bounding box of the model
+    //****************************************
+    const point3d c = (_bb.pmax + _bb.pmin) * 0.5;
+
+    //****************************************
+    // calculate the unitizing scale factor as the
+    // maximum of the 3 dimensions
+    //****************************************
+    const auto scale = static_cast<float>(2.f / std::max(std::max(w, h), d));
+
+    cout << "scale: " << scale << " cx " << c.x << " cy " << c.y << " cz " << c.z << endl;
+
+    // translate each vertex wrt to the center and then apply the scaling to the coordinate
+    for(auto& v : _vertices)
     {
         //****************************************
-        // calculate model width, height, and
-        // depth using the bounding box
+        // translate the vertex
         //****************************************
-        const float w = fabs( _bb.pmax.x - _bb.pmin.x );
-        const float h = fabs( _bb.pmax.y - _bb.pmin.y );
-        const float d = fabs( _bb.pmax.z - _bb.pmin.z );
-
-        cout << "size: w: " << w << " h " << h << " d " << d << endl;
-        //****************************************
-        // calculate center of the bounding box of the model
-        //****************************************
-        const point3d c = (_bb.pmax + _bb.pmin) * 0.5;
+        v.translate( -c.x, -c.y, -c.z );
 
         //****************************************
-        // calculate the unitizing scale factor as the
-        // maximum of the 3 dimensions
+        // apply the scaling
         //****************************************
-        const auto scale = static_cast<float>(2.f / std::max(std::max(w, h), d));
-
-        cout << "scale: " << scale << " cx " << c.x << " cy " << c.y << " cz " << c.z << endl;
-
-        // translate each vertex wrt to the center and then apply the scaling to the coordinate
-        for(auto& v : _vertices)
-        {
-            //****************************************
-            // translate the vertex
-            //****************************************
-            v.translate( -c.x, -c.y, -c.z );
-
-            //****************************************
-            // apply the scaling
-            //****************************************
-            v.scale( scale );
-
-        }
-
-
-        //****************************************
-        // update the bounding box, ie translate and scale the 6 coordinates
-        //****************************************
-        _bb.pmax = (_bb.pmax - c) * scale;
-        _bb.pmin = (_bb.pmin - c) * scale;
-
-
-        cout << "New bounding box : pmax=" << _bb.pmax << "  pmin=" << _bb.pmin << endl;
-
-        return scale;
+        v.scale( scale );
 
     }
 
-    return 0;
-}
+
+    //****************************************
+    // update the bounding box, ie translate and scale the 6 coordinates
+    //****************************************
+    _bb.pmax = (_bb.pmax - c) * scale;
+    _bb.pmin = (_bb.pmin - c) * scale;
+
+
+    cout << "New bounding box : pmax=" << _bb.pmax << "  pmin=" << _bb.pmin << endl;
+
+    return scale;
 
 
 /**

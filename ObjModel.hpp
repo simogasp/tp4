@@ -23,6 +23,7 @@
 #include "core.hpp"
 
 #include <vector>
+#include <string>
 #include <ostream>
 #include <cmath>
 #include <optional>
@@ -135,7 +136,7 @@ public:
       * @param[in] filename The name of the OBJ file
       * @return true if everything went well, false otherwise
      */
-    bool load(char *filename);
+    bool load(const std::string& filename);
 
     /**
      * Render the model according to the provided parameters
@@ -289,3 +290,14 @@ vec3d computeNormal( const point3d& v1, const point3d& v2, const point3d& v3);
  * @return the angle in radiants
  */
 [[nodiscard]] float angleAtVertex(const point3d& v1, const point3d& v2, const point3d& v3);
+
+/**
+ * Load the OBJ data from file
+ * @param[in] filename The name of the OBJ file to load
+ * @param[out] vertices The list of vertices
+ * @param[out] mesh The list of faces
+ * @param[out] normals The list of normals
+ * @param[out] bb The bounding box of the object
+ * @return true if everything went well, false otherwise
+ */
+bool load(const std::string& filename, std::vector<point3d>& vertices, std::vector<face>& mesh, std::vector<vec3d>& normals, BoundingBox& bb);

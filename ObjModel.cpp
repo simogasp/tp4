@@ -60,12 +60,15 @@ vec3d computeNormal( const point3d& v1, const point3d& v2, const point3d& v3)
 
 /**
  * Load the OBJ data from file
- * @param[in] filename The name of the OBJ file
+ * @param[in] filename The name of the OBJ file to load
+ * @param[out] vertices The list of vertices
+ * @param[out] mesh The list of faces
+ * @param[out] normals The list of normals
+ * @param[out] bb The bounding box of the object
  * @return true if everything went well, false otherwise
  */
-bool ObjModel::load( char* filename )
+bool load(const std::string& filename, std::vector<point3d>& vertices, std::vector<face>& mesh, std::vector<vec3d>& normals, BoundingBox& bb)
 {
-
     string line;
     ifstream objFile( filename );
 
@@ -84,7 +87,7 @@ bool ObjModel::load( char* filename )
 
         // If the first character is a simple 'v'...
 //            PRINTVAR( line );
-        if ( (line.c_str( )[0] == 'v') && (line.c_str( )[1] == ' ') ) // to drop all the vn and vn lines
+        if ( (line[0] == 'v') && (line[1] == ' ') ) // to drop all the vn and vn lines
         {
 //                PRINTVAR( line );
             // Read 3 floats from the line:  X Y Z and store them in the corresponding place in _vertices
@@ -95,24 +98,24 @@ bool ObjModel::load( char* filename )
             // and its normal to the list of normals: for the time
             // being it is a [0, 0 ,0] normal.
             //**************************************************
-            _vertices.push_back( p );  //!!
-            _normals.emplace_back();  //!!
+            vertices.push_back( p );  //!!
+            normals.emplace_back();  //!!
 
             // update the bounding box, if it is the first vertex simply
             // set the bb to it
-            if ( _vertices.size( ) == 1 )
+            if (vertices.size( ) == 1 )
             {
-                _bb.set( p );
+                bb.set( p );
             }
             else
             {
                 // otherwise add the point
-                _bb.add( p );
+                bb.add( p );
             }
 
         }
         // If the first character is a 'f'...
-        if ( line.c_str( )[0] == 'f' )
+        if ( line[0] == 'f' )
         {
             face t = parseFaceString( line);
 
@@ -124,46 +127,51 @@ bool ObjModel::load( char* filename )
             //**************************************************
             // add it to the mesh
             //**************************************************
-            _mesh.push_back( t );  //!!
+            mesh.push_back( t );  //!!
 
             //*********************************************************************
             //  Compute the normal of the face
             //*********************************************************************
-            const vec3d norm = computeNormal( _vertices[ t.v1], _vertices[t.v2], _vertices[t.v3]);  //!!
+            const vec3d norm = computeNormal(vertices[ t.v1], vertices[t.v2], vertices[t.v3]);  //!!
 
             //*********************************************************************
             // Sum the normal of the face to each vertex normal
             //*********************************************************************
 
-            _normals[t.v1] += (vec3d( norm ) * angleAtVertex( _vertices[ t.v1], _vertices[t.v2], _vertices[t.v3] ));  //!!
-            _normals[t.v2] += (vec3d( norm ) * angleAtVertex( _vertices[ t.v2], _vertices[t.v1], _vertices[t.v3] ));  //!!
-            _normals[t.v3] += (vec3d( norm ) * angleAtVertex( _vertices[ t.v3], _vertices[t.v1], _vertices[t.v2] ));  //!!
+            normals[t.v1] += (vec3d( norm ) * angleAtVertex(vertices[ t.v1], vertices[t.v2], vertices[t.v3] ));  //!!
+            normals[t.v2] += (vec3d( norm ) * angleAtVertex(vertices[ t.v2], vertices[t.v1], vertices[t.v3] ));  //!!
+            normals[t.v3] += (vec3d( norm ) * angleAtVertex(vertices[ t.v3], vertices[t.v1], vertices[t.v2] ));  //!!
 
         }
     }
 
-    cerr << "Found :\n\tNumber of triangles (_indices) " << _mesh.size( ) << "\n\tNumber of Vertices: " << _vertices.size( ) << "\n\tNumber of Normals: " << _normals.size( ) << endl;
-//        PRINTVAR( _mesh );
-//        PRINTVAR( _vertices );
-//        PRINTVAR( _normals );
+    cerr << "Found :\n\tNumber of triangles (_indices) " << mesh.size( ) << "\n\tNumber of Vertices: " << vertices.size( ) << "\n\tNumber of Normals: " << normals.size( ) << endl;
+//        PRINTVAR( mesh );
+//        PRINTVAR( vertices );
+//        PRINTVAR( normals );
 
     //*********************************************************************
     // normalize the normals of each vertex
     //*********************************************************************
-    for(auto &normal : _normals)  //<!!
+    for(auto &normal : normals)  //<!!
     {
         normal.normalize();
     }  //>!!
 
-//        PRINTVAR( _normals );
+//        PRINTVAR( normals );
 
     // Close OBJ file
-    objFile.close( );
+    objFile.close();
 
 
-    cout << "Object loaded with " << _vertices.size( ) << " vertices and " << _mesh.size( ) << " faces" << endl;
-    cout << "Bounding box : pmax=" << _bb.pmax << "  pmin=" << _bb.pmin << endl;
+    cout << "Object loaded with " << vertices.size( ) << " vertices and " << mesh.size( ) << " faces" << endl;
+    cout << "Bounding box : pmax=" << bb.pmax << "  pmin=" << bb.pmin << endl;
     return true;
+}
+
+bool ObjModel::load(const std::string& filename)
+{
+    return ::load(filename, _vertices, _mesh, _normals, _bb);
 }
 
 /**

@@ -27,6 +27,7 @@
 #include <ostream>
 #include <cmath>
 #include <optional>
+#include <cmath>
 
 /// number of vertices in a triangle
 constexpr GLsizei VERTICES_PER_TRIANGLE{3};

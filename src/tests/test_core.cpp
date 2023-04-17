@@ -24,7 +24,7 @@ BOOST_AUTO_TEST_CASE(test_edge)
                        {edge(3, 5), 6}};
 
     BOOST_CHECK_EQUAL(mylist.size(), 4);
-    PRINTVAR(mylist);
+//    PRINTVAR(mylist);
 
     BOOST_CHECK(mylist.find(edge(4,1)) != mylist.end());
     BOOST_CHECK(mylist.find(edge(3,2)) == mylist.end());
@@ -48,14 +48,14 @@ BOOST_AUTO_TEST_CASE(test_edge)
     idxtype tmp = idx;
     BOOST_CHECK(!face(1,2,3).containsEdge( edge(3,5), idx ));
     BOOST_CHECK( idx == tmp);
-    PRINTVAR((face(1,2,3).containsEdge( edge(2,3), idx )));
+    BOOST_CHECK((face(1,2,3).containsEdge( edge(2,3), idx )));
     BOOST_CHECK( idx == 1);
     BOOST_CHECK(face(1,2,3).containsEdge( edge(3,2), idx ));
     BOOST_CHECK( idx == 1);
     tmp = idx;
     BOOST_CHECK(!(face(1,2,3).containsEdge( edge(0,2), idx )));
     BOOST_CHECK( idx == tmp);
-    PRINTVAR((face(1,2,3).containsEdge( edge(3,1), idx )));
+    BOOST_CHECK((face(1,2,3).containsEdge( edge(3,1), idx )));
     BOOST_CHECK( idx == 2);
 
 }

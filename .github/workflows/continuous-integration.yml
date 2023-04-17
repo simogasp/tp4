@@ -37,6 +37,15 @@ jobs:
       run: |
         cd build
         ctest
+    # test that the version shipped to the students is working
+    - name: Test studentipy
+      run: |
+        ./generateStudent.py -w test_student --skip-cleaning --skip-packaging --archive-name tpogl
+        mkdir test_student/tpogl/build
+        cd test_student/tpogl/build
+        cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DBUILD_TESTS:BOOL=OFF
+        cmake --build .
+#        ctest
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
 

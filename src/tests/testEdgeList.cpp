@@ -8,13 +8,12 @@
  * Created on October 25, 2014, 1:26 PM
  */
 
-
-#include "core.hpp"
-#include "ObjModel.hpp"
-#include <sstream>
+#include "../core.hpp"
+#include "../ObjModel.hpp"
+#include <cassert>
 #include <cstdio>
 #include <cstdlib>
-#include <cassert>
+#include <sstream>
 
 using namespace std;
 

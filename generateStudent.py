@@ -27,13 +27,13 @@ def main(working_dir: str, archive_name: str, skip_cleaning: bool = False, skip_
     logger.info("Creating directory %s", dest_name)
     os.mkdir(dest_name)
 
-    files_to_copy = ["BUILD.md", "CMakeLists.txt", "core.cpp", "core.hpp", "main.cpp", "ObjModel.cpp", "ObjModel.cxx",
-                     "ObjModel.hpp", "README.md", "LICENSE"]
+    files_to_copy = ["BUILD.md", "CMakeLists.txt", "README.md", "LICENSE"]
     logger.info("Copying files to %s", dest_name)
     for file in files_to_copy:
         shutil.copy(file, dest_name)
 
     logger.info("Copying directories data and freeglut to %s", dest_name)
+    shutil.copytree("src", os.path.join(dest_name, "src"))
     shutil.copytree("data", os.path.join(dest_name, "data"))
     shutil.copytree("freeglut", os.path.join(dest_name, "freeglut"))
 
@@ -41,7 +41,7 @@ def main(working_dir: str, archive_name: str, skip_cleaning: bool = False, skip_
     logger.info("Cloning studentify.py to %s", studentify_dir)
     subprocess.check_call(["git", "clone", "https://github.com/simogasp/studentipy.git", studentify_dir])
 
-    objmodel_cpp = os.path.join(dest_name, "ObjModel.cpp")
+    objmodel_cpp = os.path.join(dest_name, "src/ObjModel.cpp")
     logger.info("Applying studentify to %s", objmodel_cpp)
     subprocess.check_call(
         ["python3", os.path.join(studentify_dir, "studentify.py"), objmodel_cpp, "-o", objmodel_cpp, "--force"])

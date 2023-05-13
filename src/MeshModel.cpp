@@ -4,21 +4,19 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include "ObjModel.hpp"
-#include "objReader.hpp"
 #include "geometry.hpp"
 #include "loop.hpp"
-
-#include <iostream>
-#include <fstream>
+#include "MeshModel.hpp"
+#include "objReader.hpp"
 #include <cassert>
-
+#include <cmath>
+#include <fstream>
+#include <iostream>
 #include <sstream>
 #include <string>
 #include <vector>
-#include <cmath>
 
-bool ObjModel::load(const std::string& filename)
+bool MeshModel::load(const std::string& filename)
 {
     return ::load(filename, _vertices, _mesh, _normals, _bb);
 }
@@ -28,7 +26,7 @@ bool ObjModel::load(const std::string& filename)
 * Render the model according to the provided parameters
 * @param params The rendering parameters
 */
-void ObjModel::render( const RenderingParameters &params )
+void MeshModel::render( const RenderingParameters &params )
 {
     // if we need to draw the original model
     if ( !params.subdivision )
@@ -98,7 +96,7 @@ void ObjModel::render( const RenderingParameters &params )
  * @param vertexNormals list of normals
  * @param params Rendering parameters
  */
-void ObjModel::draw( const std::vector<point3d> &vertices, const std::vector<face> &indices, std::vector<vec3d> &vertexNormals, const RenderingParameters &params ) const
+void MeshModel::draw( const std::vector<point3d> &vertices, const std::vector<face> &indices, std::vector<vec3d> &vertexNormals, const RenderingParameters &params ) const
 {
     if ( params.solid )
     {
@@ -117,7 +115,7 @@ void ObjModel::draw( const std::vector<point3d> &vertices, const std::vector<fac
  *
  * @return the scale factor used to transform the model
  */
-float ObjModel::unitizeModel( )
+float MeshModel::unitizeModel( )
 {
     if ( _vertices.empty( ) || _mesh.empty( ) )
     {
@@ -182,7 +180,7 @@ float ObjModel::unitizeModel( )
 
 // to be deprecated
 
-void ObjModel::flatDraw( ) const
+void MeshModel::flatDraw( ) const
 {
     glShadeModel( GL_SMOOTH );
 
@@ -207,7 +205,7 @@ void ObjModel::flatDraw( ) const
 
 // to be deprecated
 
-void ObjModel::drawWireframe( ) const
+void MeshModel::drawWireframe( ) const
 {
 
     ::drawWireframe( _vertices, _mesh, RenderingParameters( ) );
@@ -216,7 +214,7 @@ void ObjModel::drawWireframe( ) const
 
 // to be deprecated
 
-void ObjModel::indexDraw( ) const
+void MeshModel::indexDraw( ) const
 {
     glShadeModel( GL_SMOOTH );
     //****************************************
@@ -261,7 +259,7 @@ void ObjModel::indexDraw( ) const
 }
 
 // to be deprecated
-void ObjModel::drawSubdivision( )
+void MeshModel::drawSubdivision( )
 {
     if ( _subMesh.empty( ) || _subNorm.empty( ) || _subVert.empty( ) )
     {

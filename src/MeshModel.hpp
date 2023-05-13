@@ -20,7 +20,7 @@
 /**
  * The class containing and managing the 3D model 
  */
-class ObjModel
+class MeshModel
 {
 private:
 
@@ -46,7 +46,7 @@ private:
     unsigned short _currentSubdivLevel{};   
 
 public:
-    ObjModel() = default;
+  MeshModel() = default;
 
     /**
      * Load the OBJ data from file

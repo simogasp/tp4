@@ -84,8 +84,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(RENDERER_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set(RENDERER_SOURCES
-        src/ObjModel.cpp
-        src/ObjModel.hpp
+        src/MeshModel.cpp
+        src/MeshModel.hpp
         src/core.cpp
         src/core.hpp
         src/rendering.cpp

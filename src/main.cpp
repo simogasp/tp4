@@ -4,19 +4,15 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-
-#include "ObjModel.hpp"
-
+#include "MeshModel.hpp"
 #include "openglAll.hpp"
-
-#include <iostream>
-#include <fstream>
-#include <utility>
-#include <vector>
+#include <cassert>
 #include <cstdio>
 #include <cstring>
-#include <cassert>
-
+#include <fstream>
+#include <iostream>
+#include <utility>
+#include <vector>
 
 #define KEY_ESCAPE 27
 
@@ -51,7 +47,7 @@ struct glutWindow
 //************************************
 // global variable containing the OBJ model
 //************************************
-ObjModel obj;
+MeshModel obj;
 
 
 int angle_y = 0;

@@ -248,9 +248,10 @@ idxtype getNewVertex(const edge& e,
         return ( newVertList.getIndex( e ));  //!!
     }
 
-    // this is just to avoid compilation errors at the beginning
-    // execution should normally never reach here
-    // the return instructions go inside each branch of the if - else above
-    std::cerr << "WARNING: the subdivision may not be implemented correctly" << std::endl;
-    return 0;
+    //++ // this is just to avoid compilation errors at the beginning
+    //++ // execution should normally never reach here
+    //++ // the return instructions go inside each branch of the if - else above
+    //++ // remove this return instruction once you have implemented the function
+    //++ std::cerr << "WARNING: the subdivision may not be implemented correctly" << std::endl;
+    //++ return 0;
 }

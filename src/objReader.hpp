@@ -45,7 +45,6 @@ struct BoundingBox
         pmax = p;
         pmin = p;
     }
-
 };
 
 /**

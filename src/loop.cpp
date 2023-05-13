@@ -148,7 +148,6 @@ void loopSubdivision(const std::vector<point3d>& origVert, //!< the original ver
         destNorm[face.v1] += (vec3d( norm ) * angleAtVertex( destVert[face.v1], destVert[face.v2], destVert[face.v3] ));  //<!!
         destNorm[face.v2] += (vec3d( norm ) * angleAtVertex( destVert[face.v2], destVert[face.v3], destVert[face.v1] ));
         destNorm[face.v3] += (vec3d( norm ) * angleAtVertex( destVert[face.v3], destVert[face.v1], destVert[face.v2] ));  //>!!
-
     }
     //*********************************************************************
     // normalize the normals of each vertex
@@ -157,7 +156,6 @@ void loopSubdivision(const std::vector<point3d>& origVert, //!< the original ver
     {
         n.normalize( );
     }  //>!!
-
 }
 
 /**
@@ -236,7 +234,6 @@ idxtype getNewVertex(const edge& e,
         // return the index of the new vertex
         //*********************************************************************
         return idxnew;  //!!
-
     }
     else  //??
     // else we don't need to do anything, just return the associated index of the

@@ -164,7 +164,6 @@ void drawSmoothFaces(const std::vector<point3d>& vertices,
     // Disable normal arrays
     //****************************************
     glDisableClientState( GL_NORMAL_ARRAY );  //!!
-
 }
 
 

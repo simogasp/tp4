@@ -23,7 +23,6 @@
 class MeshModel
 {
 private:
-
     /// Stores the vertex indices for the triangles
     std::vector<face> _mesh{};
     /// Stores the vertices
@@ -89,6 +88,4 @@ private:
     [[deprecated]] void indexDraw() const;
     [[deprecated]] void flatDraw() const;
     [[deprecated]] void drawWireframe() const;
-
-
 };

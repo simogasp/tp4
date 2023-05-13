@@ -67,7 +67,6 @@ bool load(const std::string& filename, std::vector<point3d>& vertices, std::vect
                 // otherwise add the point
                 bb.add( p );
             }
-
         }
         // If the first character is a 'f'...
         if ( line[0] == 'f' )
@@ -96,7 +95,6 @@ bool load(const std::string& filename, std::vector<point3d>& vertices, std::vect
             normals[t.v1] += (vec3d( norm ) * angleAtVertex(vertices[ t.v1], vertices[t.v2], vertices[t.v3] ));  //!!
             normals[t.v2] += (vec3d( norm ) * angleAtVertex(vertices[ t.v2], vertices[t.v1], vertices[t.v3] ));  //!!
             normals[t.v3] += (vec3d( norm ) * angleAtVertex(vertices[ t.v3], vertices[t.v1], vertices[t.v2] ));  //!!
-
         }
     }
 

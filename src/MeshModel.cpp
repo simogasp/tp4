@@ -106,7 +106,6 @@ void MeshModel::draw( const std::vector<point3d> &vertices, const std::vector<fa
     {
         ::drawWireframe( vertices, indices, params );
     }
-
 }
 
 /**
@@ -156,9 +155,7 @@ float MeshModel::unitizeModel( )
         // apply the scaling
         //****************************************
         v.scale( scale );
-
     }
-
 
     //****************************************
     // update the bounding box, ie translate and scale the 6 coordinates
@@ -170,7 +167,6 @@ float MeshModel::unitizeModel( )
     std::cout << "New bounding box : pmax=" << _bb.pmax << "  pmin=" << _bb.pmin << std::endl;
 
     return scale;
-
 }
 
 
@@ -200,16 +196,13 @@ void MeshModel::flatDraw( ) const
 
         glEnd( );
     }
-
 }
 
 // to be deprecated
 
 void MeshModel::drawWireframe( ) const
 {
-
     ::drawWireframe( _vertices, _mesh, RenderingParameters( ) );
-
 }
 
 // to be deprecated
@@ -281,5 +274,4 @@ void MeshModel::drawSubdivision( )
     glDisableClientState( GL_NORMAL_ARRAY );
 
     ::drawWireframe( _subVert, _subMesh, RenderingParameters( ) );
-
 }

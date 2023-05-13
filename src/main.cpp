@@ -39,7 +39,6 @@ struct glutWindow
     glutWindow() = default;
 
     explicit glutWindow(string winName) : title(std::move(winName)) { }
-
 } ;
 
 
@@ -104,7 +103,6 @@ void define_material( GLfloat ar, GLfloat ag, GLfloat ab, // ambient
 
 void place_light( GLfloat x, GLfloat y, GLfloat z )
 {
-
     GLfloat light_position[4];
     GLfloat light_ambient[] = { .2f, .2f, .2f, 1.f };
     GLfloat light_diffuse[] = { 1.f, 1.f, 1.f, 1.f };
@@ -123,7 +121,6 @@ void place_light( GLfloat x, GLfloat y, GLfloat z )
 
     glEnable( GL_LIGHT0 );
     glEnable( GL_LIGHTING );
-
 }
 
 void display( )
@@ -280,7 +277,6 @@ int main( int argc, char **argv )
         //***********************************************
         if(obj.load(argv[1]))
         {
-
             //***********************************************
             // Make it unitary
             //***********************************************

@@ -311,8 +311,8 @@ bool face::containsEdge(const edge &e, idxtype &oppositeVertex) const
 face face::operator +(const face& a) const
 {
     return {v1 + a.v1, v2 + a.v2, v3 + a.v3};
-
 }
+
 face& face::operator +=(const face& a)
 {
     v1 += a.v1;

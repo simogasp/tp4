@@ -35,7 +35,6 @@ struct RenderingParameters
     unsigned short subdivLevel{1};
 
     RenderingParameters() = default;
-
 };
 
 /**

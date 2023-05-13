@@ -85,7 +85,6 @@ inline idxtype min( const edge &e )
  */
 struct edgeEquivalent
 {
-
     bool operator( ) ( const edge &a, const edge &b ) const
     {
         //      return !( ( (a.first == b.first) && (a.second == b.second) ) ||
@@ -104,7 +103,6 @@ struct edgeEquivalent
 
 struct edgeHash
 {
-
     size_t operator( ) ( const edge &a ) const
     {
         std::hash<std::string> fun;
@@ -142,7 +140,6 @@ inline std::ostream& operator<<( std::ostream& os, const edge2vertex & l )
 class EdgeList
 {
 public:
-
     EdgeList( ) = default;
 
     /**
@@ -177,10 +174,8 @@ public:
 
     friend std::ostream& operator<<( std::ostream& os, const EdgeList& l );
 
-
 private:
   edge2vertex list;
-
 };
 
 inline std::ostream& operator<<( std::ostream& os, const EdgeList& l )
@@ -356,7 +351,6 @@ struct v3f
 
     v3f operator /( const float &a ) const;
     v3f& operator /=( const float &a );
-
 };
 
 /**

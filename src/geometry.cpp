@@ -1,3 +1,10 @@
+/**
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
+
+
 #include "geometry.hpp"
 #include <cmath>
 
@@ -25,6 +32,10 @@ vec3d computeNormal( const point3d& v1, const point3d& v2, const point3d& v3)
 
     return norm;
 }
+
+
+//////////////////////////////////////// Nothing to do after this /////////////////////////////////
+
 
 /**
  * Computes the angle at vertex baseV formed by the edges connecting it with the

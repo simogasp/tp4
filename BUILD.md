@@ -12,7 +12,7 @@ Required tools:
 The project depends on:
 
 - OpenGL
-- freeglut (included for ease in windows)
+- freeglut (included for ease in Windows)
 
 
 ## Windows

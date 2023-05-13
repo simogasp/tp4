@@ -12,10 +12,10 @@ if(BUILD_SHARED_LIBS)
     endif()
 endif()
 
-include(CheckIPOSupported)
-check_ipo_supported(RESULT result)
-message(STATUS "IPO supported: ${result}")
-set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ${result})
+#include(CheckIPOSupported)
+#check_ipo_supported(RESULT result)
+#message(STATUS "IPO supported: ${result}")
+#set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ${result})
 
 # compile options for all targets depending on the compiler and the system
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
@@ -76,7 +76,18 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(RENDERER_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
-add_library(renderer src/ObjModel.cpp src/ObjModel.hpp src/core.cpp src/core.hpp)
+set(RENDERER_SOURCES
+        src/ObjModel.cpp
+        src/ObjModel.hpp
+        src/core.cpp
+        src/core.hpp
+        src/rendering.cpp
+        src/rendering.hpp
+        src/geometry.cpp
+        src/geometry.hpp
+        src/objReader.cpp
+        src/objReader.hpp)
+add_library(renderer ${RENDERER_SOURCES})
 target_include_directories(renderer PUBLIC $<BUILD_INTERFACE:${RENDERER_INCLUDE_DIR}>)
 target_link_libraries( renderer OpenGL::GL OpenGL::GLU GLUT::GLUT )
 target_compile_options(renderer PRIVATE ${MY_COMPILE_OPTIONS})
@@ -100,7 +111,7 @@ if(BUILD_TESTS)
     set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
     include(BoostTestHelper)
 
-    set(TEST_TARGETS "src/tests/test_utils.cpp;src/tests/test_core.cpp")
+    set(TEST_TARGETS "src/tests/test_objReader.cpp;src/tests/test_core.cpp;src/tests/test_geometry.cpp")
     foreach (TEST_TARGET ${TEST_TARGETS})
         add_boost_test(SOURCE ${TEST_TARGET} LINK renderer PREFIX renderer COMPILE_OPTIONS ${MY_COMPILE_OPTIONS} COMPILE_DEFINITIONS ${MY_COMPILE_DEFINITIONS})
     endforeach ()

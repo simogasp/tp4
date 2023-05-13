@@ -1,136 +1,16 @@
 /**
- * @file ObjModel.cxx
- * @author  Simone Gasparini <simone.gasparini@enseeiht.fr>
- * @version 1.0
- *
- * @section LICENSE
- *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
- *
- * @section DESCRIPTION
- * 
- * Simple Class to load and draw 3D objects from OBJ files
- * Using triangles and normals as static object. No texture mapping. 
- * OBJ files must be triangulated!!!
- *
  */
 
 #include <algorithm>
 #include <regex>
 #include <array>
 
-// lambda to convert the string matches to a face
-auto face_from_match(const std::string& vst1, const std::string& vst2, const std::string& vst3) -> face
+bool ObjModel::load(const std::string& filename)
 {
-    const auto v1 = static_cast<idxtype>(std::stoi(vst1));
-    const auto v2 = static_cast<idxtype>(std::stoi(vst2));
-    const auto v3 = static_cast<idxtype>(std::stoi(vst3));
-    return {v1, v2, v3};
-}
-
-face parseFaceString(const std::string &toParse)
-{
-    const auto res = parseFaceStringRegex(toParse);
-    if(!res.has_value())
-        throw std::runtime_error("Error while reading line: " + toParse);
-
-    return res.value();
-}
-
-std::optional<face> parseFaceStringRegex( const std::string &toParse)
-{
-    static const std::array<std::regex, 4> face_regexes {
-          // regex to match a face from a string in the format f v1 v2 v3
-          std::regex(R"(f\s+(\d+)\s+(\d+)\s+(\d+))"),
-          // regex to match a face from a string in the format f v1/t1 v2/t2 v3/t3
-          std::regex(R"(f\s+(\d+)(?:\/\d+){1}\s+(\d+)(?:\/\d+){1}\s+(\d+)(?:\/\d+){1})"),
-          // regex to match a face from a string in the format f v1/t1/n1 v2/t2/n2 v3/t3/n3
-          std::regex(R"(f\s+(\d+)(?:\/\d+){2}\s+(\d+)(?:\/\d+){2}\s+(\d+)(?:\/\d+){2})"),
-          // regex to match a face from a string in the format f v1//n1 v2//n2 v3//n3
-          std::regex (R"(f\s+(\d+)(?:\/\/\d+){1}\s+(\d+)(?:\/\/\d+){1}\s+(\d+)(?:\/\/\d+){1})")
-    };
-
-    // early exit if the string is empty or does not start with 'f'
-    if (toParse.empty() || toParse[0] != 'f' )
-    {
-        return {};
-    }
-
-    std::smatch face_match;
-
-    // try to match the string to each of the regexes
-    for(const auto& face_regex : face_regexes)
-    {
-        if(std::regex_search(toParse, face_match, face_regex))
-        {
-            return face_from_match(face_match[1], face_match[2], face_match[3]);
-        }
-    }
-
-    // if no match was found, return an empty optional
-    return {};
-}
-
-point3d parseVertexString(const std::string &toParse)
-{
-    const auto res = parseVertexStringRegex(toParse);
-    if(!res.has_value())
-        throw std::runtime_error("Error while reading line: " + toParse);
-
-    return res.value();
-}
-
-std::optional<point3d> parseVertexStringRegex(const std::string &toParse)
-{
-    static const std::regex vertex_regex(R"(v\s+([+-]?(?:[0-9]*[.])?[0-9]+)\s+([+-]?(?:[0-9]*[.])?[0-9]+)\s+([+-]?(?:[0-9]*[.])?[0-9]+))");
-
-    // early exit if the string is empty or does not start with 'v'
-    if (toParse.empty() || toParse[0] != 'v' )
-    {
-        return {};
-    }
-
-    std::smatch vertex_match;
-
-    // try to match the string to the regex
-    if(std::regex_search(toParse, vertex_match, vertex_regex))
-    {
-        const auto x = std::stof(vertex_match[1]);
-        const auto y = std::stof(vertex_match[2]);
-        const auto z = std::stof(vertex_match[3]);
-        return point3d(x, y, z);
-    }
-
-    // if no match was found, return an empty optional
-    return {};
-}
-
-/**
- * Computes the angle at vertex baseV formed by the edges connecting it with the
- * vertices v1 and v2 respectively, ie the baseV-v1 and baseV-v2 edges
- *
- * @brief Computes the angle at vertex
- * @param baseV the vertex at which to compute the angle
- * @param v1 the other vertex of the first edge baseV-v1
- * @param v2 the other vertex of the second edge baseV-v2
- * @return the angle in radiants
- */
-float angleAtVertex( const point3d& baseV, const point3d& v1, const point3d& v2 )
-{
-    const vec3d e1 = baseV - v1;
-    const vec3d e2 = baseV - v2;
-    //safe acos...
-    if ( fabs( (e1).dot( e2 ) / (e1.norm( ) * e2.norm( )) ) >= 1.f )
-    {
-        cerr << "warning: using safe acos" << endl;
-        return (acos( 1.f ));
-    }
-    else
-    {
-        return ( acos( (e1).dot( e2 ) / (e1.norm( ) * e2.norm( )) ));
-    }
+    return ::load(filename, _vertices, _mesh, _normals, _bb);
 }
 
 
@@ -216,50 +96,9 @@ void ObjModel::draw( const std::vector<point3d> &vertices, const std::vector<fac
     }
     if ( params.wireframe )
     {
-        drawWireframe( vertices, indices, params );
+        ::drawWireframe( vertices, indices, params );
     }
 
-}
-
-void ObjModel::drawSolid( const vector<point3d> &vertices, const vector<face> &indices, vector<vec3d> &vertexNormals, const RenderingParameters &params ) const
-{
-    if ( params.useIndexRendering )
-    {
-        drawSmoothFaces( vertices, indices, vertexNormals, params );
-    }
-    else
-    {
-        drawFlatFaces( vertices, indices, params );
-    }
-}
-
-/**
- * Draw the normals at each vertex
- * @param vertices The list of vertices 
- * @param vertexNormals The list of associated normals
- */
-void ObjModel::drawNormals( const std::vector<point3d> &vertices, const std::vector<vec3d>& vertexNormals ) const
-{
-    glDisable( GL_LIGHTING );
-
-    glColor3f( 0.8f, .0f, .0f );
-    glLineWidth( 2 );
-
-    for(std::size_t i = 0; i < vertices.size(); ++i)
-    {
-        glBegin( GL_LINES );
-
-        const auto v = vertices[i];
-        const auto n = vertexNormals[i];
-
-        vec3d newP = v +  0.05f * n;
-        glVertex3fv( (float*) &v );
-
-        glVertex3f( newP.x, newP.y, newP.z );
-
-        glEnd( );
-    }
-    glEnable( GL_LIGHTING );
 }
 
 /**
@@ -361,7 +200,7 @@ void ObjModel::flatDraw( ) const
 void ObjModel::drawWireframe( ) const
 {
 
-    drawWireframe( _vertices, _mesh, RenderingParameters( ) );
+    ::drawWireframe( _vertices, _mesh, RenderingParameters( ) );
 
 }
 
@@ -434,7 +273,7 @@ void ObjModel::drawSubdivision( )
     glDisableClientState( GL_VERTEX_ARRAY ); // disable vertex arrays
     glDisableClientState( GL_NORMAL_ARRAY );
 
-    drawWireframe( _subVert, _subMesh, RenderingParameters( ) );
+    ::drawWireframe( _subVert, _subMesh, RenderingParameters( ) );
 
 }
 

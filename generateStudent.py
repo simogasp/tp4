@@ -41,10 +41,12 @@ def main(working_dir: str, archive_name: str, skip_cleaning: bool = False, skip_
     logger.info("Cloning studentify.py to %s", studentify_dir)
     subprocess.check_call(["git", "clone", "https://github.com/simogasp/studentipy.git", studentify_dir])
 
-    objmodel_cpp = os.path.join(dest_name, "src/ObjModel.cpp")
-    logger.info("Applying studentify to %s", objmodel_cpp)
-    subprocess.check_call(
-        ["python3", os.path.join(studentify_dir, "studentify.py"), objmodel_cpp, "-o", objmodel_cpp, "--force"])
+    files_to_studentify = ["src/ObjModel.cpp", "src/rendering.cpp", "src/geometry.cpp", "src/objReader.cpp"]
+    for file in files_to_studentify:
+        file_cpp = os.path.join(dest_name, file)
+        logger.info("Applying studentify to %s", file_cpp)
+        subprocess.check_call(
+            ["python3", os.path.join(studentify_dir, "studentify.py"), file_cpp, "-o", file_cpp, "--force"])
 
     logger.info("Removing studentify.py")
     shutil.rmtree(studentify_dir)
@@ -86,13 +88,13 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--skip-cleaning",
-        action = 'store_true',
+        action='store_true',
         dest="skip_cleaning",
         help="Skip the cleaning step leaving the code available.",
     )
     parser.add_argument(
         "--skip-packaging",
-        action = 'store_true',
+        action='store_true',
         dest="skip_packaging",
         help="Skip the cleaning step leaving the code available.",
     )

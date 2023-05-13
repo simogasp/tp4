@@ -1,33 +1,12 @@
 /**
- * @file core.hpp
- * @author  Simone Gasparini <simone.gasparini@enseeiht.fr>
- * @version 1.0
- *
- * @section LICENSE
- *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
- *
- * @section DESCRIPTION
- * 
- * The core module providing some helper classes for manipulating mesh data
- *
  */
 
 #pragma once
 
-// for mac osx
-#ifdef __APPLE__
-#include <OpenGL/gl.h>
-#else
-// only for windows
-#ifdef _WIN32
-#include <windows.h>
-#endif
-// for windows and linux
-#include <GL/gl.h>
-#endif
+#include "openglAll.hpp"
 
 #include <vector>
 #include <iostream>

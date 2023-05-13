@@ -99,7 +99,7 @@ jobs:
         cmakeBuildType: ${{ matrix.config }}
         useVcpkgToolchainFile: true
         buildWithCMake: true
-        buildWithCMakeArgs: -j1
+        buildWithCMakeArgs: -j1 --config ${{ matrix.config }}
 
     - name: UnitTests
       uses: lukka/run-cmake@v3
@@ -108,7 +108,7 @@ jobs:
         cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
         buildDirectory: ${{ env.buildDir }}
         cmakeAppendedArgs: -DBUILD_TESTS:BOOL=ON -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -DBUILD_SHARED_LIBS:BOOL=ON -DVCPKG_TARGET_TRIPLET=x64-windows -A x64 -T host=x64
-        buildWithCMakeArgs: '--target RUN_TESTS'
+        buildWithCMakeArgs: --target RUN_TESTS --config ${{ matrix.config }}
         # This input tells run-cmake to consume the vcpkg.cmake toolchain file set by run-vcpkg.
         cmakeBuildType: ${{ matrix.config }}
         useVcpkgToolchainFile: true

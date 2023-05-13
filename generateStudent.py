@@ -41,7 +41,10 @@ def main(working_dir: str, archive_name: str, skip_cleaning: bool = False, skip_
     logger.info("Cloning studentify.py to %s", studentify_dir)
     subprocess.check_call(["git", "clone", "https://github.com/simogasp/studentipy.git", studentify_dir])
 
-    files_to_studentify = ["src/ObjModel.cpp", "src/rendering.cpp", "src/geometry.cpp", "src/objReader.cpp"]
+    files_to_studentify = ["src/rendering.cpp",
+                           "src/geometry.cpp",
+                           "src/objReader.cpp",
+                           "src/loop.cpp"]
     for file in files_to_studentify:
         file_cpp = os.path.join(dest_name, file)
         logger.info("Applying studentify to %s", file_cpp)

@@ -7,6 +7,7 @@
 #include "ObjModel.hpp"
 #include "objReader.hpp"
 #include "geometry.hpp"
+#include "loop.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -17,256 +18,270 @@
 #include <vector>
 #include <cmath>
 
-using namespace std;
-
+bool ObjModel::load(const std::string& filename)
+{
+    return ::load(filename, _vertices, _mesh, _normals, _bb);
+}
 
 
 /**
- * Compute the subdivision of the input mesh by applying one step of the Loop algorithm
- * 
- * @param[in] origVert The list of the input vertices
- * @param[in] origMesh The input mesh (the vertex indices for each face/triangle)
- * @param[out] destVert The list of the new vertices for the subdivided mesh
- * @param[out] destMesh The new subdivided mesh (the vertex indices for each face/triangle)
- * @param[out] destNorm The new list of normals for each new vertex of the subdivided mesh
- */
-void ObjModel::loopSubdivision( const std::vector<point3d> &origVert,           //!< the original vertices
-                                const std::vector<face> &origMesh,              //!< the original mesh
-                                std::vector<point3d> &destVert,                 //!< the new vertices
-                                std::vector<face> &destMesh,                    //!< the new mesh
-                                std::vector<vec3d> &destNorm ) const            //!< the new normals
+* Render the model according to the provided parameters
+* @param params The rendering parameters
+*/
+void ObjModel::render( const RenderingParameters &params )
 {
-    // copy the original vertices in destVert
-    destVert = origVert;
-
-    // start fresh with the new mesh
-    destMesh.clear( );
-
-    //    PRINTVAR(destVert);
-    //    PRINTVAR(origVert);
-
-    // create a list of the new vertices created with the reference to the edge
-    EdgeList newVertices;
-
-    //*********************************************************************
-    // for each face
-    //*********************************************************************
-    for(const auto &f : origMesh)  //!!
+    // if we need to draw the original model
+    if ( !params.subdivision )
     {
-        //*********************************************************************
-        // get the indices of the triangle vertices
-        //*********************************************************************
-        const idxtype v1 = f.v1;  //<!!
-        const idxtype v2 = f.v2;
-        const idxtype v3 = f.v3;  //>!!
-
-        //*********************************************************************
-        // for each edge get the index of the vertex of the midpoint using getNewVertex
-        //*********************************************************************
-        const idxtype a = getNewVertex( edge( v1, v2 ), destVert, origMesh, newVertices );  //<!!
-        const idxtype b = getNewVertex( edge( v2, v3 ), destVert, origMesh, newVertices );
-        const idxtype c = getNewVertex( edge( v3, v1 ), destVert, origMesh, newVertices );  //>!!
-
-        //*********************************************************************
-        // create the four new triangles
-        // BE CAREFUL WITH THE VERTEX ORDER!!
-        //               v2
-        //               /\
-        //              /  \
-        //             /    \
-        //            a ---- b
-        //           / \     /\
-        //          /   \   /  \
-        //         /     \ /    \
-        //        v1 ---- c ---- v3
-        //
-        // the original triangle was v1-v2-v3, use the same clock-wise order for the other
-        // hence v1-a-c, a-b-c and so on
-        //*********************************************************************
-
-        destMesh.emplace_back(v1, a, c);  //<!!
-        destMesh.emplace_back(a, b, c);
-        destMesh.emplace_back(a, v2, b);
-        destMesh.emplace_back(c, b, v3);  //>!!
+        // draw it
+        draw( _vertices, _mesh, _normals, params );
+        // draw the normals
+        if ( params.normals )
+        {
+            drawNormals( _vertices, _normals );
+        }
     }
-
-    //*********************************************************************
-    // Update each "old" vertex using the Loop coefficients. A smart way to do
-    // so is to think in terms of faces than the single vertex: for each face
-    // we update each of the 3 vertices using the Loop formula wrt the other 2 and
-    // sum it to a temporary copy tmp of the vertices (which is initialized to
-    // [0 0 0] at the beginning). We also keep a record of the occurrence of each vertex.
-    // At then end, to get the final vertices we just need to divide each vertex
-    // in tmp by its occurrence
-    //*********************************************************************
-
-    // A list containing the occurrence of each vertex
-    vector<size_t> occurrences( origVert.size( ), 0 );
-
-    // A list of the same size as origVert with all the elements initialized to [0 0 0]
-    vector<point3d> tmp( origVert.size( ) );
-
-    //*********************************************************************
-    // for each face
-    //*********************************************************************
-    for(const auto &face : origMesh)  //!!
+    else
     {
-        //*********************************************************************
-        // consider each of the 3 vertices:
-        // 1) increment its occurrence
-        // 2) apply Loop update wrt the other 2 vertices of the face
-        // BE CAREFUL WITH THE COEFFICIENT OF THE OTHER 2 VERTICES!... consider
-        // how many times each vertex is summed in the general case...
-        //*********************************************************************
+        PRINTVAR(params.subdivLevel);
+        PRINTVAR(_currentSubdivLevel);
+        // before drawing check the current level of subdivision and the required one
+        if ( ( _currentSubdivLevel == 0 ) || ( _currentSubdivLevel != params.subdivLevel ) )
+        {
+            // if they are different apply the missing steps: either restart from the beginning
+            // if the required level is less than the current one or apply the missing
+            // steps starting from the current one
+            std::vector<point3d> tmpVert;        //!< a temporary list of vertices used in the iterations
+            std::vector<face> tmpMesh;           //!< a temporary mesh used in the iterations
 
-        ++occurrences[face.v1];  //<!!
-        tmp[face.v1] += (0.625f * origVert[face.v1] + 0.1875f * origVert[face.v2] + 0.1875f * origVert[face.v3]);
+            if(( _currentSubdivLevel == 0 ) || ( _currentSubdivLevel > params.subdivLevel ) )
+            {
+                // start from the beginning
+                _currentSubdivLevel = 0;
+                tmpVert = _vertices;
+                tmpMesh = _mesh;
+            }
+            else
+            {
+                // start from the current level
+                tmpVert = _subVert;
+                tmpMesh = _subMesh;
+            }
 
-        ++occurrences[face.v2];
-        tmp[face.v2] += (0.625f * origVert[face.v2] + 0.1875f * origVert[face.v1] + 0.1875f * origVert[face.v3]);
+            // apply the proper subdivision iterations
+            for( ; _currentSubdivLevel < params.subdivLevel; ++_currentSubdivLevel)
+            {
+                std::cerr << "[Loop subdivision] iteration " << _currentSubdivLevel << std::endl;
+                loopSubdivision( tmpVert, tmpMesh, _subVert, _subMesh, _subNorm );
+                // swap unless it's the last iteration
+                if( _currentSubdivLevel < ( params.subdivLevel - 1) )
+                {
+                    tmpVert = _subVert;
+                    tmpMesh = _subMesh;
+                }
+            }
+        }
 
-        ++occurrences[face.v3];
-        tmp[face.v3] += (0.625f * origVert[face.v3] + 0.1875f * origVert[face.v2] + 0.1875f * origVert[face.v1]);  //>!!
+        draw( _subVert, _subMesh, _subNorm, params );
+        if ( params.normals )
+        {
+            drawNormals( _subVert, _subNorm );
+        }
     }
+}
 
-    //*********************************************************************
-    //  To obtain the new vertices, divide each vertex by its occurrence value
-    //*********************************************************************
-    for ( size_t i = 0; i < origVert.size( ); ++i )  //!!
+/**
+ * Draw the model
+ *
+ * @param vertices list of vertices
+ * @param indices list of faces
+ * @param vertexNormals list of normals
+ * @param params Rendering parameters
+ */
+void ObjModel::draw( const std::vector<point3d> &vertices, const std::vector<face> &indices, std::vector<vec3d> &vertexNormals, const RenderingParameters &params ) const
+{
+    if ( params.solid )
     {
-        assert( occurrences[i] != 0 );  //??
-        destVert[i] = tmp[i] / static_cast<float>(occurrences[i]);  //!!
+        drawSolid( vertices, indices, vertexNormals, params );
     }
-    //PRINTVAR(destVert);
-
-    // redo the normals, reset and create a list of normals of the same size as
-    // the vertices, each normal set to [0 0 0]
-    destNorm.clear( );
-    destNorm = vector<vec3d>(destVert.size( ));
-
-    //*********************************************************************
-    //  Recompute the normals for each face
-    //*********************************************************************
-    for(const auto &face : destMesh)  //!!
+    if ( params.wireframe )
     {
-        //*********************************************************************
-        //  Calculate the normal of the triangles, it will be the same for each vertex
-        //*********************************************************************
-        vec3d norm = computeNormal( destVert[face.v1], destVert[face.v2], destVert[face.v3]);  //!!
-
-        //*********************************************************************
-        // Sum the normal of the face to each vertex normal using the angleAtVertex as weight
-        //*********************************************************************
-        destNorm[face.v1] += (vec3d( norm ) * angleAtVertex( destVert[face.v1], destVert[face.v2], destVert[face.v3] ));  //<!!
-        destNorm[face.v2] += (vec3d( norm ) * angleAtVertex( destVert[face.v2], destVert[face.v3], destVert[face.v1] ));
-        destNorm[face.v3] += (vec3d( norm ) * angleAtVertex( destVert[face.v3], destVert[face.v1], destVert[face.v2] ));  //>!!
-
+        ::drawWireframe( vertices, indices, params );
     }
-    //*********************************************************************
-    // normalize the normals of each vertex
-    //*********************************************************************
-    for(auto &n : destNorm)  //<!!
-    {
-        n.normalize( );
-    }  //>!!
 
 }
 
 /**
- * For a given edge it returns the index of the new vertex created on its middle point. 
- * If such vertex already exists it just returns the its index; if it does not exist 
- * it creates it in vertList along it's normal and return the index
- * 
- * @param[in] e the edge
- * @param[in,out] vertList the list of vertices
- * @param[in] mesh the list of triangles
- * @param[in,out] newVertList The list of the new vertices added so far
- * @return the index of the new vertex or the one that has been already created for that edge
- * @see EdgeList
+ * It scales the model to unitary size by translating it to the origin and
+ * scaling it to fit in a unit cube around the origin.
+ *
+ * @return the scale factor used to transform the model
  */
-idxtype ObjModel::getNewVertex( const edge &e,
-                                std::vector<point3d> &vertList,
-                                const std::vector<face> &mesh,
-                                EdgeList &newVertList ) const
+float ObjModel::unitizeModel( )
 {
-    //    PRINTVAR(e);
-    //    PRINTVAR(newVertList);
-
-    //*********************************************************************
-    // if the egde is NOT contained in the new vertex list (see EdgeList.contains() method)
-    //*********************************************************************
-    if ( !newVertList.contains( e ) )  //!!
+    if ( _vertices.empty( ) || _mesh.empty( ) )
     {
-        //*********************************************************************
-        // generate new index (vertex.size)
-        //*********************************************************************
-        const auto idxnew = static_cast<idxtype>(vertList.size( ));  //!!
-
-        //*********************************************************************
-        // add the edge and index to the newVertList
-        //*********************************************************************
-        newVertList.add( e, idxnew );  //!!
-
-        // generate new vertex
-        point3d nvert;        //!< this will contain the new vertex
-        idxtype oppV1;        //!< the index of the first "opposite" vertex
-        idxtype oppV2;        //!< the index of the second "opposite" vertex (if it exists)
-
-        //*********************************************************************
-        // check if it is a boundary edge, ie check if there is another triangle
-        // sharing this edge and if so get the index of its "opposite" vertex
-        //*********************************************************************
-        if ( !isBoundaryEdge( e, mesh, oppV1, oppV2 ) )  //!!
-        {
-            // if it is not a boundary edge create the new vertex
-
-            //*********************************************************************
-            // the new vertex is the linear combination of the two extrema of
-            // the edge V1 and V2 and the two opposite vertices oppV1 and oppV2
-            // Using the loop coefficient the new vertex is
-            // nvert = 3/8 (V1+V2) + 1/8(oppV1 + oppV2)
-            //
-            // REMEMBER THAT IN THE CODE OPPV1 AND OPPV2 ARE INDICES, NOT VERTICES!!!
-            //*********************************************************************
-
-            nvert = 0.375f * ( vertList[e.first] + vertList[e.second] ) + 0.125f * (vertList[oppV1] + vertList[oppV2]);  //!!
-        }
-        else  //??
-        {
-            //*********************************************************************
-            // otherwise it is a boundary edge then the vertex is the linear combination of the
-            // two extrema
-            //*********************************************************************
-            nvert = 0.5 * (vertList[e.first] + vertList[e.second]);  //!!
-        }
-        //*********************************************************************
-        // append the new vertex to the list of vertices
-        //*********************************************************************
-        vertList.push_back( nvert );  //!!
-
-        //*********************************************************************
-        // return the index of the new vertex
-        //*********************************************************************
-        return idxnew;  //!!
-
-    }
-    else  //??
-    // else we don't need to do anything, just return the associated index of the
-    // already existing vertex
-    {
-        //*********************************************************************
-        // get and return the index of the vertex
-        //*********************************************************************
-        return ( newVertList.getIndex( e ));  //!!
+        return .0f;
     }
 
-    // this is just to avoid compilation errors at the beginning
-    // execution should normally never reach here
-    // the return instructions go inside each branch of the if - else above
-    std::cerr << "WARNING: the subdivision may not be implemented correctly" << std::endl;
-    return 0;
+    //****************************************
+    // calculate model width, height, and
+    // depth using the bounding box
+    //****************************************
+    const float w = std::fabs( _bb.pmax.x - _bb.pmin.x );
+    const float h = std::fabs( _bb.pmax.y - _bb.pmin.y );
+    const float d = std::fabs( _bb.pmax.z - _bb.pmin.z );
+
+    std::cout << "size: w: " << w << " h " << h << " d " << d << std::endl;
+    //****************************************
+    // calculate center of the bounding box of the model
+    //****************************************
+    const point3d c = (_bb.pmax + _bb.pmin) * 0.5;
+
+    //****************************************
+    // calculate the unitizing scale factor as the
+    // maximum of the 3 dimensions
+    //****************************************
+    const auto scale = static_cast<float>(2.f / std::max(std::max(w, h), d));
+
+    std::cout << "scale: " << scale << " cx " << c.x << " cy " << c.y << " cz " << c.z << std::endl;
+
+    // translate each vertex wrt to the center and then apply the scaling to the coordinate
+    for(auto& v : _vertices)
+    {
+        //****************************************
+        // translate the vertex
+        //****************************************
+        v.translate( -c.x, -c.y, -c.z );
+
+        //****************************************
+        // apply the scaling
+        //****************************************
+        v.scale( scale );
+
+    }
+
+
+    //****************************************
+    // update the bounding box, ie translate and scale the 6 coordinates
+    //****************************************
+    _bb.pmax = (_bb.pmax - c) * scale;
+    _bb.pmin = (_bb.pmin - c) * scale;
+
+
+    std::cout << "New bounding box : pmax=" << _bb.pmax << "  pmin=" << _bb.pmin << std::endl;
+
+    return scale;
+
 }
 
 
+//*****************************************************************************
+//*                        DEPRECATED FUNCTIONS
+//*****************************************************************************
 
-#include "ObjModel.cxx"
+// to be deprecated
+
+void ObjModel::flatDraw( ) const
+{
+    glShadeModel( GL_SMOOTH );
+
+    // for each triangle draw the vertices and the normals
+    for(const auto &face : _mesh)
+    {
+        glBegin( GL_TRIANGLES );
+        //compute the normal of the triangle
+        const vec3d n = computeNormal( _vertices[face.v1], _vertices[face.v2], _vertices[face.v3]);
+        glNormal3fv( (float*) &n );
+
+        glVertex3fv( (float*) &_vertices[face.v1] );
+
+        glVertex3fv( (float*) &_vertices[face.v2] );
+
+        glVertex3fv( (float*) &_vertices[face.v3] );
+
+        glEnd( );
+    }
+
+}
+
+// to be deprecated
+
+void ObjModel::drawWireframe( ) const
+{
+
+    ::drawWireframe( _vertices, _mesh, RenderingParameters( ) );
+
+}
+
+// to be deprecated
+
+void ObjModel::indexDraw( ) const
+{
+    glShadeModel( GL_SMOOTH );
+    //****************************************
+    // Enable vertex arrays
+    //****************************************
+    glEnableClientState( GL_VERTEX_ARRAY );
+
+    //****************************************
+    // Enable normal arrays
+    //****************************************
+    glEnableClientState( GL_NORMAL_ARRAY );
+
+    //****************************************
+    // Vertex Pointer to triangle array
+    //****************************************
+    glEnableClientState( GL_VERTEX_ARRAY );
+
+    //****************************************
+    // Normal pointer to normal array
+    //****************************************
+    glNormalPointer( GL_FLOAT, 0, (float*) &_normals[0] );
+
+    //****************************************
+    // Index pointer to normal array
+    //****************************************
+    glVertexPointer( COORD_PER_VERTEX, GL_FLOAT, 0, (float*) &_vertices[0] );
+
+    //****************************************
+    // Draw the triangles
+    //****************************************
+    glDrawElements( GL_TRIANGLES, static_cast<GLsizei>(_mesh.size( )) * VERTICES_PER_TRIANGLE, GL_UNSIGNED_INT, (idxtype*) & _mesh[0] );
+
+    //****************************************
+    // Disable vertex arrays
+    //****************************************
+    glDisableClientState( GL_VERTEX_ARRAY ); // disable vertex arrays
+
+    //****************************************
+    // Disable normal arrays
+    //****************************************
+    glDisableClientState( GL_NORMAL_ARRAY );
+}
+
+// to be deprecated
+void ObjModel::drawSubdivision( )
+{
+    if ( _subMesh.empty( ) || _subNorm.empty( ) || _subVert.empty( ) )
+    {
+        loopSubdivision( _vertices, _mesh, _subVert, _subMesh, _subNorm );
+    }
+
+    glShadeModel( GL_SMOOTH );
+
+    glEnableClientState( GL_NORMAL_ARRAY );
+    glEnableClientState( GL_VERTEX_ARRAY );
+
+    glNormalPointer( GL_FLOAT, 0, (float*) &_subNorm[0] );
+    glVertexPointer( COORD_PER_VERTEX, GL_FLOAT, 0, (float*) &_subVert[0] );
+
+    glDrawElements( GL_TRIANGLES, static_cast<GLsizei>(_subMesh.size( )) * VERTICES_PER_TRIANGLE, GL_UNSIGNED_SHORT, (idxtype*) & _subMesh[0] );
+
+
+    glDisableClientState( GL_VERTEX_ARRAY ); // disable vertex arrays
+    glDisableClientState( GL_NORMAL_ARRAY );
+
+    ::drawWireframe( _subVert, _subMesh, RenderingParameters( ) );
+
+}

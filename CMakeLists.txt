@@ -85,6 +85,8 @@ set(RENDERER_SOURCES
         src/rendering.hpp
         src/geometry.cpp
         src/geometry.hpp
+        src/loop.cpp
+        src/loop.hpp
         src/objReader.cpp
         src/objReader.hpp)
 add_library(renderer ${RENDERER_SOURCES})

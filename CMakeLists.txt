@@ -12,6 +12,11 @@ if(BUILD_SHARED_LIBS)
     endif()
 endif()
 
+include(CheckIPOSupported)
+check_ipo_supported(RESULT result)
+message(STATUS "IPO supported: ${result}")
+set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ${result})
+
 # compile options for all targets depending on the compiler and the system
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
     set(MY_COMPILE_OPTIONS "-Wall;-Wextra;-pedantic;-Wno-comment;-Wshadow;-Wnon-virtual-dtor;-Wpedantic;-Wconversion;-Wmisleading-indentation;-Wsign-conversion;-Wfloat-equal")

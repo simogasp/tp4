@@ -24,7 +24,7 @@ jobs:
       run: |
         mkdir build
         cd build
-        cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DBUILD_TESTS:BOOL=ON
+        cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DBUILD_TESTS:BOOL=ON -DENABLE_WARNINGS_AS_ERRORS:BOOL=ON
 
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v2
@@ -94,7 +94,7 @@ jobs:
         cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
         buildDirectory: ${{ env.buildDir }}
 #        cmakeGenerator: VS16Win64
-        cmakeAppendedArgs: -DBUILD_TESTS:BOOL=ON -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -DBUILD_SHARED_LIBS:BOOL=ON -DVCPKG_TARGET_TRIPLET=x64-windows -A x64 -T host=x64
+        cmakeAppendedArgs: -DBUILD_TESTS:BOOL=ON -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -DBUILD_SHARED_LIBS:BOOL=ON -DVCPKG_TARGET_TRIPLET=x64-windows -A x64 -T host=x64 -DENABLE_WARNINGS_AS_ERRORS:BOOL=ON
         # This input tells run-cmake to consume the vcpkg.cmake toolchain file set by run-vcpkg.
         cmakeBuildType: ${{ matrix.config }}
         useVcpkgToolchainFile: true
@@ -130,7 +130,7 @@ jobs:
       run: |
         mkdir build
         cd build
-        cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS:BOOL=ON
+        cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS:BOOL=ON -DENABLE_WARNINGS_AS_ERRORS:BOOL=ON
         cmake --build .
     - name: Test
       run: |

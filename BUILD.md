@@ -3,7 +3,7 @@
 ## Building instructions
 
 Required tools:
-* C/C++ 11 compiler (gcc or visual studio or clang)
+* C/C++ 17 compiler (gcc or visual studio or clang)
 * cmake
 
 
@@ -12,7 +12,7 @@ Required tools:
 The project depends on:
 
 - OpenGL
-- freeglut (included for ease in windows)
+- freeglut (included for ease in Windows)
 
 
 ## Windows
@@ -21,8 +21,8 @@ The project depends on:
 
 * download and install the latest version of CMake
 
-   * download here: https://github.com/Kitware/CMake/releases/download/v3.17.1/cmake-3.17.1-win64-x64.msi
-   
+   * download here (choose "Windows x64 Installer:"): https://cmake.org/download/
+  
    * !!! When installing make sure that the checkbox "ne pas ajouter cmake au PATH" is NOT checked
  
 
@@ -108,18 +108,17 @@ sudo apt-get install libglu1-mesa-dev freeglut3-dev build-essential mesa-common-
 
 To build this code we use the CMake build system. You can install CMake from the system package manager but you need a recent version >= 3.10. Check the version that is provided by your linux distribution and if it is suitable usually you need to
 
-    ```
-    sudo apt-get install cmake
-    ```
+```
+sudo apt-get install cmake
+```
 
-    otherwise you can install the binaries from here: https://github.com/Kitware/CMake/releases/download/v3.17.1/cmake-3.17.1-Linux-x86_64.sh
-    
-    To install:
-    ```
-    wget https://github.com/Kitware/CMake/releases/download/v3.17.1/cmake-3.17.1-Linux-x86_64.sh
-    chmod +x cmake-3.17.1-Linux-x86_64.sh
-    sudo cmake-3.17.1-Linux-x86_64.sh --prefix=/usr/local/ --skip-license
-    ```
+otherwise you can install the binaries from here (choose Linux x86_64): https://cmake.org/download/ 
+
+Once downloaded the latest version X.YY.Z, in order to install:
+```
+chmod +x cmake-X.YY.Z-Linux-x86_64.sh
+sudo ./cmake-X.YY.Z-Linux-x86_64.sh --prefix=/usr/local/ --skip-license
+```
   
 ### Build
  

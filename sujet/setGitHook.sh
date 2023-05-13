@@ -7,6 +7,6 @@ for i in "${arr[@]}"
 do
    echo "$i"
    filename="post-${i}"
-   cp post-xxx-sample.txt ../.git/hooks/${filename}
-   chmod +x ../.git/hooks/${filename}
+   cp post-xxx-sample.txt ../.git/hooks/"${filename}"
+   chmod +x ../.git/hooks/"${filename}"
 done

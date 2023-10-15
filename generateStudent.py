@@ -36,7 +36,7 @@ def main(working_dir: str, archive_name: str, skip_cleaning: bool = False, skip_
     logger.info("Creating directory %s", dest_name)
     os.mkdir(dest_name)
 
-    files_to_copy = ["BUILD.md", "CMakeLists.txt", "README.md", "LICENSE"]
+    files_to_copy = [".clang-format", "BUILD.md", "CMakeLists.txt", "README.md", "LICENSE"]
     logger.info("Copying files to %s", dest_name)
     for file in files_to_copy:
         shutil.copy(file, dest_name)

@@ -1,5 +1,14 @@
 #!/usr/bin/env python3
 
+"""
+Script used to generate the package to be given to the student.
+Things to adapt:
+* default name for the package
+* files to copy
+* directories to copy
+* name of the main file to studentify
+"""
+
 import argparse
 import logging
 import os

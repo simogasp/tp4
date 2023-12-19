@@ -67,7 +67,7 @@ bool load(const std::string& filename, std::vector<point3d>& vertices, std::vect
 
 /**
  * It parses a line of the OBJ file containing a face and it return the result.
- * NB: it only recover the indices, it discard normal and texture indices
+ * NB: it only recovers the indices, it discards normal and texture indices
  *
  * @param[in] toParse the string to parse in the OBJ format for a face (f v/vt/vn v/vt/vn v/vt/vn) and its variants
  * @return the 3 indices for the face
